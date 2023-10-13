@@ -1,8 +1,11 @@
 server:
-  port: 8080
+  port: 8082
 
 spring:
   datasource:
+   url: jdbc:postgresql://114.132.51.227:5432/ooad_proj
+   username: ooad_admin
+   password: '111111'
 
 springdoc:
   swagger-ui:

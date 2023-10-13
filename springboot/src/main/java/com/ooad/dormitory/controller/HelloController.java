@@ -20,7 +20,7 @@ public class HelloController {
 
   @GetMapping("")
   public Map<String, String> hello() {
-    Map<String, String> res = Map.of("response", "hello");
+    Map<String, String> res = Map.of("response", "hello-changed");
     return res;
   }
 }
