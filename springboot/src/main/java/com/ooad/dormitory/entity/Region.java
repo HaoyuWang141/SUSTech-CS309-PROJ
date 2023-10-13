@@ -4,6 +4,9 @@ public class Region {
     private Integer regionId;
     private String regionName;
 
+    public Region() {
+    }
+
     public Region(Integer regionId, String regionName) {
         this.regionId = regionId;
         this.regionName = regionName;

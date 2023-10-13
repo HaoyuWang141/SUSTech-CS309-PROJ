@@ -10,6 +10,9 @@ public class Layout {
     private String description;
     private String imageUrl;
 
+    public Layout() {
+    }
+
     public Layout(Integer layoutId, String layoutName, String description, String imageUrl) {
         this.layoutId = layoutId;
         this.layoutName = layoutName;

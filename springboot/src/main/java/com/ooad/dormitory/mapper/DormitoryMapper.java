@@ -20,7 +20,8 @@ public interface DormitoryMapper extends BaseMapper<Dormitory> {
             @Result(column = "layout_id", property = "layout", one = @org.apache.ibatis.annotations.One(select = "com.ooad.dormitory.mapper.LayoutMapper.selectById")),
             @Result(column = "is_empty", property = "isEmpty"),
             @Result(column = "gender", property = "gender"),
-            @Result(column = "degree", property = "degree")
+            @Result(column = "degree", property = "degree"),
+            @Result(column = "building_id", property = "building", one = @org.apache.ibatis.annotations.One(select = "com.ooad.dormitory.mapper.BuildingMapper.selectById"))
     })
-    List<Dormitory> selectAllWithLayout();
+    List<Dormitory> selectAll();
 }

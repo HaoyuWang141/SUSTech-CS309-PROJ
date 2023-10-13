@@ -1,6 +1,5 @@
 -- 删除表格
 DROP TABLE IF EXISTS team_favorite_dorm;
-DROP TABLE IF EXISTS region_building_dorm;
 DROP TABLE IF EXISTS student_account;
 DROP TABLE IF EXISTS team;
 DROP TABLE IF EXISTS dormitory;
@@ -12,7 +11,7 @@ DROP TABLE IF EXISTS admin_account;
 -- 管理员账号表
 CREATE TABLE admin_account (
     account_id SERIAL PRIMARY KEY,
-    account_name VARCHAR(50) NOT NULL,
+    account_name VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(50) NOT NULL
 );
 
@@ -26,7 +25,8 @@ CREATE TABLE region (
 CREATE TABLE building (
     building_id SERIAL PRIMARY KEY,
     building_name VARCHAR(100) NOT NULL,
-    description TEXT
+    description TEXT,
+    region_id INT REFERENCES region(region_id)
 );
 
 -- 布局表
@@ -48,7 +48,9 @@ CREATE TABLE dormitory (
     is_empty BOOLEAN,
     gender VARCHAR(20),
     degree VARCHAR(20),
-    FOREIGN KEY (layout_id) REFERENCES layout(layout_id)
+    building_id INT,
+    FOREIGN KEY (layout_id) REFERENCES layout(layout_id),
+    FOREIGN KEY (building_id) REFERENCES building(building_id)
 );
 
 -- 队伍表
@@ -60,15 +62,14 @@ CREATE TABLE team (
 
 -- 学生账户表
 CREATE TABLE student_account (
-    student_id SERIAL PRIMARY KEY,
+    student_id VARCHAR(20) PRIMARY KEY,
     name VARCHAR(100),
     gender VARCHAR(20),
-    student_number VARCHAR(20) NOT NULL UNIQUE,
     photo_url VARCHAR(255),
     personal_description TEXT,
     sleep_time TIME,
     wake_up_time TIME,
-    air_conditioner_temperature FLOAT,
+    air_conditioner_temperature INT,
     is_snores BOOLEAN,
     qq VARCHAR(20),
     email VARCHAR(100),

@@ -9,6 +9,9 @@ public class AdminAccount {
     private String accountName;
     private String password;
 
+    public AdminAccount() {
+    }
+
     public AdminAccount(Integer accountId, String accountName, String password) {
         this.accountId = accountId;
         this.accountName = accountName;

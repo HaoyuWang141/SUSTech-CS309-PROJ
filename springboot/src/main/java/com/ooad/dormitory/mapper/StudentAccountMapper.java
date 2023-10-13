@@ -14,7 +14,6 @@ public interface StudentAccountMapper extends BaseMapper<StudentAccount> {
             @Result(column = "student_id", property = "studentId"),
             @Result(column = "name", property = "name"),
             @Result(column = "gender", property = "gender"),
-            @Result(column = "student_number", property = "studentNumber"),
             @Result(column = "photo_url", property = "photoUrl"),
             @Result(column = "description", property = "description"),
             @Result(column = "sleep_time", property = "sleepTime"),

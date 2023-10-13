@@ -18,6 +18,11 @@ public class Dormitory {
     private Boolean isEmpty;
     private String gender;
     private String degree;
+    @TableField(exist = false)
+    private Building building;
+
+    public Dormitory() {
+    }
 
     public Dormitory(Integer dormitoryId, Integer floor, String roomNumber, Integer bedCount, String description, Layout layout, Boolean isEmpty, String gender, String degree) {
         this.dormitoryId = dormitoryId;
@@ -101,6 +106,14 @@ public class Dormitory {
 
     public void setDegree(String degree) {
         this.degree = degree;
+    }
+
+    public Building getBuilding() {
+        return building;
+    }
+
+    public void setBuilding(Building building) {
+        this.building = building;
     }
 }
 

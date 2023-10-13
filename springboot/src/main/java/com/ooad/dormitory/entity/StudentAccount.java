@@ -7,16 +7,15 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import java.sql.Time;
 
 public class StudentAccount {
-    @TableId(type = IdType.AUTO)
-    private Integer studentId;
+    @TableId(type = IdType.INPUT)
+    private String studentId;
     private String name;
     private String gender;
-    private String studentNumber;
     private String photoUrl;
     private String description;
     private Time sleepTime;
     private Time wakeUpTime;
-    private String airConditionerTemperature;
+    private Integer airConditionerTemperature;
     private Boolean isSnoring;
     private String qq;
     private String email;
@@ -25,28 +24,15 @@ public class StudentAccount {
     private Team team;
 
 
-    public StudentAccount(Integer studentId, String name, String gender, String studentNumber, String photoUrl, String description, Time sleepTime, Time wakeUpTime, String airConditionerTemperature, Boolean isSnoring, String qq, String email, String wechat, Team team) {
-        this.studentId = studentId;
-        this.name = name;
-        this.gender = gender;
-        this.studentNumber = studentNumber;
-        this.photoUrl = photoUrl;
-        this.description = description;
-        this.sleepTime = sleepTime;
-        this.wakeUpTime = wakeUpTime;
-        this.airConditionerTemperature = airConditionerTemperature;
-        this.isSnoring = isSnoring;
-        this.qq = qq;
-        this.email = email;
-        this.wechat = wechat;
-        this.team = team;
+    public StudentAccount() {
+
     }
 
-    public Integer getStudentId() {
+    public String getStudentId() {
         return studentId;
     }
 
-    public void setStudentId(Integer studentId) {
+    public void setStudentId(String studentId) {
         this.studentId = studentId;
     }
 
@@ -64,14 +50,6 @@ public class StudentAccount {
 
     public void setGender(String gender) {
         this.gender = gender;
-    }
-
-    public String getStudentNumber() {
-        return studentNumber;
-    }
-
-    public void setStudentNumber(String studentNumber) {
-        this.studentNumber = studentNumber;
     }
 
     public String getPhotoUrl() {
@@ -106,11 +84,11 @@ public class StudentAccount {
         this.wakeUpTime = wakeUpTime;
     }
 
-    public String getAirConditionerTemperature() {
+    public Integer getAirConditionerTemperature() {
         return airConditionerTemperature;
     }
 
-    public void setAirConditionerTemperature(String airConditionerTemperature) {
+    public void setAirConditionerTemperature(Integer airConditionerTemperature) {
         this.airConditionerTemperature = airConditionerTemperature;
     }
 

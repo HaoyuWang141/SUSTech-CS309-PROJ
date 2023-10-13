@@ -1,6 +1,7 @@
 package com.ooad.dormitory.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 
 public class Building {
@@ -8,6 +9,11 @@ public class Building {
     private Integer buildingId;
     private String buildingName;
     private String description;
+    @TableField(exist = false)
+    private Region region;
+
+    public Building() {
+    }
 
     public Building(Integer buildingId, String buildingName, String description) {
         this.buildingId = buildingId;
@@ -37,6 +43,14 @@ public class Building {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Region getRegion() {
+        return region;
+    }
+
+    public void setRegion(Region region) {
+        this.region = region;
     }
 }
 
