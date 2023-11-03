@@ -15,7 +15,6 @@ public interface StudentAccountMapper extends BaseMapper<StudentAccount> {
             @Result(column = "name", property = "name"),
             @Result(column = "gender", property = "gender"),
             @Result(column = "photo_url", property = "photoUrl"),
-            @Result(column = "description", property = "description"),
             @Result(column = "sleep_time", property = "sleepTime"),
             @Result(column = "wake_up_time", property = "wakeUpTime"),
             @Result(column = "air_conditioner_temperature", property = "airConditionerTemperature"),
@@ -23,6 +22,7 @@ public interface StudentAccountMapper extends BaseMapper<StudentAccount> {
             @Result(column = "qq", property = "qq"),
             @Result(column = "email", property = "email"),
             @Result(column = "wechat", property = "wechat"),
+            @Result(column = "team_id", property = "teamId"),
             @Result(column = "team_id", property = "team", one = @org.apache.ibatis.annotations.One(select = "com.ooad.dormitory.mapper.TeamMapper.selectById"))
     })
     List<StudentAccount> selectAllWithTeam();

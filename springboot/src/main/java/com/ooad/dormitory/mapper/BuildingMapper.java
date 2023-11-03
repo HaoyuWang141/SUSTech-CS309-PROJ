@@ -16,6 +16,7 @@ public interface BuildingMapper extends BaseMapper<Building> {
             @Result(column = "building_id", property = "buildingId"),
             @Result(column = "building_name", property = "buildingName"),
             @Result(column = "description", property = "description"),
+            @Result(column = "region_id", property = "regionId"),
             @Result(column = "region_id", property = "region", one = @One(select = "com.ooad.dormitory.mapper.RegionMapper.selectById"))
     })
     Building selectById(Integer buildingId);

@@ -9,9 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class AdminAccount {
-    @TableId(type = IdType.AUTO)
-    private Integer accountId;
-    private String accountName;
-    private String password;
+public class AllocationStage {
+    @TableId(type = IdType.INPUT)
+    private Integer entryYear;
+    @TableId(type = IdType.INPUT)
+    private Integer degree;
+    private Integer gender;
+    private Integer stage;
 }
