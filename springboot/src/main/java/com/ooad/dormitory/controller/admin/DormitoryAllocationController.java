@@ -28,7 +28,7 @@ public class DormitoryAllocationController {
     public ResponseEntity<?> relateDormitory(@RequestBody Integer entryYear, @RequestBody Integer degree, @RequestBody Integer gender, @RequestBody List<Integer> dormitoryIdList) {
         List<AllocationRelation> allocationRelationList = new ArrayList<>();
         for (Integer dormitoryId : dormitoryIdList) {
-            allocationRelationList.add(new AllocationRelation(entryYear, degree, gender, dormitoryId));
+            allocationRelationList.add(new AllocationRelation(null, entryYear, degree, gender, dormitoryId));
         }
         allocationRelationService.saveBatch(allocationRelationList);
         return ResponseEntity.ok().build();
@@ -48,7 +48,7 @@ public class DormitoryAllocationController {
 
     @PostMapping("/setState")
     public ResponseEntity<?> setState(Integer entryYear, Integer degree, Integer gender, Integer state) {
-        AllocationStage allocationStage = new AllocationStage(entryYear, degree, gender, state);
+        AllocationStage allocationStage = new AllocationStage(null, entryYear, degree, gender, state);
         allocationStageService.saveOrUpdate(allocationStage);
         return ResponseEntity.ok().build();
     }

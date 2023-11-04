@@ -99,18 +99,20 @@ CREATE TABLE team_favorite_dorm
 
 CREATE TABLE allocation_relation
 (
-    entry_year      INT,
-    degree          INT,
-    gender          INT,
+    id              SERIAL PRIMARY KEY,
+    entry_year      INT, -- eg: 2019
+    degree          INT, -- 0:本科, 1:硕士, 2:博士
+    gender          INT, -- 0:女, 1:男
     dormitory_id    INT,
     UNIQUE (entry_year, degree, gender, dormitory_id)
 );
 
 CREATE TABLE allocation_stage
 (
-    entry_year  INT,
-    degree      INT,
-    gender      INT,
+    id          SERIAL PRIMARY KEY,
+    entry_year  INT, -- eg: 2019
+    degree      INT, -- 0:本科, 1:硕士, 2:博士
+    gender      INT, -- 0:女, 1:男
     stage       INT NOT NULL,
-    PRIMARY KEY (entry_year, degree)
+    UNIQUE (entry_year, degree, gender)
 );

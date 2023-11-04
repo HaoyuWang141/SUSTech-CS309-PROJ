@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class AllocationStage {
-    @TableId(type = IdType.INPUT)
+    @TableId(type = IdType.AUTO)
+    private Integer id;
     private Integer entryYear;
-    @TableId(type = IdType.INPUT)
     private Integer degree;
     private Integer gender;
     private Integer stage;
