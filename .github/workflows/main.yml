@@ -1,0 +1,29 @@
+name: Deploy to Tencent Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: ls -a via ssh
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          command: |
+            cd ~/ooad_proj/
+            git pull origin main
+            ./deploy_script.sh
+          host: ${{ secrets.HOST }}
+          username: lighthouse
+          password: ${{ secrets.PASSWORD }}
+          
+      # - name: Deploy code to my server
+      #   run: |
+      #     ssh lighthouse@114.132.51.227 "cd ~/ooad_proj/ && git pull origin main && ./deploy_script.sh"
