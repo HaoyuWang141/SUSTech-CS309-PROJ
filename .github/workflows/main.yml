@@ -16,7 +16,10 @@ jobs:
       - name: ls -a via ssh
         uses: garygrossgarten/github-action-ssh@release
         with:
-          command: ls -a
+          command: |
+            cd ~/ooad_proj/
+            git pull origin main
+            ./deploy_script.sh
           host: ${{ secrets.HOST }}
           username: lighthouse
           password: ${{ secrets.PASSWORD }}
