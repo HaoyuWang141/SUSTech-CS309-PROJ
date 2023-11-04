@@ -1,11 +1,15 @@
 package com.ooad.dormitory.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.beans.Transient;
 
+@NoArgsConstructor
+@Data
 public class Dormitory {
     @TableId(type = IdType.AUTO)
     private Integer dormitoryId;
@@ -13,94 +17,14 @@ public class Dormitory {
     private String roomNumber;
     private Integer bedCount;
     private String description;
+    private Integer layoutId;
     @TableField(exist = false)
     private Layout layout;
     private Boolean isEmpty;
     private String gender;
     private String degree;
-
-    public Dormitory(Integer dormitoryId, Integer floor, String roomNumber, Integer bedCount, String description, Layout layout, Boolean isEmpty, String gender, String degree) {
-        this.dormitoryId = dormitoryId;
-        this.floor = floor;
-        this.roomNumber = roomNumber;
-        this.bedCount = bedCount;
-        this.description = description;
-        this.layout = layout;
-        this.isEmpty = isEmpty;
-        this.gender = gender;
-        this.degree = degree;
-    }
-
-    public Integer getDormitoryId() {
-        return dormitoryId;
-    }
-
-    public void setDormitoryId(Integer dormitoryId) {
-        this.dormitoryId = dormitoryId;
-    }
-
-    public Integer getFloor() {
-        return floor;
-    }
-
-    public void setFloor(Integer floor) {
-        this.floor = floor;
-    }
-
-    public String getRoomNumber() {
-        return roomNumber;
-    }
-
-    public void setRoomNumber(String roomNumber) {
-        this.roomNumber = roomNumber;
-    }
-
-    public Integer getBedCount() {
-        return bedCount;
-    }
-
-    public void setBedCount(Integer bedCount) {
-        this.bedCount = bedCount;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Layout getLayout() {
-        return layout;
-    }
-
-    public void setLayout(Layout layout) {
-        this.layout = layout;
-    }
-
-    public Boolean getEmpty() {
-        return isEmpty;
-    }
-
-    public void setEmpty(Boolean empty) {
-        isEmpty = empty;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public String getDegree() {
-        return degree;
-    }
-
-    public void setDegree(String degree) {
-        this.degree = degree;
-    }
+    private Integer buildingId;
+    @TableField(exist = false)
+    private Building building;
 }
 

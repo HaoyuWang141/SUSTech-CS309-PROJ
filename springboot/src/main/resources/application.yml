@@ -28,6 +28,6 @@ spring:
   jackson:
     property-naming-strategy: SNAKE_CASE_TO_LOWER_CASE_WITH_UNDERSCORES
 
-#mybatis-plus:
-#  configuration:
-#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
