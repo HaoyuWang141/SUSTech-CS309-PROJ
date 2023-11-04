@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# 进入项目目录
 cd springboot/
+mvn clean package -DskipTests
 
-# 对于 Maven 项目
-nohup mvn spring-boot:run &
+cd target/
+nohup java -jar dormitory.jar > ./nohup.out 2>&1 &
