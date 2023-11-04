@@ -6,3 +6,4 @@ which mvn
 
 cd target/
 nohup java -jar dormitory.jar > ./nohup.out 2>&1 &
+cat ./nohup.out
