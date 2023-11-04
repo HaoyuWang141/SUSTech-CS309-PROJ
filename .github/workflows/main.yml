@@ -13,6 +13,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Deploy code to my server
-        run: |
-          sshpass -p '${{ secrets.PASSWORD }}' ssh lighthouse@114.132.51.227 "cd ~/ooad_proj/ && git pull origin main && ./deploy_script.sh"
+      - name: ls -a via ssh
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          command: ls -a
+          host: ${{ secrets.HOST }}
+          username: lighthouse
+          password: ${{ secrets.PASSWORD }}
+          
+      # - name: Deploy code to my server
+      #   run: |
+      #     ssh lighthouse@114.132.51.227 "cd ~/ooad_proj/ && git pull origin main && ./deploy_script.sh"
