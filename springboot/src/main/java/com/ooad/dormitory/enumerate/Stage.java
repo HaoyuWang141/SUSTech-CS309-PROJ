@@ -1,4 +1,4 @@
-package com.ooad.dormitory.entity;
+package com.ooad.dormitory.enumerate;
 
 public enum Stage {
     TEAM(0), COLLECTION(1), SELECTION(2), FINISH(3);

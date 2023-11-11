@@ -1,4 +1,4 @@
-package com.ooad.dormitory.entity;
+package com.ooad.dormitory.enumerate;
 
 public enum Gender {
     FEAMLE(0), MALE(1);
