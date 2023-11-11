@@ -5,6 +5,7 @@ import com.ooad.dormitory.entity.AllocationRelation;
 import com.ooad.dormitory.entity.AllocationStage;
 import com.ooad.dormitory.service.admin.AllocationRelationService;
 import com.ooad.dormitory.service.admin.AllocationStageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,7 @@ public class DormitoryAllocationController {
     private final AllocationRelationService allocationRelationService;
     private final AllocationStageService allocationStageService;
 
+    @Autowired
     public DormitoryAllocationController(AllocationRelationService allocationRelationService, AllocationStageService allocationStageService) {
         this.allocationRelationService = allocationRelationService;
         this.allocationStageService = allocationStageService;

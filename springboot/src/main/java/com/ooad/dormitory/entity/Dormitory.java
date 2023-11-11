@@ -21,8 +21,8 @@ public class Dormitory {
     @TableField(exist = false)
     private Layout layout;
     private Boolean isEmpty;
-    private String gender;
-    private String degree;
+    private Integer gender; // 0:女, 1:男
+    private Integer degree; // 0:本科, 1:硕士, 2:博士
     private Integer buildingId;
     @TableField(exist = false)
     private Building building;
