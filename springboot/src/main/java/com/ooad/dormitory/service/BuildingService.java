@@ -1,4 +1,4 @@
-package com.ooad.dormitory.service.admin;
+package com.ooad.dormitory.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ooad.dormitory.entity.Building;

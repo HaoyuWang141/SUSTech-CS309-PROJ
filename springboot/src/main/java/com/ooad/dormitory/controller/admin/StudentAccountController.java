@@ -2,8 +2,7 @@ package com.ooad.dormitory.controller.admin;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ooad.dormitory.entity.StudentAccount;
-import com.ooad.dormitory.service.admin.StudentAccountService;
-import org.apache.ibatis.annotations.Param;
+import com.ooad.dormitory.service.StudentAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

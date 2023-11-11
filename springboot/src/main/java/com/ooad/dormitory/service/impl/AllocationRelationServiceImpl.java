@@ -1,9 +1,9 @@
-package com.ooad.dormitory.service.admin.impl;
+package com.ooad.dormitory.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ooad.dormitory.entity.AllocationRelation;
 import com.ooad.dormitory.mapper.AllocationRelationMapper;
-import com.ooad.dormitory.service.admin.AllocationRelationService;
+import com.ooad.dormitory.service.AllocationRelationService;
 import org.springframework.stereotype.Service;
 
 @Service
