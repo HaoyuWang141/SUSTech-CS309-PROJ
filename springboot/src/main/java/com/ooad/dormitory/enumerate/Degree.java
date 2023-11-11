@@ -1,4 +1,4 @@
-package com.ooad.dormitory.entity;
+package com.ooad.dormitory.enumerate;
 
 public enum Degree {
     BACHELOR(0), MASTER(1), DOCTOR(2);
