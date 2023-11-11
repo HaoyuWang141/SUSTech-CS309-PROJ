@@ -53,8 +53,8 @@ CREATE TABLE dormitory
     description  TEXT,
     layout_id    INT,
     is_empty     BOOLEAN,
-    gender       VARCHAR(20),
-    degree       VARCHAR(20),
+    gender       INT, -- 0:女, 1:男
+    degree       INT, -- 0:本科, 1:硕士, 2:博士
     building_id  INT,
     FOREIGN KEY (layout_id) REFERENCES layout (layout_id),
     FOREIGN KEY (building_id) REFERENCES building (building_id)
@@ -113,6 +113,6 @@ CREATE TABLE allocation_stage
     entry_year  INT, -- eg: 2019
     degree      INT, -- 0:本科, 1:硕士, 2:博士
     gender      INT, -- 0:女, 1:男
-    stage       INT NOT NULL,
+    stage       INT NOT NULL, -- 0:组队阶段, 1:收藏阶段, 2:正选阶段, 3:结束阶段
     UNIQUE (entry_year, degree, gender)
 );

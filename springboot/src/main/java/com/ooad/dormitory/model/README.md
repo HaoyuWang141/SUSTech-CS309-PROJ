@@ -1,3 +1,3 @@
 model package:
 
-向前端传输的数据模型
+model for backend, used in controller and service
