@@ -53,8 +53,8 @@ CREATE TABLE dormitory
     description  TEXT,
     layout_id    INT,
     is_empty     BOOLEAN,
-    gender       VARCHAR(20),
-    degree       VARCHAR(20),
+    gender       INT, -- 0:女, 1:男
+    degree       INT, -- 0:本科, 1:硕士, 2:博士
     building_id  INT,
     FOREIGN KEY (layout_id) REFERENCES layout (layout_id),
     FOREIGN KEY (building_id) REFERENCES building (building_id)
