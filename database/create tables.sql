@@ -9,6 +9,7 @@ DROP TABLE IF EXISTS region CASCADE;
 DROP TABLE IF EXISTS admin_account CASCADE;
 DROP TABLE IF EXISTS allocation_relation CASCADE;
 DROP TABLE IF EXISTS allocation_stage CASCADE;
+DROP TABLE IF EXISTS invitation CASCADE;
 
 -- 管理员账号表
 CREATE TABLE admin_account
@@ -90,9 +91,10 @@ CREATE TABLE student_account
 -- 队伍-收藏宿舍关系表
 CREATE TABLE team_favorite_dorm
 (
+    id           SERIAL PRIMARY KEY,
     team_id      INT,
     dormitory_id INT,
-    PRIMARY KEY (team_id, dormitory_id),
+    UNIQUE (team_id, dormitory_id),
     FOREIGN KEY (team_id) REFERENCES team (team_id),
     FOREIGN KEY (dormitory_id) REFERENCES dormitory (dormitory_id)
 );
@@ -115,4 +117,12 @@ CREATE TABLE allocation_stage
     gender      INT, -- 0:女, 1:男
     stage       INT NOT NULL, -- 0:组队阶段, 1:收藏阶段, 2:正选阶段, 3:结束阶段
     UNIQUE (entry_year, degree, gender)
+);
+
+CREATE TABLE invitation
+(
+    id           SERIAL PRIMARY KEY,
+    inviter_id   INT,
+    invitee_id   INT,
+    time         TIMESTAMP
 );

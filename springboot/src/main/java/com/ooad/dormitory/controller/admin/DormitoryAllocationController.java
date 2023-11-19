@@ -50,8 +50,17 @@ public class DormitoryAllocationController {
 
     @PostMapping("/setState")
     public ResponseEntity<?> setState(Integer entryYear, Integer degree, Integer gender, Integer state) {
-        AllocationStage allocationStage = new AllocationStage(null, entryYear, degree, gender, state);
-        allocationStageService.saveOrUpdate(allocationStage);
+        List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
+                .eq("entry_year", entryYear).eq("degree", degree).eq("gender", gender));
+        if (allocationStageList.isEmpty()) {
+            AllocationStage allocationStage = new AllocationStage(null, entryYear, degree, gender, state);
+            allocationStageService.save(allocationStage);
+        }
+        else {
+            AllocationStage allocationStage = allocationStageList.get(0);
+            allocationStage.setStage(state);
+            allocationStageService.saveOrUpdate(allocationStage);
+        }
         return ResponseEntity.ok().build();
     }
 }

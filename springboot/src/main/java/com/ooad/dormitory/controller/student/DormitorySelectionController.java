@@ -1,19 +1,11 @@
 package com.ooad.dormitory.controller.student;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.ooad.dormitory.entity.Building;
-import com.ooad.dormitory.entity.Dormitory;
-import com.ooad.dormitory.entity.Region;
-import com.ooad.dormitory.entity.TeamFavoriteDorm;
-import com.ooad.dormitory.service.BuildingService;
-import com.ooad.dormitory.service.DormitoryService;
-import com.ooad.dormitory.service.RegionService;
-import com.ooad.dormitory.service.TeamFavoriteDormService;
+import com.ooad.dormitory.entity.*;
+import com.ooad.dormitory.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,16 +19,19 @@ public class DormitorySelectionController {
     private final BuildingService buildingService;
     private final RegionService regionService;
     private final TeamFavoriteDormService teamFavoriteDormService;
+    private final AllocationStageService allocationStageService;
 
     @Autowired
     public DormitorySelectionController(DormitoryService dormitoryService,
                                          BuildingService buildingService,
                                          RegionService regionService,
-                                         TeamFavoriteDormService teamFavoriteDormService) {
+                                         TeamFavoriteDormService teamFavoriteDormService,
+                                         AllocationStageService allocationStageService) {
         this.dormitoryService = dormitoryService;
         this.buildingService = buildingService;
         this.regionService = regionService;
         this.teamFavoriteDormService = teamFavoriteDormService;
+        this.allocationStageService = allocationStageService;
     }
 
     @GetMapping("/getRegions")
@@ -66,6 +61,26 @@ public class DormitorySelectionController {
     }
 
 
+    @PostMapping("/favor")
+    public ResponseEntity<?> favorDormitory(@RequestBody StudentAccount studentAccount, @RequestBody Dormitory dormitory) {
+        // 判断是否是收藏宿舍阶段
+        List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
+                .eq("entryYear", studentAccount.getEntryYear())
+                .eq("degree", studentAccount.getDegree())
+                .eq("gender", studentAccount.getGender()));
+        if (allocationStageList.isEmpty() || allocationStageList.get(0).getStage() != 1) {
+            throw new RuntimeException("favor dormitory failed!");
+        }
+        // 收藏宿舍
+        List<TeamFavoriteDorm> teamFavoriteDormList = teamFavoriteDormService.list(new QueryWrapper<TeamFavoriteDorm>()
+                .eq("teamId", studentAccount.getTeamId())
+                .eq("dormitoryId", dormitory.getDormitoryId()));
+        if (teamFavoriteDormList.isEmpty()) {
+            TeamFavoriteDorm teamFavoriteDorm = new TeamFavoriteDorm(null, studentAccount.getTeamId(), dormitory.getDormitoryId(), dormitory);
+            teamFavoriteDormService.save(teamFavoriteDorm);
+        }
+        return ResponseEntity.ok().build();
+    }
 
 
 }
