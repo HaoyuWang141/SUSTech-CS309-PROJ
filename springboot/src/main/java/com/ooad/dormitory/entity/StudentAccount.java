@@ -13,7 +13,7 @@ public class StudentAccount {
     @TableId(type = IdType.INPUT)
     private String studentId;
     private String name;
-    private String gender;
+    private Integer gender;
     private String photoUrl;
     private Time sleepTime;
     private Time wakeUpTime;
