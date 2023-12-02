@@ -1,10 +1,48 @@
 #!/bin/bash
 
-cd springboot/
-which mvn
-/home/lighthouse/apache-maven-3.9.4/bin/mvn clean package -DskipTests
+# git pull
 
-cd target/
-kill $(lsof -t -i:8082)
+# cd springboot/
+# which mvn
+# /home/lighthouse/apache-maven-3.9.4/bin/mvn clean package -DskipTests
+
+# cd target/
+# kill $(lsof -t -i:8082)
+# nohup java -jar dormitory.jar > ./nohup.out 2>&1 &
+# cat ./nohup.out
+
+#!/bin/bash
+
+# 拉取最新代码
+git pull
+if [ $? -ne 0 ]; then
+    echo "git pull 失败，脚本退出"
+    exit 1
+fi
+
+# 进入项目目录
+cd springboot/ || exit
+
+# 使用 Maven Wrapper 构建项目
+./mvnw clean package -DskipTests
+if [ $? -ne 0 ]; then
+    echo "构建失败，脚本退出"
+    exit 1
+fi
+
+# 进入目标目录
+cd target/ || exit
+
+# 优雅地停止旧进程
+OLD_PID=$(lsof -t -i:8082)
+if [ -n "$OLD_PID" ]; then
+    kill "$OLD_PID"
+    sleep 10
+fi
+
+# 启动新进程
 nohup java -jar dormitory.jar > ./nohup.out 2>&1 &
+echo "应用已启动"
+
+# 输出日志
 cat ./nohup.out

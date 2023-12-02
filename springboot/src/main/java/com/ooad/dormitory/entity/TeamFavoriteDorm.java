@@ -8,9 +8,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
-public class Team {
+public class TeamFavoriteDorm {
     @TableId(type = IdType.AUTO)
+    private Integer id;
     private Integer teamId;
     private Integer dormitoryId;
     @TableField(exist = false)

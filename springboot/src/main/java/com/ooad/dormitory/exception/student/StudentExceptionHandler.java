@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-@ControllerAdvice(basePackages = {"com.ooad.dormitory.controller.admin"})
+@ControllerAdvice(basePackages = {"com.ooad.dormitory.controller.student"})
 public class StudentExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)

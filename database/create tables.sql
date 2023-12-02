@@ -9,6 +9,7 @@ DROP TABLE IF EXISTS region CASCADE;
 DROP TABLE IF EXISTS admin_account CASCADE;
 DROP TABLE IF EXISTS allocation_relation CASCADE;
 DROP TABLE IF EXISTS allocation_stage CASCADE;
+DROP TABLE IF EXISTS invitation CASCADE;
 
 -- 管理员账号表
 CREATE TABLE admin_account
@@ -73,7 +74,7 @@ CREATE TABLE student_account
 (
     student_id                  VARCHAR(20) PRIMARY KEY,
     name                        VARCHAR(100),
-    gender                      VARCHAR(20),
+    gender                      INT, -- 0:女, 1:男
     photo_url                   VARCHAR(255),
     personal_description        TEXT,
     sleep_time                  TIME,
@@ -90,9 +91,10 @@ CREATE TABLE student_account
 -- 队伍-收藏宿舍关系表
 CREATE TABLE team_favorite_dorm
 (
+    id           SERIAL PRIMARY KEY,
     team_id      INT,
     dormitory_id INT,
-    PRIMARY KEY (team_id, dormitory_id),
+    UNIQUE (team_id, dormitory_id),
     FOREIGN KEY (team_id) REFERENCES team (team_id),
     FOREIGN KEY (dormitory_id) REFERENCES dormitory (dormitory_id)
 );
@@ -115,4 +117,35 @@ CREATE TABLE allocation_stage
     gender      INT, -- 0:女, 1:男
     stage       INT NOT NULL, -- 0:组队阶段, 1:收藏阶段, 2:正选阶段, 3:结束阶段
     UNIQUE (entry_year, degree, gender)
+);
+
+CREATE TABLE invitation
+(
+    id           SERIAL PRIMARY KEY,
+    inviter_id   INT,
+    invitee_id   INT,
+    time         TIMESTAMP
+);
+
+CREATE TABLE notification
+(
+    id              SERIAL PRIMARY KEY,
+    publisher_id    INT,
+    entry_year      INT, -- eg: 2019
+    degree          INT, -- 0:本科, 1:硕士, 2:博士
+    gender          INT, -- 0:女, 1:男
+    title           TEXT,
+    content         TEXT,
+    publish_time    TIME,
+    FOREIGN KEY (publisher_id) REFERENCES admin_account (account_id)
+);
+
+CREATE TABLE comment
+(
+    id SERIAL PRIMARY KEY,
+    replying_id INT,  -- 该评论回复的评论的id
+    publisher_id VARCHAR(20),
+    FOREIGN KEY (replying_id) REFERENCES comment (id),
+    FOREIGN KEY (publisher_id) REFERENCES student_account (student_id),
+    -- tag 的设置
 );

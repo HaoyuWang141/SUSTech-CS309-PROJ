@@ -1,9 +1,9 @@
-package com.ooad.dormitory.service.admin.impl;
+package com.ooad.dormitory.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ooad.dormitory.entity.StudentAccount;
 import com.ooad.dormitory.mapper.StudentAccountMapper;
-import com.ooad.dormitory.service.admin.StudentAccountService;
+import com.ooad.dormitory.service.StudentAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
