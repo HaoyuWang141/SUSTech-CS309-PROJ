@@ -14,12 +14,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/notification")
 @CrossOrigin
-public class NotificationController {
+public class AdminNotificationController {
 
     private final NotificationService notificationService;
 
     @Autowired
-    public NotificationController(NotificationService notificationService) {
+    public AdminNotificationController(NotificationService notificationService) {
         this.notificationService = notificationService;
     }
 

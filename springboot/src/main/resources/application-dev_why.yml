@@ -1,0 +1,13 @@
+server:
+  port: 8082
+
+spring:
+  datasource:
+
+    url: jdbc:postgresql://localhost:5432/ooad_project
+    username: ooad_admin
+    password: 111111
+
+#    url: jdbc:postgresql://localhost:5432/ooad_proj
+#    username: postgres
+#    password: rin186210

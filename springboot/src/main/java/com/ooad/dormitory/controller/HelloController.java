@@ -15,6 +15,7 @@ import java.util.Map;
 @CrossOrigin
 public class HelloController {
 
+<<<<<<< Updated upstream
   @Autowired
   ObjectMapper objectMapper;
 
@@ -23,4 +24,11 @@ public class HelloController {
     Map<String, String> res = Map.of("response", "hello-changed");
     return res;
   }
+=======
+    @GetMapping("")
+    public Map<String, String> hello() {
+        Map<String, String> res = Map.of("response", "hello");
+        return res;
+    }
+>>>>>>> Stashed changes
 }
