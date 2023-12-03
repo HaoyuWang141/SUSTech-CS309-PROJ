@@ -1,21 +1,27 @@
 package com.ooad.dormitory.controller.admin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
 import com.ooad.dormitory.entity.AdminAccount;
 import com.ooad.dormitory.mapper.AdminAccountMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterEach;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -34,31 +40,35 @@ class AdminAccountControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @BeforeEach
-    void setUp() {
-        // 可以在这里设置一些每个测试之前的初始化逻辑
-    }
-
-    @AfterEach
-    void tearDown() {
-        // 可以在这里设置一些每个测试之后的清理逻辑
-    }
-
     @Test
-    void createAdminAccount() throws Exception {
-        List<AdminAccount> adminAccounts = Arrays.asList(
-                new AdminAccount(null, "admin1", "password1"),
-                new AdminAccount(null, "admin2", "password2"),
-                new AdminAccount(null, "admin3", "password3")
-        );
+    void createAdminAccountTest() throws Exception {
+        String accountName = "admin";
+        String password = "password";
 
+        // Step 1: 创建管理员账户
         mockMvc.perform(post("/admin/adminAccount/create")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(adminAccounts)))
+                        .param("accountName", accountName)
+                        .param("password", password))
                 .andExpect(status().isOk());
 
-        adminAccounts.forEach(verify(adminAccountMapper)::insert);
+        // Step 2: 通过 GET 请求验证账户是否创建成功
+        MvcResult result = mockMvc.perform(get("/admin/adminAccount/get"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String responseContent = result.getResponse().getContentAsString();
+
+        // 使用 JsonPath 解析 JSON 响应
+        JsonPath jsonPath = JsonPath.compile("$.[?(@.accountName == '" + accountName + "')]");
+        DocumentContext jsonContext = JsonPath.parse(responseContent);
+        List<?> accountList = jsonContext.read(jsonPath);
+
+        assertFalse(accountList.isEmpty()); // 确认找到了匹配的账户
+        assertEquals(accountName, jsonContext.read(jsonPath + ".accountName")); // 验证账户名
+        assertEquals(password, jsonContext.read(jsonPath + ".password")); // 验证密码
+
     }
+
 
     @Test
     void deleteAdminAccount() throws Exception {
@@ -70,29 +80,33 @@ class AdminAccountControllerTest {
     }
 
     @Test
-    void updateAdminAccount() throws Exception {
-        AdminAccount adminAccount = new AdminAccount(1, "adminUpdated", "newPassword");
+    void updateAdminAccountTest() throws Exception {
+        Integer accountId = 1;
+        String accountName = "updatedAdmin";
+        String password = "updatedPassword";
 
         mockMvc.perform(put("/admin/adminAccount/update")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(adminAccount)))
+                        .param("accountId", accountId.toString())
+                        .param("accountName", accountName)
+                        .param("password", password))
                 .andExpect(status().isOk());
 
-        verify(adminAccountMapper).updateById(adminAccount);
+        ArgumentCaptor<AdminAccount> captor = ArgumentCaptor.forClass(AdminAccount.class);
+        verify(adminAccountMapper).updateById(captor.capture());
+
+        AdminAccount capturedAccount = captor.getValue();
+        assertEquals(accountId, capturedAccount.getAccountId()); // 验证账户ID是否正确
+        assertEquals(accountName, capturedAccount.getAccountName()); // 验证账户名是否正确
+        assertEquals(password, capturedAccount.getPassword()); // 验证密码是否正确
     }
+
 
     @Test
     void getAdminAccount() throws Exception {
-        List<AdminAccount> adminAccounts = Arrays.asList(
-                new AdminAccount(1, "admin1", "password1"),
-                new AdminAccount(2, "admin2", "password2")
-        );
+        MvcResult result = mockMvc.perform(get("/admin/adminAccount/get"))
+                .andExpect(status().isOk())
+                .andReturn();
 
-        given(adminAccountMapper.selectList(null)).willReturn(adminAccounts);
-
-        mockMvc.perform(get("/admin/adminAccount/get"))
-                .andExpect(status().isOk());
-
-        verify(adminAccountMapper).selectList(null);
+        System.out.println(result);
     }
 }

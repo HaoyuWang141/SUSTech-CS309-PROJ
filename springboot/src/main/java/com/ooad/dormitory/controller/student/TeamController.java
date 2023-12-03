@@ -63,8 +63,8 @@ public class TeamController {
 
     @PostMapping("/invite")
     public ResponseEntity<?> invite(@RequestBody StudentAccount inviter, @RequestBody StudentAccount invitee) {
-        if (!Objects.equals(inviter.getEntryYear(), invitee.getEntryYear())
-                || !Objects.equals(inviter.getDegree(), invitee.getDegree())
+        if (!Objects.equals(inviter.calEntryYear(), invitee.calEntryYear())
+                || !Objects.equals(inviter.calDegree(), invitee.calDegree())
                 || !Objects.equals(inviter.getGender(), invitee.getGender())
                 || Objects.equals(inviter.getStudentId(), invitee.getStudentId())) {
             throw new RuntimeException("invite failed!");

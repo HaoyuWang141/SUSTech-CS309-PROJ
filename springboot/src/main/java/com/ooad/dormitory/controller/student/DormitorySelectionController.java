@@ -70,8 +70,8 @@ public class DormitorySelectionController {
     public ResponseEntity<?> favorDormitory(@RequestBody StudentAccount studentAccount, @RequestBody Dormitory dormitory) {
         // 判断是否是收藏宿舍阶段
         List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
-                .eq("entryYear", studentAccount.getEntryYear())
-                .eq("degree", studentAccount.getDegree())
+                .eq("entryYear", studentAccount.calEntryYear())
+                .eq("degree", studentAccount.calDegree())
                 .eq("gender", studentAccount.getGender()));
         if (allocationStageList.isEmpty() || allocationStageList.get(0).getStage() != 1) {
             throw new RuntimeException("favor dormitory failed! (wrong stage)");
@@ -91,8 +91,8 @@ public class DormitorySelectionController {
     public ResponseEntity<?> selectDormitory(@RequestBody StudentAccount studentAccount, @RequestBody Dormitory dormitory) {
         // 判断是否是选择宿舍阶段
         List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
-                .eq("entryYear", studentAccount.getEntryYear())
-                .eq("degree", studentAccount.getDegree())
+                .eq("entryYear", studentAccount.calEntryYear())
+                .eq("degree", studentAccount.calDegree())
                 .eq("gender", studentAccount.getGender()));
         if (allocationStageList.isEmpty() || allocationStageList.get(0).getStage() != 2) {
             throw new RuntimeException("select dormitory failed! (wrong stage)");
@@ -110,8 +110,8 @@ public class DormitorySelectionController {
         }
         // 判断该宿舍是否能够选择
         if (allocationRelationService.list(new QueryWrapper<AllocationRelation>()
-                .eq("entryYear", studentAccount.getEntryYear())
-                .eq("degree", studentAccount.getDegree())
+                .eq("entryYear", studentAccount.calEntryYear())
+                .eq("degree", studentAccount.calDegree())
                 .eq("gender", studentAccount.getGender())
                 .eq("dormitoryId", dormitory.getDormitoryId())).isEmpty()) {
             throw new RuntimeException("select dormitory failed! (not exists this allocation)");

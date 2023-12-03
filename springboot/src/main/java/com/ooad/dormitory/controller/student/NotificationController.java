@@ -26,8 +26,8 @@ public class NotificationController {
     @GetMapping("/get")
     public List<Notification> getNotifications(@RequestBody StudentAccount studentAccount) {
         return notificationService.list().stream()
-                .filter(notification -> notification.getEntryYear() == null || notification.getEntryYear().equals(studentAccount.getEntryYear()))
-                .filter(notification -> notification.getDegree() == null || notification.getDegree().equals(studentAccount.getDegree()))
+                .filter(notification -> notification.getEntryYear() == null || notification.getEntryYear().equals(studentAccount.calEntryYear()))
+                .filter(notification -> notification.getDegree() == null || notification.getDegree().equals(studentAccount.calDegree()))
                 .filter(notification -> notification.getGender() == null || notification.getGender().equals(studentAccount.getGender()))
                 .collect(Collectors.toList());
     }
