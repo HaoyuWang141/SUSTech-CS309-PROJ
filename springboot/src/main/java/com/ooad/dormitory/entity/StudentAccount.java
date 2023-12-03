@@ -26,11 +26,11 @@ public class StudentAccount {
     @TableField(exist = false)
     private Team team;
 
-    public Integer getEntryYear() {
+    public Integer calEntryYear() {
         return Integer.parseInt("20" + this.studentId.substring(1, 3));
     }
 
-    public Integer getDegree() {
+    public Integer calDegree() {
         if (this.studentId.charAt(3) == '1') {
             return 0;
         }

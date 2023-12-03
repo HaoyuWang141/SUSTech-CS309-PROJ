@@ -146,6 +146,6 @@ CREATE TABLE comment
     replying_id INT,  -- 该评论回复的评论的id
     publisher_id VARCHAR(20),
     FOREIGN KEY (replying_id) REFERENCES comment (id),
-    FOREIGN KEY (publisher_id) REFERENCES student_account (student_id),
+    FOREIGN KEY (publisher_id) REFERENCES student_account (student_id)
     -- tag 的设置
 );

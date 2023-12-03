@@ -1,6 +1,8 @@
 package com.ooad.dormitory.controller.admin;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ooad.dormitory.entity.StudentAccount;
 import com.ooad.dormitory.service.StudentAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,21 +26,22 @@ public class StudentAccountController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createStudentAccount(@RequestBody List<StudentAccount> studentAccountList) {
-        record Response(int successCount, List<String> failedIdList) {
+        record Response(int successCount, List<StudentAccount> failedStudentList) {
         }
 
         int successCount = 0;
-        List<String> failedIdList = new ArrayList<>();
+        List<StudentAccount> failedStudentList = new ArrayList<>();
         for (StudentAccount studentAccount : studentAccountList) {
             try {
                 if (studentAccountService.save(studentAccount)) {
                     successCount++;
                 }
             } catch (Exception e) {
-                failedIdList.add(studentAccount.getStudentId());
+                failedStudentList.add(studentAccount);
             }
         }
-        return ResponseEntity.ok(new Response(successCount, failedIdList));
+        System.out.println(failedStudentList);
+        return ResponseEntity.ok(new Response(successCount, failedStudentList));
     }
 
     @DeleteMapping("/delete")
@@ -85,10 +88,8 @@ public class StudentAccountController {
     @GetMapping("/get")
     public List<StudentAccount> getStudentAccount(@RequestParam(required = false) Integer entryYear, @RequestParam(required = false) String degree) {
         QueryWrapper<StudentAccount> queryWrapper = new QueryWrapper<>();
-
-        if (entryYear == null && degree == null) {
-            System.out.println("all is null");
-            return studentAccountService.list();
+        if ((entryYear == null && (degree == null || degree.isEmpty()))) {
+            System.out.println("entryYear and degree is null");
         } else if (entryYear == null) {
             if (degree.equals("master")) {
                 queryWrapper.like("student_id", "________");
@@ -116,6 +117,5 @@ public class StudentAccountController {
         }
 
         return studentAccountService.list(queryWrapper);
-
     }
 }
