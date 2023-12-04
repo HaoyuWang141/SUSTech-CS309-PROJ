@@ -67,10 +67,11 @@ const login = () => {
     margin: auto;
     margin-top: 100px;
     padding: 50px 80px;
-    border: 1px solid @border-color;
+    border: 0;
     border-radius: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     background-color: rgba(194, 206, 219, 0.8);
+    box-shadow: 8px 8px 20px rgba(34, 204, 228, 0.8);
 
     form {
         display: flex;
@@ -108,10 +109,6 @@ const login = () => {
             &::content {
                 color: @mainColor;
             }
-        }
-
-        input[type="text"] {
-            
         }
 
         button {
