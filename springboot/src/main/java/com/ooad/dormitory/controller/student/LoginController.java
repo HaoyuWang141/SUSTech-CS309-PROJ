@@ -51,7 +51,7 @@ public class LoginController {
 
     public static boolean checkAuthentication(AuthenticationMapper authenticationMapper, String token) {
         Authentication authentication = authenticationMapper.selectByToken(token);
-        if (authentication != null) {
+        if (authentication != null && new Time(System.currentTimeMillis()).compareTo(authentication.getTokenFailureTime()) < 0) {
             return true;
         }
         else {
