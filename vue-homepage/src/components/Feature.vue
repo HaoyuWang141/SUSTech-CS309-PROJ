@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
-
-// 定义传入的属性
-const props = defineProps({
+defineProps({
     title: String,
     description: String
 });
