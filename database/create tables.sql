@@ -10,6 +10,9 @@ DROP TABLE IF EXISTS admin_account CASCADE;
 DROP TABLE IF EXISTS allocation_relation CASCADE;
 DROP TABLE IF EXISTS allocation_stage CASCADE;
 DROP TABLE IF EXISTS invitation CASCADE;
+DROP TABLE IF EXISTS notification CASCADE;
+DROP TABLE IF EXISTS comment CASCADE;
+DROP TABLE IF EXISTS authentication CASCADE;
 
 -- 管理员账号表
 CREATE TABLE admin_account
@@ -148,4 +151,14 @@ CREATE TABLE comment
     FOREIGN KEY (replying_id) REFERENCES comment (id),
     FOREIGN KEY (publisher_id) REFERENCES student_account (student_id)
     -- tag 的设置
+);
+
+CREATE TABLE authentication
+(
+    student_id INT PRIMARY KEY,
+    student_password VARCHAR(100),
+    token VARCHAR(100),
+    token_failure_time TIME,
+    online_amount,  -- 该账户已在线设备数
+    FOREIGN KEY (student_id) REFERENCES student_account (student_id)
 );

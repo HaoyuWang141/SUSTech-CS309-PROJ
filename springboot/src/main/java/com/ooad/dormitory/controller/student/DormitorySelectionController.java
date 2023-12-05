@@ -2,6 +2,7 @@ package com.ooad.dormitory.controller.student;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ooad.dormitory.entity.*;
+import com.ooad.dormitory.mapper.AuthenticationMapper;
 import com.ooad.dormitory.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,15 +23,10 @@ public class DormitorySelectionController {
     private final AllocationStageService allocationStageService;
     private final AllocationRelationService allocationRelationService;
     private final TeamService teamService;
+    private final AuthenticationMapper authenticationMapper;
 
     @Autowired
-    public DormitorySelectionController(DormitoryService dormitoryService,
-                                         BuildingService buildingService,
-                                         RegionService regionService,
-                                         TeamFavoriteDormService teamFavoriteDormService,
-                                         AllocationStageService allocationStageService,
-                                         AllocationRelationService allocationRelationService,
-                                         TeamService teamService) {
+    public DormitorySelectionController(DormitoryService dormitoryService, BuildingService buildingService, RegionService regionService, TeamFavoriteDormService teamFavoriteDormService, AllocationStageService allocationStageService, AllocationRelationService allocationRelationService, TeamService teamService, AuthenticationMapper authenticationMapper) {
         this.dormitoryService = dormitoryService;
         this.buildingService = buildingService;
         this.regionService = regionService;
@@ -38,36 +34,43 @@ public class DormitorySelectionController {
         this.allocationStageService = allocationStageService;
         this.allocationRelationService = allocationRelationService;
         this.teamService = teamService;
+        this.authenticationMapper = authenticationMapper;
     }
 
     @GetMapping("/getRegions")
-    public List<Region> queryRegion() {
+    public List<Region> queryRegion(@RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
         return regionService.list();
     }
 
     @GetMapping("/getBuildings")
-    public List<Building> queryBuilding(Integer regionId) {
+    public List<Building> queryBuilding(Integer regionId, @RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
         return buildingService.list(new QueryWrapper<Building>().eq("regionId", regionId));
     }
 
     @GetMapping("/getDormitories")
-    public List<Dormitory> queryDormitory(Integer buildingId) {
+    public List<Dormitory> queryDormitory(Integer buildingId, @RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
         return dormitoryService.list(new QueryWrapper<Dormitory>().eq("buildingId", buildingId));
     }
 
     @GetMapping("/getFavoriteList")
-    public List<Dormitory> getFavoriteDormitories(Integer teamId) {
+    public List<Dormitory> getFavoriteDormitories(Integer teamId, @RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
         return teamFavoriteDormService.list(new QueryWrapper<TeamFavoriteDorm>().eq("teamId", teamId))
                 .stream().map(TeamFavoriteDorm::getDormitory).collect(Collectors.toList());
     }
 
     @GetMapping("/getDormitory")
-    public Dormitory getDormitory(Integer dormitoryId) {
+    public Dormitory getDormitory(Integer dormitoryId, @RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
         return dormitoryService.getById(dormitoryId);
     }
 
     @PostMapping("/favor")
-    public ResponseEntity<?> favorDormitory(@RequestBody StudentAccount studentAccount, @RequestBody Dormitory dormitory) {
+    public ResponseEntity<?> favorDormitory(@RequestBody StudentAccount studentAccount, @RequestBody Dormitory dormitory, @RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
         // 判断是否是收藏宿舍阶段
         List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
                 .eq("entryYear", studentAccount.calEntryYear())
@@ -88,7 +91,8 @@ public class DormitorySelectionController {
     }
 
     @PostMapping("/select")
-    public ResponseEntity<?> selectDormitory(@RequestBody StudentAccount studentAccount, @RequestBody Dormitory dormitory) {
+    public ResponseEntity<?> selectDormitory(@RequestBody StudentAccount studentAccount, @RequestBody Dormitory dormitory, @RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
         // 判断是否是选择宿舍阶段
         List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
                 .eq("entryYear", studentAccount.calEntryYear())
