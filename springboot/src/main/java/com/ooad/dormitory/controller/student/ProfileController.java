@@ -1,9 +1,9 @@
 package com.ooad.dormitory.controller.student;
 
 import com.ooad.dormitory.entity.StudentAccount;
+import com.ooad.dormitory.mapper.AuthenticationMapper;
 import com.ooad.dormitory.mapper.StudentAccountMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Time;
@@ -14,22 +14,26 @@ import java.sql.Time;
 public class ProfileController {
 
     private final StudentAccountMapper studentAccountMapper;
+    private final AuthenticationMapper authenticationMapper;
 
     @Autowired
-    public ProfileController(StudentAccountMapper studentAccountMapper) {
+    public ProfileController(StudentAccountMapper studentAccountMapper, AuthenticationMapper authenticationMapper) {
         this.studentAccountMapper = studentAccountMapper;
+        this.authenticationMapper = authenticationMapper;
     }
 
     @PostMapping("/set")
     public void setProfile(@RequestBody StudentAccount studentAccount,
-                                        @RequestParam(required = false) String photoUrl,
-                                        @RequestParam(required = false) Time sleepTime,
-                                        @RequestParam(required = false) Time wakeUpTime,
-                                        @RequestParam(required = false) Integer airConditionerTemperature,
-                                        @RequestParam(required = false) Boolean snore,
-                                        @RequestParam(required = false) String qq,
-                                        @RequestParam(required = false) String email,
-                                        @RequestParam(required = false) String wechat) {
+                           @RequestParam(required = false) String photoUrl,
+                           @RequestParam(required = false) Time sleepTime,
+                           @RequestParam(required = false) Time wakeUpTime,
+                           @RequestParam(required = false) Integer airConditionerTemperature,
+                           @RequestParam(required = false) Boolean snore,
+                           @RequestParam(required = false) String qq,
+                           @RequestParam(required = false) String email,
+                           @RequestParam(required = false) String wechat,
+                           @RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
         if (photoUrl != null) {
             studentAccount.setPhotoUrl(photoUrl);
         }
