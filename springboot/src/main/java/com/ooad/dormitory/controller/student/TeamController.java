@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ooad.dormitory.entity.Invitation;
 import com.ooad.dormitory.entity.StudentAccount;
 import com.ooad.dormitory.entity.Team;
+import com.ooad.dormitory.mapper.AuthenticationMapper;
 import com.ooad.dormitory.service.InvitationService;
 import com.ooad.dormitory.service.StudentAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,21 +25,24 @@ public class TeamController {
 
     private final StudentAccountService studentAccountService;
     private final InvitationService invitationService;
+    private final AuthenticationMapper authenticationMapper;
 
     @Autowired
-    public TeamController(StudentAccountService studentAccountService,
-                          InvitationService invitationService) {
+    public TeamController(StudentAccountService studentAccountService, InvitationService invitationService, AuthenticationMapper authenticationMapper) {
         this.studentAccountService = studentAccountService;
         this.invitationService = invitationService;
+        this.authenticationMapper = authenticationMapper;
     }
 
     @GetMapping("/getTeam")
-    public List<StudentAccount> getTeam(@RequestBody StudentAccount studentAccount) {
-       return studentAccountService.list(new QueryWrapper<StudentAccount>().eq("teamId", studentAccount.getTeamId()));
+    public List<StudentAccount> getTeam(@RequestBody StudentAccount studentAccount, @RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
+        return studentAccountService.list(new QueryWrapper<StudentAccount>().eq("teamId", studentAccount.getTeamId()));
     }
 
     @PostMapping("/quitTeam")
-    public ResponseEntity<?> quitTeam(@RequestBody StudentAccount studentAccount) {
+    public ResponseEntity<?> quitTeam(@RequestBody StudentAccount studentAccount, @RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
         List<StudentAccount> studentAccountList = studentAccountService.list(new QueryWrapper<StudentAccount>()
                 .eq("teamId", studentAccount.getTeamId()));
         if (studentAccountList.size() > 2) {
@@ -57,12 +61,14 @@ public class TeamController {
     }
 
     @GetMapping("/getInvitations")
-    public List<Invitation> getInvitations(@RequestBody StudentAccount studentAccount) {
+    public List<Invitation> getInvitations(@RequestBody StudentAccount studentAccount, @RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
         return invitationService.list(new QueryWrapper<Invitation>().eq("inviteeId", studentAccount.getTeamId()));
     }
 
     @PostMapping("/invite")
-    public ResponseEntity<?> invite(@RequestBody StudentAccount inviter, @RequestBody StudentAccount invitee) {
+    public ResponseEntity<?> invite(@RequestBody StudentAccount inviter, @RequestBody StudentAccount invitee, @RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
         if (!Objects.equals(inviter.calEntryYear(), invitee.calEntryYear())
                 || !Objects.equals(inviter.calDegree(), invitee.calDegree())
                 || !Objects.equals(inviter.getGender(), invitee.getGender())
@@ -75,7 +81,8 @@ public class TeamController {
     }
 
     @PostMapping("/accept")
-    public ResponseEntity<?> accept(@RequestBody Invitation invitation) {
+    public ResponseEntity<?> accept(@RequestBody Invitation invitation, @RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
         StudentAccount inviter = invitation.getInviter();
         StudentAccount invitee = invitation.getInvitee();
         if (invitee.getTeam() != null) {
@@ -101,7 +108,9 @@ public class TeamController {
                                             @RequestParam(required = false) Time wakeUpTimeRightBound,
                                             @RequestParam(required = false) Integer airConditionerTemperatureLeftBound,
                                             @RequestParam(required = false) Integer airConditionerTemperatureRightBound,
-                                            @RequestParam(required = false) Boolean snore) {
+                                            @RequestParam(required = false) Boolean snore,
+                                            @RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
         return studentAccountService.list().stream()
                 .filter(studentAccount -> studentId == null || Objects.equals(studentAccount.getStudentId(), studentId))
                 .filter(studentAccount -> name == null || Objects.equals(studentAccount.getName(), name))
@@ -116,13 +125,15 @@ public class TeamController {
     }
 
     @GetMapping("/getRecommendation")
-    public List<StudentAccount> getRecommendation(@RequestBody StudentAccount studentAccount) {
+    public List<StudentAccount> getRecommendation(@RequestBody StudentAccount studentAccount, @RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
         // TODO
         return new ArrayList<>();
     }
 
     @GetMapping("getStudent")
-    public StudentAccount getStudent(String studentId) {
+    public StudentAccount getStudent(String studentId, @RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
         return studentAccountService.getById(studentId);
     }
 
