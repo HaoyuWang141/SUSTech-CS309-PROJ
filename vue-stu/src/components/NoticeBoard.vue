@@ -3,7 +3,7 @@ import {onMounted, ref} from "vue";
 
 const notices = ref([
     "这是第一条通知。",
-    "这是第二条通知，henchang很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长。",
+    "这是第二条通知，很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长。",
     "3",
     "4",
 ])
@@ -33,9 +33,13 @@ const currentNotice = ref(notices.value[currentNoticeIndex.value])
 
 <style scoped>
 .notice-board-card {
-    width: 30%; /* 设置通知栏的宽度 */
-    height: 30%;
-    margin: 2%
+    border-radius: 20px;
+    width: 90%;
+    height: 90%;
+    margin-left: 2.5%;
+    margin-top: 5%;
+    margin-bottom: 2.5%;
+    margin-right: 5%;
 }
 
 .notice-board-header {

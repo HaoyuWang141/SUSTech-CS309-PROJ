@@ -63,8 +63,12 @@ function deleteRow(index) {
 }
 
 .team-view-card {
-    width: 30%;
-    height: 30%;
-    margin: 2%;
+    border-radius: 20px;
+    width: 90%;
+    height: 90%;
+    margin-top: 2.5%;
+    margin-bottom: 5%;
+    margin-left: 5%;
+    margin-right: 2.5%;
 }
 </style>
