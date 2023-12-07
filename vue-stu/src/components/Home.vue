@@ -2,21 +2,24 @@
 import HomePagePersonCard from "@/components/HomePagePersonCard.vue";
 import NoticeBoard from "@/components/NoticeBoard.vue";
 import TeamView from "@/components/TeamView.vue";
+import FunctionBoard from "@/components/FunctionBoard.vue";
 </script>
 
 <template>
-    <div class="grid-container">
-        <div class="upper-left">
-            <HomePagePersonCard></HomePagePersonCard>
-        </div>
-        <div class="upper-right">
-            <NoticeBoard></NoticeBoard>
-        </div>
-        <div class="lower-full">
-            <TeamView></TeamView>
-            <!-- 其他组件可以在这里添加 -->
-        </div>
+  <div class="grid-container">
+    <div class="upper-left">
+      <HomePagePersonCard></HomePagePersonCard>
     </div>
+    <div class="upper-right">
+      <NoticeBoard></NoticeBoard>
+    </div>
+    <div class="lower-left">
+      <TeamView></TeamView>
+    </div>
+    <div class="lower-right">
+      <FunctionBoard></FunctionBoard>
+    </div>
+  </div>
 </template>
 
 <style scoped>
@@ -42,8 +45,13 @@ import TeamView from "@/components/TeamView.vue";
     grid-row: 1 / 6;
 }
 
-.lower-full {
+.lower-left {
     grid-column: 1 / 6;
+    grid-row: 6 / 11;
+}
+
+.lower-right {
+    grid-column: 6 / 11;
     grid-row: 6 / 11;
 }
 </style>
