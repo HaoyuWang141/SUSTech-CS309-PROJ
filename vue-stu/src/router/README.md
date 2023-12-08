@@ -22,16 +22,20 @@ routes: [
     children: [
       {
         path: 'page1',
+        name: 'Page1',
         component: Page1
       },
       {
         path: 'page2',
+        name: 'Page2',
         component: Page2
       }
     ]
   }
 ]
 ```
+
+新加入页面时, 只需要按照示例的格式, 在 children 中添加即可.
 
 ## 路由拦截
 路由拦截是指在路由跳转之前，我们可以对路由进行拦截，比如我们可以在路由跳转之前判断用户是否登录，如果没有登录则跳转到登录页面，如果已经登录则跳转到目标页面。

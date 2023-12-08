@@ -27,3 +27,21 @@ npm run dev
 ```sh
 npm run build
 ```
+
+### src 目录结构
+    
+```sh
+src
+├── assets: 静态资源
+├── components: 公共组件
+├── layout: 布局, 所有页面的公共部分, 包括头部, 背景图片, 背景颜色, 底部等
+├── router: 路由
+├── types: 类型定义
+├── views: 页面视图
+├── App.vue: 根组件
+└── main.ts: 入口文件
+```
+
+仅在本页面(view)中使用的组件(component)放在本目录的 components 目录下, 而多个页面共同使用的公共组件放在 src/components 目录下.
+
+其他具体描述见文件夹下的 README.md 文件.
