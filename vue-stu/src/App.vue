@@ -28,7 +28,6 @@ export default {
     left: 0;
     right: 0;
     display: flex;
-    //background-color: var(--el-color-primary-light-7);
     box-sizing: border-box;
 }
 </style>
