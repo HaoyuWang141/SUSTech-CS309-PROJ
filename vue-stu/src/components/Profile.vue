@@ -15,7 +15,8 @@ const student = ref({
     email: "123456789@email.com",
     wechat: "wx_id_123456789",
 })
-const testTemp = ref([24, 25]);
+const testTemp = ref(26);
+const showEditInfo = ref(false);
 
 interface Mark {
     style: CSSProperties
@@ -38,19 +39,22 @@ const marks = reactive<Marks>({
     },
 });
 const isSnore = ref(false);
+const editInfoForm = ref({
+    sleepTime: '',
+})
 </script>
 
 <template>
   <div style="height: 80vh; display: flex; flex-direction: row">
     <el-card class="profile-left-card">
-      <div slot="header" class="clearfix">
-        <span>学生基本信息</span>
-      </div>
+      <template #header>
+        学生基本信息
+      </template>
       <div>
         <el-form label-position="left" label-width="60px">
           <el-form-item label="姓名">
             <el-row>
-            <span>{{ student.name }}</span>
+              <span>{{ student.name }}</span>
             </el-row>
           </el-form-item>
           <el-form-item label="性别">
@@ -72,7 +76,7 @@ const isSnore = ref(false);
             </el-col>
           </el-row>
           <el-row>
-            <el-col :span="12">
+            <el-col :span="24">
               <div class="grid-content ep-bg-purple">
                 <el-form-item label="书院">
                   <span>{{ student.college }}</span>
@@ -84,9 +88,20 @@ const isSnore = ref(false);
       </div>
     </el-card>
     <el-card class="profile-right-card">
-      <div slot="header" class="clearfix">
-        <span>附加信息</span>
-      </div>
+      <template #header>
+        <el-row>
+          <el-col :span="12">
+            <div>附加信息</div>
+          </el-col>
+          <el-col :span="12">
+            <div style="width: 100%; display: flex; flex-direction: row-reverse;">
+              <el-button round type="primary" @click="showEditInfo = true">
+                编辑信息
+              </el-button>
+            </div>
+          </el-col>
+        </el-row>
+      </template>
       <el-form label-position="left" label-width="80px">
         <el-form-item label="睡觉时间">
           <span>{{ student.sleepTime }}</span>
@@ -99,7 +114,6 @@ const isSnore = ref(false);
         </el-form-item>
         <el-form-item label="调温测试">
           <el-slider v-model="testTemp"
-                     range
                      show-stops
                      :marks="marks"
                      :min="16"
@@ -129,6 +143,26 @@ const isSnore = ref(false);
       </el-form>
     </el-card>
   </div>
+  <el-drawer v-model="showEditInfo"
+             size="60%"
+             :with-header="false"
+             :direction="'rtl'">
+    <div>
+      <h1>编辑附加信息</h1>
+    </div>
+    <el-form style="margin: 20px">
+      <el-row>
+        <el-form-item label="睡觉时间">
+          <el-time-picker v-model="editInfoForm.sleepTime"
+                          format="HH:mm">
+
+          </el-time-picker>
+        </el-form-item>
+      </el-row>
+      <el-row>
+      </el-row>
+    </el-form>
+  </el-drawer>
 </template>
 
 <style scoped>
