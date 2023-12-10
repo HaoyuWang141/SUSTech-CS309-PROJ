@@ -25,11 +25,12 @@ import FunctionBoard from "@/components/FunctionBoard.vue";
 <style scoped>
 .grid-container {
     display: grid;
+    grid-gap: 20px;
     grid-template-columns: repeat(10, 1fr);
     grid-template-rows: repeat(10, 1fr);
     background-color: #f2f2f2;
-    height: 100vh;
-    width: 100vw;
+    height: 85vh;
+    width: 100%;
     margin: 0;
     padding: 0;
     border: 0;

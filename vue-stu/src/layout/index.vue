@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { onMounted, ref, watch, nextTick } from "vue";
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 const bg_color = ref<HTMLElement | null>(null);
 const content = ref<HTMLElement | null>(null);
 const route = useRoute();
+const router = useRouter();
 
 const updateBgHeight = () => {
     if (content.value) {
@@ -21,6 +22,10 @@ watch(() => route.path, () => {
     // 确保在 DOM 更新后再计算高度
     nextTick(updateBgHeight);
 });
+
+function backToHome() {
+    router.push("/home")
+}
 </script>
 
 <template>
@@ -33,6 +38,7 @@ watch(() => route.path, () => {
                 <img alt="Vue logo" src="./assets/logo.png" />
             </div> -->
             <p class="title">SUSTech Dormitory</p>
+            <el-link @click.prevent="backToHome()">SUSTech Dormitory</el-link>
             <div class="labels">
                 <p>................</p>
             </div>

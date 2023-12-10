@@ -1,10 +1,16 @@
 <script setup>
 import {ref} from "vue";
+import {useRouter} from "vue-router";
 
-const name = ref("xingming")
-const sid = ref("12010000")
-const grade = ref("dayi")
-const major = ref("CS")
+const router = useRouter();
+const name = ref("xingming");
+const sid = ref("12010000");
+const grade = ref("dayi");
+const major = ref("CS");
+
+function goProfile() {
+    router.push("profile");
+}
 </script>
 
 <template>
@@ -35,7 +41,7 @@ const major = ref("CS")
           <span>专业：</span>
           <span>{{ major }}</span>
         </el-row>
-        <el-button type="primary">
+        <el-button type="primary" @click="goProfile">
           编辑个人信息
         </el-button>
       </div>
@@ -52,8 +58,8 @@ const major = ref("CS")
 
 .simple-person-card {
     border-radius: 20px;
-    width: 90%;
-    height: 90%;
+    width: 92.5%;
+    height: 92.5%;
     margin-left: 5%;
     margin-top: 5%;
     margin-bottom: 2.5%;

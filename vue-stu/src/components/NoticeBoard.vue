@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref} from "vue";
+import { ref } from "vue";
 
 const notices = ref([
     "这是第一条通知。",
@@ -34,8 +34,8 @@ const currentNotice = ref(notices.value[currentNoticeIndex.value])
 <style scoped>
 .notice-board-card {
     border-radius: 20px;
-    width: 90%;
-    height: 90%;
+    width: 92.5%;
+    height: 92.5%;
     margin-left: 2.5%;
     margin-top: 5%;
     margin-bottom: 2.5%;

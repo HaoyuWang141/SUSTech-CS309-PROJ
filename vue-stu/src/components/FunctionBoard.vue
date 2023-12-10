@@ -15,8 +15,8 @@
 <style scoped>
 .function-board-card {
     border-radius: 20px;
-    width: 90%;
-    height: 90%;
+    width: 92.5%;
+    height: 92.5%;
     margin-top: 2.5%;
     margin-bottom: 5%;
     margin-left: 2.5%;
