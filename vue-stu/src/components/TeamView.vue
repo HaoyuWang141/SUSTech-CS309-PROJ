@@ -16,7 +16,7 @@ const inviteForm = reactive({
     studentID: "",
 })
 
-function deleteRow(index: number) {
+function removeTeammate(index: number) {
     teammates.value.splice(index, 1)
     //TODO
 }
@@ -66,8 +66,8 @@ function deleteRow(index: number) {
                   width="250px"
                   confirm-button-text="Yes"
                   cancel-button-text="No"
-                  title="Are you sure to delete this?"
-                  @confirm="deleteRow(scope.$index)"
+                  title="Are you sure to remove him/her?"
+                  @confirm="removeTeammate(scope.$index)"
                   @cancel=""
               >
                 <template #reference>
