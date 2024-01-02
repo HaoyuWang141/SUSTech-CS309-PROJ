@@ -25,15 +25,29 @@ const viewDetails = () => {
 </script>
 
 <style scoped lang="less">
-
+@import "@/assets/colors.less";
 .el-card {
     min-width: 100px;
     margin-bottom: 30px;
+    background-color: @gray;
+    color: @text-color4;
+    border: none;
+    border-radius: 12px;
+    font-size: large;
 }
 
 .image {
     width: 100%;
     height: 200px;
     display: block;
+}
+
+.el-button {
+    border: None;
+    background-color: @button-color;
+
+    &:hover {
+        background-color: darken(@button-color, 5%);
+    }
 }
 </style>

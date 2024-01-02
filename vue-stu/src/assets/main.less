@@ -1,4 +1,5 @@
 @import './base.css';
+@import './colors.less';
 
 #app {
   max-width: 1280px;
@@ -32,4 +33,12 @@ a,
     grid-template-columns: 1fr 1fr;
     padding: 0 2rem;
   }
+}
+
+.el-button {
+  background-color: @button-color;
+
+  &:hover {
+      background-color: darken(@button-color, 5%);
+    }
 }

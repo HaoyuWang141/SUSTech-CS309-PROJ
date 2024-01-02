@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -121,6 +122,13 @@ public class DormitorySelectionController {
         team.setDormitory(dormitory);
         teamService.saveOrUpdate(team);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/getLayout")
+    public List<Layout> getLayout(Integer buildingId) {
+        List<Dormitory> dormitoryList = dormitoryService.list(new QueryWrapper<Dormitory>().eq("building_id", buildingId));
+        Set<Integer> layoutIdSet = dormitoryList.stream().map(Dormitory::getLayoutId).collect(Collectors.toSet());
+        return layoutIdSet.stream().map(dormitoryService::getById).map(Dormitory::getLayout).collect(Collectors.toList());
     }
 
 }

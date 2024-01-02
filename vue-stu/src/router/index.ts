@@ -20,6 +20,7 @@ const routes: Array<RouteRecordRaw> = [
         children: [
             {
                 path: "",
+                name: "redirect",
                 redirect: "/welcome",
             },
             {

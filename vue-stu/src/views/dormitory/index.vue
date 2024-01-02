@@ -3,26 +3,31 @@
         <el-form-item label="Region">
             <el-select
                 v-model="selectedRegion"
+                value-key="region_id"
                 placeholder="Select region"
-                @changed="fetchBuildings"
+                @change="fetchBuildings"
             >
                 <el-option
                     v-for="region in regions"
                     :key="region.region_id"
                     :label="region.region_name"
-                    :value="region.region_id"
+                    :value="region"
                 >
                 </el-option>
             </el-select>
         </el-form-item>
 
         <el-form-item label="Building">
-            <el-select v-model="selectedBuilding" placeholder="Select building">
+            <el-select
+                v-model="selectedBuilding"
+                value-key="building_id"
+                placeholder="Select building"
+            >
                 <el-option
                     v-for="building in buildings"
                     :key="building.building_id"
                     :label="building.building_name"
-                    :value="building.building_id"
+                    :value="building"
                 >
                 </el-option>
             </el-select>
@@ -36,10 +41,19 @@
             />
         </el-form-item>
 
-        <el-form-item>
-            <el-button type="primary" @click="viewLayout">View</el-button>
-        </el-form-item>
+        <el-button type="primary" @click="viewLayout">View</el-button>
     </el-form>
+
+    <div class="description">
+        <h1>简介</h1>
+        <h2>{{ selectedRegion?.region_name }} {{ selectedBuilding?.building_name }}</h2>
+        <p>{{ selectedBuilding?.description }}</p>
+    </div>
+
+    <div class="description">
+        <h1>布局</h1>
+        <p>每栋楼虽然宿舍很多，但是宿舍类型大多大同小异，看看这栋楼都有哪些类型的房间吧！</p>
+    </div>
 
     <el-row :gutter="40">
         <el-col :span="5" v-for="(card, index) in cards" :key="index">
@@ -58,7 +72,7 @@ import LayoutCard from "./components/layout_card.vue";
 import axiosInstance from "@/axios/axiosConfig";
 import type { Region, Building, Layout, Dormitory } from "@/types/globalTypes";
 
-const regions = ref<Region[]>([]); // 示例数据
+const regions = ref<Region[]>([]);
 const selectedRegion = ref<Region>();
 
 const buildings = ref<Building[]>([]);
@@ -74,42 +88,22 @@ const viewLayout = () => {
 
 const cards = ref([
     {
-        image: "https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png",
+        image: "http://114.132.51.227:7777/images/2024/01/02/dorm3.jpg",
         title: "Title 1",
         description: "Description 1",
     },
     {
-        image: "src/assets/bg.png",
+        image: "http://114.132.51.227:7777/images/2024/01/02/dorm2.md.jpg",
         title: "Title 1",
         description: "Description 1",
     },
     {
-        image: "https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png",
+        image: "http://114.132.51.227:7777/images/2024/01/02/dorm1.md.jpg",
         title: "Title 1",
         description: "Description 1",
     },
     {
-        image: "src/assets/bg.png",
-        title: "Title 1",
-        description: "Description 1",
-    },
-    {
-        image: "https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png",
-        title: "Title 1",
-        description: "Description 1",
-    },
-    {
-        image: "src/assets/bg.png",
-        title: "Title 1",
-        description: "Description 1",
-    },
-    {
-        image: "https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png",
-        title: "Title 1",
-        description: "Description 1",
-    },
-    {
-        image: "src/assets/bg.png",
+        image: "http://114.132.51.227:7777/images/2024/01/02/dorm5.jpg",
         title: "Title 1",
         description: "Description 1",
     },
@@ -126,24 +120,27 @@ async function fetchRegions() {
     }
 }
 
-fetchRegions();
-
 async function fetchBuildings() {
+    selectedBuilding.value = undefined;
     try {
         const response = await axiosInstance.get(
             "/student/dormitory/getBuildings",
             {
-                params: {'regionId': selectedRegion.value?.region_id},
+                params: { regionId: selectedRegion.value?.region_id },
             }
         );
-        regions.value = response.data;
+        buildings.value = response.data;
     } catch (error) {
         console.error(error);
     }
 }
+
+fetchRegions();
 </script>
 
-<style scoped lang="less">
+<style lang="less">
+@import "../../assets/colors.less";
+
 main {
     border-radius: 8rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -158,14 +155,60 @@ main {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    padding: 0 10%;
-    gap: 30px;
-    margin: 50px 0;
+    padding: 30px 5%;
+    gap: 10%;
+    margin: 50px 10%;
+
+    background-color: rgba(0, 0, 0, 0.7);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
 
     .el-form-item {
         flex: 1;
         min-width: 200px;
-        max-width: 30%;
+        max-width: 20%;
+        margin: 0;
+
+        label {
+            color: @text-color2;
+            font-size: large;
+        }
+    }
+
+    .el-button {
+        border: None;
+        background-color: @button-color-light;
+
+        &:hover {
+            background-color: darken(@button-color-light, 15%);
+        }
+    }
+}
+
+.description {
+    margin: 50px 10%;
+    padding: 20px 5%;
+    background-color: rgba(0, 0, 0, 0.7);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+
+    h1 {
+        color: @text-color2;
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    h2 {
+        color: @text-color2;
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    p {
+        color: @text-color2;
+        font-size: 16px;
     }
 }
 
@@ -174,4 +217,3 @@ main {
     justify-content: center;
 }
 </style>
-@/axios/axiosConfigs

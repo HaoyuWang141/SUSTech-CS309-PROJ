@@ -11,7 +11,7 @@ const updateBgHeight = () => {
     if (content.value) {
         const contentHeight = content.value.clientHeight;
         if (bg_color.value) {
-            console.log(contentHeight);
+            // console.log(contentHeight);
             bg_color.value.style.height = `${contentHeight}px`;
         }
     }
