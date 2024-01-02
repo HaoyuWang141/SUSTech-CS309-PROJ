@@ -13,11 +13,13 @@ CS309 面向对象分析与设计 Project
 
 前端: Vue
 
-# 项目需求
+
+
+首页包含：功能，技术栈
 
 
 
-## GitHub CI/CD
+# GitHub CI/CD
 
 Actions: `main.yml`
 

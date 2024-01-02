@@ -44,22 +44,22 @@ function navigateToLogin() {
 </script>
 
 <template>
-        <div class="intro">
-            <div class="title-container">
-                <h1>SUSTech Dormitory</h1>
-                <p>SUSTech CS309 PROJ: 南方科技大学宿舍管理系统</p>
-            </div>
-            <button @click="navigateToLogin">Login to preview</button>
+    <div class="intro">
+        <div class="title-container">
+            <h1>SUSTech Dormitory</h1>
+            <p>SUSTech CS309 PROJ: 南方科技大学宿舍管理系统</p>
         </div>
+        <button @click="navigateToLogin">Login to preview</button>
+    </div>
 
-        <section class="features">
-            <Feature
-                v-for="feature in features"
-                :key="feature.title"
-                :title="feature.title"
-                :description="feature.description"
-            />
-        </section>
+    <section class="features">
+        <Feature
+            v-for="feature in features"
+            :key="feature.title"
+            :title="feature.title"
+            :description="feature.description"
+        />
+    </section>
 </template>
 
 <style scoped lang="less">

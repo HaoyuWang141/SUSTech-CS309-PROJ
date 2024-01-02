@@ -38,20 +38,17 @@ public class DormitorySelectionController {
     }
 
     @GetMapping("/getRegions")
-    public List<Region> queryRegion(@RequestBody String token) {
-        LoginController.checkAuthentication(authenticationMapper, token);
+    public List<Region> queryRegion() {
         return regionService.list();
     }
 
     @GetMapping("/getBuildings")
-    public List<Building> queryBuilding(Integer regionId, @RequestBody String token) {
-        LoginController.checkAuthentication(authenticationMapper, token);
+    public List<Building> queryBuilding(Integer regionId) {
         return buildingService.list(new QueryWrapper<Building>().eq("regionId", regionId));
     }
 
     @GetMapping("/getDormitories")
-    public List<Dormitory> queryDormitory(Integer buildingId, @RequestBody String token) {
-        LoginController.checkAuthentication(authenticationMapper, token);
+    public List<Dormitory> queryDormitory(Integer buildingId) {
         return dormitoryService.list(new QueryWrapper<Dormitory>().eq("buildingId", buildingId));
     }
 
@@ -63,8 +60,7 @@ public class DormitorySelectionController {
     }
 
     @GetMapping("/getDormitory")
-    public Dormitory getDormitory(Integer dormitoryId, @RequestBody String token) {
-        LoginController.checkAuthentication(authenticationMapper, token);
+    public Dormitory getDormitory(Integer dormitoryId) {
         return dormitoryService.getById(dormitoryId);
     }
 

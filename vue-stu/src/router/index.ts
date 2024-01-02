@@ -5,6 +5,7 @@ import Welcome from "@/views/homepage/index.vue";
 import Login from "@/views/login/index.vue";
 import Home from "@/components/Home.vue";
 import Profile from "@/components/Profile.vue";
+import Dormitory from "@/views/dormitory/index.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -40,7 +41,8 @@ const routes: Array<RouteRecordRaw> = [
                 path: "profile",
                 name: "Profile",
                 component: Profile,
-            }
+            },
+            { path: "dormitory", name: "Dormitory", component: Dormitory },
         ],
     },
 ];

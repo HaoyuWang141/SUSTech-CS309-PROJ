@@ -11,6 +11,7 @@ const updateBgHeight = () => {
     if (content.value) {
         const contentHeight = content.value.clientHeight;
         if (bg_color.value) {
+            console.log(contentHeight);
             bg_color.value.style.height = `${contentHeight}px`;
         }
     }
@@ -67,7 +68,6 @@ function backToHome() {
     left: 0;
     z-index: 1;
     width: 100%;
-    height: 1200px;
 }
 
 .bg-picture {
