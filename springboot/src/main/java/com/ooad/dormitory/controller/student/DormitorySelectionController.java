@@ -44,18 +44,18 @@ public class DormitorySelectionController {
 
     @GetMapping("/getBuildings")
     public List<Building> queryBuilding(Integer regionId) {
-        return buildingService.list(new QueryWrapper<Building>().eq("regionId", regionId));
+        return buildingService.list(new QueryWrapper<Building>().eq("region_id", regionId));
     }
 
     @GetMapping("/getDormitories")
     public List<Dormitory> queryDormitory(Integer buildingId) {
-        return dormitoryService.list(new QueryWrapper<Dormitory>().eq("buildingId", buildingId));
+        return dormitoryService.list(new QueryWrapper<Dormitory>().eq("building_id", buildingId));
     }
 
     @GetMapping("/getFavoriteList")
     public List<Dormitory> getFavoriteDormitories(Integer teamId, @RequestBody String token) {
         LoginController.checkAuthentication(authenticationMapper, token);
-        return teamFavoriteDormService.list(new QueryWrapper<TeamFavoriteDorm>().eq("teamId", teamId))
+        return teamFavoriteDormService.list(new QueryWrapper<TeamFavoriteDorm>().eq("team_id", teamId))
                 .stream().map(TeamFavoriteDorm::getDormitory).collect(Collectors.toList());
     }
 
