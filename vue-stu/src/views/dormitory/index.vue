@@ -1,11 +1,12 @@
 <template>
     <el-form class="form-horizontal">
-        <el-form-item label="Region">
+        <el-form-item>
             <el-select
                 v-model="selectedRegion"
                 value-key="region_id"
                 placeholder="Select region"
                 @change="fetchBuildings"
+                class="select"
             >
                 <el-option
                     v-for="region in regions"
@@ -17,11 +18,12 @@
             </el-select>
         </el-form-item>
 
-        <el-form-item label="Building">
+        <el-form-item>
             <el-select
                 v-model="selectedBuilding"
                 value-key="building_id"
                 placeholder="Select building"
+                class="select"
             >
                 <el-option
                     v-for="building in buildings"
@@ -33,26 +35,31 @@
             </el-select>
         </el-form-item>
 
-        <el-form-item label="Room">
+        <!-- <el-form-item>
             <el-input
                 v-model="room_number"
                 placeholder="Room Number"
                 clearable
             />
-        </el-form-item>
+        </el-form-item> -->
 
-        <el-button type="primary" @click="viewLayout">View</el-button>
+        <el-button type="primary" @click="fetchLayout">View</el-button>
     </el-form>
 
-    <div class="description">
+    <div class="dormitroy_description">
         <h1>简介</h1>
-        <h2>{{ selectedRegion?.region_name }} {{ selectedBuilding?.building_name }}</h2>
+        <h2>
+            {{ selectedRegion?.region_name }}
+            {{ selectedBuilding?.building_name }}
+        </h2>
         <p>{{ selectedBuilding?.description }}</p>
     </div>
 
-    <div class="description">
+    <div class="dormitroy_description">
         <h1>布局</h1>
-        <p>每栋楼虽然宿舍很多，但是宿舍类型大多大同小异，看看这栋楼都有哪些类型的房间吧！</p>
+        <p>
+            每栋楼虽然宿舍很多，但是宿舍类型大多大同小异，看看这栋楼都有哪些类型的房间吧！
+        </p>
     </div>
 
     <el-row :gutter="40">
@@ -81,10 +88,6 @@ const selectedBuilding = ref<Building>();
 const room_number = ref<string>("");
 
 const layoutList = ref<Layout[]>([]);
-
-const viewLayout = () => {
-    // 实现查看宿舍的逻辑
-};
 
 const cards = ref([
     {
@@ -135,6 +138,22 @@ async function fetchBuildings() {
     }
 }
 
+async function fetchLayout () {
+    try {
+        const response = await axiosInstance.get(
+            "/student/dormitory/getLayout",
+            {
+                params: {
+                    buildingId: selectedBuilding.value?.building_id,
+                },
+            }
+        );
+        layoutList.value = response.data;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
 fetchRegions();
 </script>
 
@@ -160,7 +179,7 @@ main {
     margin: 50px 10%;
 
     background-color: rgba(0, 0, 0, 0.7);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 2px 4px rgba(34, 204, 228, 0.8);
     border-radius: 12px;
 
     .el-form-item {
@@ -169,9 +188,8 @@ main {
         max-width: 20%;
         margin: 0;
 
-        label {
-            color: @text-color2;
-            font-size: large;
+        .el-select {
+            background-color: @mainColor;
         }
     }
 
@@ -185,11 +203,15 @@ main {
     }
 }
 
-.description {
+el-select select {
+    background-color: red; // 这里设置你想要的背景色
+}
+
+.dormitroy_description {
     margin: 50px 10%;
     padding: 20px 5%;
     background-color: rgba(0, 0, 0, 0.7);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 2px 4px rgba(34, 204, 228, 0.8);
     border-radius: 12px;
 
     h1 {

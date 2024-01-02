@@ -72,7 +72,7 @@ function backToHome() {
 
 .bg-picture {
     width: 100%;
-    height: 100vh;
+    height: 100%;
     background: url("../assets/bg.png") no-repeat center center fixed;
     background-size: cover;
     position: absolute;
@@ -90,7 +90,7 @@ function backToHome() {
         rgba(13, 25, 51, 1)
     );
     position: absolute;
-    bottom: 0px;
+    bottom: 0;
     left: 0;
     z-index: 3;
 }

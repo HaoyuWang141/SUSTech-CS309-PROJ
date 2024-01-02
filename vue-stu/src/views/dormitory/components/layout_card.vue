@@ -1,11 +1,18 @@
 <template>
     <el-card :body-style="{ padding: '0' }">
         <img :src="image" class="image" alt="Card image" />
-        <div style="padding: 12px 30px">
-            <span>{{ title }}</span>
+        <div
+            style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 30px 30px;
+            "
+        >
+            <!-- <span>{{ title }}</span>
             <div class="text item">
                 {{ description }}
-            </div>
+            </div> -->
             <el-button type="primary" @click="viewDetails">查看详情</el-button>
         </div>
     </el-card>
@@ -34,6 +41,7 @@ const viewDetails = () => {
     border: none;
     border-radius: 12px;
     font-size: large;
+    box-shadow: 4px 4px 10px rgba(34, 204, 228, 0.8);
 }
 
 .image {
@@ -45,7 +53,6 @@ const viewDetails = () => {
 .el-button {
     border: None;
     background-color: @button-color;
-
     &:hover {
         background-color: darken(@button-color, 5%);
     }

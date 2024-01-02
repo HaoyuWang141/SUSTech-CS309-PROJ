@@ -25,9 +25,10 @@ public class DormitorySelectionController {
     private final AllocationRelationService allocationRelationService;
     private final TeamService teamService;
     private final AuthenticationMapper authenticationMapper;
+    private final LayoutService layoutService;
 
     @Autowired
-    public DormitorySelectionController(DormitoryService dormitoryService, BuildingService buildingService, RegionService regionService, TeamFavoriteDormService teamFavoriteDormService, AllocationStageService allocationStageService, AllocationRelationService allocationRelationService, TeamService teamService, AuthenticationMapper authenticationMapper) {
+    public DormitorySelectionController(DormitoryService dormitoryService, BuildingService buildingService, RegionService regionService, TeamFavoriteDormService teamFavoriteDormService, AllocationStageService allocationStageService, AllocationRelationService allocationRelationService, TeamService teamService, AuthenticationMapper authenticationMapper, LayoutService layoutService) {
         this.dormitoryService = dormitoryService;
         this.buildingService = buildingService;
         this.regionService = regionService;
@@ -36,6 +37,7 @@ public class DormitorySelectionController {
         this.allocationRelationService = allocationRelationService;
         this.teamService = teamService;
         this.authenticationMapper = authenticationMapper;
+        this.layoutService = layoutService;
     }
 
     @GetMapping("/getRegions")
@@ -128,7 +130,7 @@ public class DormitorySelectionController {
     public List<Layout> getLayout(Integer buildingId) {
         List<Dormitory> dormitoryList = dormitoryService.list(new QueryWrapper<Dormitory>().eq("building_id", buildingId));
         Set<Integer> layoutIdSet = dormitoryList.stream().map(Dormitory::getLayoutId).collect(Collectors.toSet());
-        return layoutIdSet.stream().map(dormitoryService::getById).map(Dormitory::getLayout).collect(Collectors.toList());
+        return layoutIdSet.stream().map(layoutService::getById).collect(Collectors.toList());
     }
 
 }
