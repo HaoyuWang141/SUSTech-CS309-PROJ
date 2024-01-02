@@ -1,11 +1,16 @@
 <script setup>
-import IconCommunity from "@/components/icons/IconCommunity.vue";
 import {ref} from "vue";
+import {useRouter} from "vue-router";
 
-const name = ref("xingming")
-const sid = ref("12010000")
-const grade = ref("dayi")
-const major = ref("CS")
+const router = useRouter();
+const name = ref("xingming");
+const sid = ref("12010000");
+const grade = ref("dayi");
+const major = ref("CS");
+
+function goProfile() {
+    router.push("profile");
+}
 </script>
 
 <template>
@@ -17,10 +22,7 @@ const major = ref("CS")
     </template>
     <div class="simple-card-body">
       <div class="simple-card-left">
-        <IconCommunity/>
-        <el-button type="primary">
-          编辑个人信息
-        </el-button>
+        <img src="@/assets/Kobe.jpg" alt="DaTouZhao" class="head-pic">
       </div>
       <div class="simple-card-right">
         <el-row>
@@ -39,6 +41,9 @@ const major = ref("CS")
           <span>专业：</span>
           <span>{{ major }}</span>
         </el-row>
+        <el-button type="primary" @click="goProfile">
+          编辑个人信息
+        </el-button>
       </div>
     </div>
   </el-card>
@@ -52,9 +57,13 @@ const major = ref("CS")
 }
 
 .simple-person-card {
-    width: 30%;
-    height: 30%;
-    margin: 2%;
+    border-radius: 20px;
+    width: 92.5%;
+    height: 92.5%;
+    margin-left: 5%;
+    margin-top: 5%;
+    margin-bottom: 2.5%;
+    margin-right: 2.5%;
 }
 
 .simple-card-body {
@@ -68,6 +77,12 @@ const major = ref("CS")
 }
 
 .simple-card-right {
-//display: flex;
+
+}
+
+.head-pic {
+    width: 160px;
+    height: 240px;
+    object-fit: cover;
 }
 </style>

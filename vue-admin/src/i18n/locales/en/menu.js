@@ -1,0 +1,16 @@
+export default {
+  homepage: 'En',
+  dashboard: '',
+  test: '',
+  testList: '',
+  testAdd: '',
+  testEdit: 'Edit',
+  testAuth: 'Auth',
+  testNoAuth: 'No auth',
+  'test-cache': '',
+  'test-no-cache': '',
+  nest: 'Nest page',
+  nestPage1: 'Page1',
+  nestPage2: 'Page2',
+  'test-error-log': 'Error log',
+}

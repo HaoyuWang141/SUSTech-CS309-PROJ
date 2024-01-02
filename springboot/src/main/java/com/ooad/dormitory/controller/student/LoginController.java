@@ -18,11 +18,14 @@ import java.util.Random;
 public class LoginController {
 
     private final AuthenticationMapper authenticationMapper;
+    private final StudentAccountMapper studentAccountMapper;
+
     private final Integer failureTimeInMinutes = 20;
 
     @Autowired
-    public LoginController(AuthenticationMapper authenticationMapper) {
+    public LoginController(AuthenticationMapper authenticationMapper, StudentAccountMapper studentAccountMapper) {
         this.authenticationMapper = authenticationMapper;
+        this.studentAccountMapper = studentAccountMapper;
     }
 
     @PostMapping("/login")
@@ -39,6 +42,12 @@ public class LoginController {
         else {
             throw new RuntimeException("login failed!");
         }
+    }
+
+    @GetMapping("/getSelf")
+    public StudentAccount getSelf(@RequestBody String studentId, @RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
+        return studentAccountMapper.selectById(studentId);
     }
 
 
