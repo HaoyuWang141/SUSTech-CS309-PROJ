@@ -155,10 +155,10 @@ CREATE TABLE comment
 
 CREATE TABLE authentication
 (
-    student_id INT PRIMARY KEY,
+    student_id VARCHAR PRIMARY KEY,
     student_password VARCHAR(100),
     token VARCHAR(100),
     token_failure_time TIME,
-    online_amount,  -- 该账户已在线设备数
+    online_amount INT, -- 该账户已在线设备数
     FOREIGN KEY (student_id) REFERENCES student_account (student_id)
 );

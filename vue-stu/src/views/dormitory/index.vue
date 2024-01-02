@@ -1,47 +1,43 @@
 <template>
     <el-form class="form-horizontal">
         <el-form-item label="Region">
-            <el-select v-model="selectedRegion" placeholder="Select region">
+            <el-select
+                v-model="selectedRegion"
+                placeholder="Select region"
+                @changed="fetchBuildings"
+            >
                 <el-option
                     v-for="region in regions"
-                    :key="region"
-                    :label="region"
-                    :value="region"
+                    :key="region.region_id"
+                    :label="region.region_name"
+                    :value="region.region_id"
                 >
                 </el-option>
             </el-select>
         </el-form-item>
 
         <el-form-item label="Building">
-            <el-select v-model="selectedRegion" placeholder="Select building">
+            <el-select v-model="selectedBuilding" placeholder="Select building">
                 <el-option
-                    v-for="region in regions"
-                    :key="region"
-                    :label="region"
-                    :value="region"
-                >
-                </el-option>
-            </el-select>
-        </el-form-item>
-
-        <el-form-item label="Floor">
-            <el-select v-model="selectedRegion" placeholder="Select floor">
-                <el-option
-                    v-for="region in regions"
-                    :key="region"
-                    :label="region"
-                    :value="region"
+                    v-for="building in buildings"
+                    :key="building.building_id"
+                    :label="building.building_name"
+                    :value="building.building_id"
                 >
                 </el-option>
             </el-select>
         </el-form-item>
 
         <el-form-item label="Room">
-              <el-input v-model="room_number" placeholder="Room Number" clearable />
+            <el-input
+                v-model="room_number"
+                placeholder="Room Number"
+                clearable
+            />
         </el-form-item>
 
         <el-form-item>
-            <el-button type="primary" @click="viewDorm">View</el-button>
+            <el-button type="primary" @click="viewLayout">View</el-button>
         </el-form-item>
     </el-form>
 
@@ -57,22 +53,23 @@
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent, ref } from "vue";
+import { ref } from "vue";
 import LayoutCard from "./components/layout_card.vue";
-import axiosInstance from "@/axios/axiosConfig"
+import axiosInstance from "@/axios/axiosConfig";
+import type { Region, Building, Layout, Dormitory } from "@/types/globalTypes";
 
-const regions = ref(null); // 示例数据
-const selectedRegion = ref<string>("");
+const regions = ref<Region[]>([]); // 示例数据
+const selectedRegion = ref<Region>();
+
+const buildings = ref<Building[]>([]);
+const selectedBuilding = ref<Building>();
 
 const room_number = ref<string>("");
 
-const selectedLayout = ref<string>("");
+const layoutList = ref<Layout[]>([]);
 
-const viewDorm = () => {
+const viewLayout = () => {
     // 实现查看宿舍的逻辑
-    console.log(
-        `Selected Dorm: ${selectedRegion.value}, Layout: ${selectedLayout.value}`
-    );
 };
 
 const cards = ref([
@@ -118,17 +115,32 @@ const cards = ref([
     },
 ]);
 
-async function fetchData() {
-  try {
-    const response = await axiosInstance.get('/student/dormitory/getRegions', );
-    regions.value = response.data;
-  } catch (error) {
-    console.error(error);
-  }
+async function fetchRegions() {
+    try {
+        const response = await axiosInstance.get(
+            "/student/dormitory/getRegions"
+        );
+        regions.value = response.data;
+    } catch (error) {
+        console.error(error);
+    }
 }
 
-fetchData();
+fetchRegions();
 
+async function fetchBuildings() {
+    try {
+        const response = await axiosInstance.get(
+            "/student/dormitory/getBuildings",
+            {
+                params: {'regionId': selectedRegion.value?.region_id},
+            }
+        );
+        regions.value = response.data;
+    } catch (error) {
+        console.error(error);
+    }
+}
 </script>
 
 <style scoped lang="less">
