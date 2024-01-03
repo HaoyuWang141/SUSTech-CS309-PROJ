@@ -145,12 +145,15 @@ CREATE TABLE notification
 
 CREATE TABLE comment
 (
-    id SERIAL PRIMARY KEY,
-    replying_id INT,  -- 该评论回复的评论的id
-    publisher_id VARCHAR(20),
+    id              SERIAL PRIMARY KEY,
+    publisher_id    VARCHAR(20),
+    replying_comment_id     INT,  -- 该评论回复的评论的id
+    dormitory_id    INT,
+    content         TEXT,
+    publish_time    TIME,
+    FOREIGN KEY (publisher_id) REFERENCES student_account (student_id),
     FOREIGN KEY (replying_id) REFERENCES comment (id),
-    FOREIGN KEY (publisher_id) REFERENCES student_account (student_id)
-    -- tag 的设置
+    FOREIGN KEY (dormitory_id) REFERENCES dormitory (dormitory_id)
 );
 
 CREATE TABLE authentication
