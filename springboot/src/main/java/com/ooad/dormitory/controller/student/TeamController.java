@@ -35,14 +35,20 @@ public class TeamController {
         this.authenticationMapper = authenticationMapper;
     }
 
-    @GetMapping("/getTeam")
-    public List<StudentAccount> getTeam(@RequestBody StudentAccount studentAccount, @RequestBody String token) {
+    @GetMapping("/getTeam2")
+    public List<StudentAccount> getTeam2(String studentAccountId, @RequestBody String token) {
+        StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
+        assert studentAccount != null;
+
         LoginController.checkAuthentication(authenticationMapper, token);
         return studentAccountService.list(new QueryWrapper<StudentAccount>().eq("teamId", studentAccount.getTeamId()));
     }
 
-    @PostMapping("/quitTeam")
-    public ResponseEntity<?> quitTeam(@RequestBody StudentAccount studentAccount, @RequestBody String token) {
+    @PostMapping("/quitTeam2")
+    public ResponseEntity<?> quitTeam2(@RequestBody String studentAccountId, @RequestBody String token) {
+        StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
+        assert studentAccount != null;
+
         LoginController.checkAuthentication(authenticationMapper, token);
         List<StudentAccount> studentAccountList = studentAccountService.list(new QueryWrapper<StudentAccount>()
                 .eq("teamId", studentAccount.getTeamId()));
@@ -61,14 +67,21 @@ public class TeamController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/getInvitations")
-    public List<Invitation> getInvitations(@RequestBody StudentAccount studentAccount, @RequestBody String token) {
+    @GetMapping("/getInvitations2")
+    public List<Invitation> getInvitations2(String studentAccountId, @RequestBody String token) {
+        StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
+        assert studentAccount != null;
+
         LoginController.checkAuthentication(authenticationMapper, token);
         return invitationService.list(new QueryWrapper<Invitation>().eq("inviteeId", studentAccount.getTeamId()));
     }
 
-    @PostMapping("/invite")
-    public ResponseEntity<?> invite(@RequestBody StudentAccount inviter, @RequestBody StudentAccount invitee, @RequestBody String token) {
+    @PostMapping("/invite2")
+    public ResponseEntity<?> invite2(@RequestBody String inviterId, @RequestBody String inviteeId, @RequestBody String token) {
+        StudentAccount inviter = studentAccountService.getById(inviterId);
+        StudentAccount invitee = studentAccountService.getById(inviteeId);
+        assert inviter != null && invitee != null;
+
         LoginController.checkAuthentication(authenticationMapper, token);
         if (!Objects.equals(inviter.calEntryYear(), invitee.calEntryYear())
                 || !Objects.equals(inviter.calDegree(), invitee.calDegree())
@@ -81,8 +94,11 @@ public class TeamController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/accept")
-    public ResponseEntity<?> accept(@RequestBody Invitation invitation, @RequestBody String token) {
+    @PostMapping("/accept2")
+    public ResponseEntity<?> accept2(@RequestBody Integer invitationId, @RequestBody String token) {
+        Invitation invitation = invitationService.getById(invitationId);
+        assert invitation != null;
+
         LoginController.checkAuthentication(authenticationMapper, token);
         StudentAccount inviter = invitation.getInviter();
         StudentAccount invitee = invitation.getInvitee();
@@ -125,8 +141,11 @@ public class TeamController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/getRecommendation")
-    public List<StudentAccount> getRecommendation(@RequestBody StudentAccount studentAccount, @RequestBody String token) {
+    @GetMapping("/getRecommendation2")
+    public List<StudentAccount> getRecommendation2(String studentAccountId, @RequestBody String token) {
+        StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
+        assert studentAccount != null;
+
         LoginController.checkAuthentication(authenticationMapper, token);
         return studentAccountService.list().stream()
                 .filter(s -> s.getTeamId() == null && !Objects.equals(studentAccount.getStudentId(), s.getStudentId()))
@@ -139,5 +158,88 @@ public class TeamController {
         LoginController.checkAuthentication(authenticationMapper, token);
         return studentAccountService.getById(studentId);
     }
+
+
+    @Deprecated
+    @GetMapping("/getTeam")
+    public List<StudentAccount> getTeam(@RequestBody StudentAccount studentAccount, @RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
+        return studentAccountService.list(new QueryWrapper<StudentAccount>().eq("teamId", studentAccount.getTeamId()));
+    }
+
+    @Deprecated
+    @PostMapping("/quitTeam")
+    public ResponseEntity<?> quitTeam(@RequestBody StudentAccount studentAccount, @RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
+        List<StudentAccount> studentAccountList = studentAccountService.list(new QueryWrapper<StudentAccount>()
+                .eq("teamId", studentAccount.getTeamId()));
+        if (studentAccountList.size() > 2) {
+            studentAccount.setTeamId(null);
+            studentAccount.setTeam(null);
+            studentAccountService.saveOrUpdate(studentAccount);
+        }
+        else if (studentAccountList.size() == 2) {
+            for (StudentAccount each : studentAccountList) {
+                each.setTeamId(null);
+                each.setTeam(null);
+                studentAccountService.saveOrUpdate(each);
+            }
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    @Deprecated
+    @GetMapping("/getInvitations")
+    public List<Invitation> getInvitations(@RequestBody StudentAccount studentAccount, @RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
+        return invitationService.list(new QueryWrapper<Invitation>().eq("inviteeId", studentAccount.getTeamId()));
+    }
+
+    @Deprecated
+    @PostMapping("/invite")
+    public ResponseEntity<?> invite(@RequestBody StudentAccount inviter, @RequestBody StudentAccount invitee, @RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
+        if (!Objects.equals(inviter.calEntryYear(), invitee.calEntryYear())
+                || !Objects.equals(inviter.calDegree(), invitee.calDegree())
+                || !Objects.equals(inviter.getGender(), invitee.getGender())
+                || Objects.equals(inviter.getStudentId(), invitee.getStudentId())) {
+            throw new RuntimeException("invite failed!");
+        }
+        Invitation invitation = new Invitation(null, inviter.getStudentId(), invitee.getStudentId(), new Timestamp(System.currentTimeMillis()), inviter, invitee);
+        invitationService.save(invitation);
+        return ResponseEntity.ok().build();
+    }
+
+    @Deprecated
+    @PostMapping("/accept")
+    public ResponseEntity<?> accept(@RequestBody Invitation invitation, @RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
+        StudentAccount inviter = invitation.getInviter();
+        StudentAccount invitee = invitation.getInvitee();
+        if (invitee.getTeam() != null) {
+            throw new RuntimeException("accept invitation failed! (invitee already has a team)");
+        }
+        if (inviter.getTeam() == null) {
+            inviter.setTeam(new Team());
+            inviter.setTeamId(inviter.getTeam().getTeamId());
+            studentAccountService.saveOrUpdate(inviter);
+        }
+        invitee.setTeamId(inviter.getTeamId());
+        invitee.setTeam(inviter.getTeam());
+        studentAccountService.saveOrUpdate(invitee);
+        return ResponseEntity.ok().build();
+    }
+
+    @Deprecated
+    @GetMapping("/getRecommendation")
+    public List<StudentAccount> getRecommendation(@RequestBody StudentAccount studentAccount, @RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
+        return studentAccountService.list().stream()
+                .filter(s -> s.getTeamId() == null && !Objects.equals(studentAccount.getStudentId(), s.getStudentId()))
+                .sorted(Comparator.comparingDouble(s -> studentAccount.getSimilarity((StudentAccount) s)).reversed())
+                .collect(Collectors.toList());
+    }
+
+
 
 }

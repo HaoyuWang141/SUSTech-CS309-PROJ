@@ -32,8 +32,11 @@ public class ForumController {
         this.authenticationMapper = authenticationMapper;
     }
 
-    @PostMapping("/launch")
-    public ResponseEntity<?> launch(@RequestBody StudentAccount studentAccount, @RequestBody Integer dormitoryId, @RequestBody String content, @RequestBody String token) {
+    @PostMapping("/launch2")
+    public ResponseEntity<?> launch2(@RequestBody String studentAccountId, @RequestBody Integer dormitoryId, @RequestBody String content, @RequestBody String token) {
+        StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
+        assert studentAccount != null;
+
         LoginController.checkAuthentication(authenticationMapper, token);
         try {
             Comment comment = new Comment();
@@ -57,8 +60,11 @@ public class ForumController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/reply")
-    public ResponseEntity<?> reply(@RequestBody StudentAccount studentAccount, @RequestBody Integer replyingCommentId, @RequestBody String content, @RequestBody String token) {
+    @PostMapping("/reply2")
+    public ResponseEntity<?> reply2(@RequestBody String studentAccountId, @RequestBody Integer replyingCommentId, @RequestBody String content, @RequestBody String token) {
+        StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
+        assert studentAccount != null;
+
         LoginController.checkAuthentication(authenticationMapper, token);
         try {
             Comment comment = new Comment();
@@ -112,4 +118,52 @@ public class ForumController {
                 .collect(Collectors.toList());
     }
 
+
+    @Deprecated
+    @PostMapping("/launch")
+    public ResponseEntity<?> launch(@RequestBody StudentAccount studentAccount, @RequestBody Integer dormitoryId, @RequestBody String content, @RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
+        try {
+            Comment comment = new Comment();
+            comment.setPublisherId(studentAccount.getStudentId());
+            comment.setPublisher(studentAccount);
+            if (dormitoryId != null) {
+                comment.setDormitoryId(dormitoryId);
+                comment.setDormitory(dormitoryService.getById(dormitoryId));
+                assert (comment.getDormitory() != null);
+            }
+            else {
+                comment.setDormitoryId(null);
+                comment.setDormitory(null);
+            }
+            comment.setContent(content);
+            comment.setPublishTime(new java.sql.Time(System.currentTimeMillis()));
+            commentService.save(comment);
+        } catch (Exception e) {
+            throw new RuntimeException("launch comment failed!");
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    @Deprecated
+    @PostMapping("/reply")
+    public ResponseEntity<?> reply(@RequestBody StudentAccount studentAccount, @RequestBody Integer replyingCommentId, @RequestBody String content, @RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
+        try {
+            Comment comment = new Comment();
+            comment.setPublisherId(studentAccount.getStudentId());
+            comment.setPublisher(studentAccount);
+            comment.setReplyingCommentId(replyingCommentId);
+            comment.setReplyingComment(commentService.getById(replyingCommentId));
+            assert comment.getReplyingComment() != null;
+            comment.setDormitory(comment.getReplyingComment().getDormitory());
+            comment.setDormitoryId(comment.getReplyingComment().getDormitoryId());
+            comment.setContent(content);
+            comment.setPublishTime(new java.sql.Time(System.currentTimeMillis()));
+            commentService.save(comment);
+        } catch (Exception e) {
+            throw new RuntimeException("reply comment failed!");
+        }
+        return ResponseEntity.ok().build();
+    }
 }

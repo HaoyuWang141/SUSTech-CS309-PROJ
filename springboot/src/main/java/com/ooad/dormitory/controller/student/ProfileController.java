@@ -22,6 +22,50 @@ public class ProfileController {
         this.authenticationMapper = authenticationMapper;
     }
 
+    @PostMapping("/set2")
+    public void setProfile2(@RequestBody String studentAccountId,
+                           @RequestParam(required = false) String photoUrl,
+                           @RequestParam(required = false) Time sleepTime,
+                           @RequestParam(required = false) Time wakeUpTime,
+                           @RequestParam(required = false) Integer airConditionerTemperature,
+                           @RequestParam(required = false) Boolean snore,
+                           @RequestParam(required = false) String qq,
+                           @RequestParam(required = false) String email,
+                           @RequestParam(required = false) String wechat,
+                           @RequestBody String token) {
+        StudentAccount studentAccount = studentAccountMapper.selectById(studentAccountId);
+        assert studentAccount != null;
+
+        LoginController.checkAuthentication(authenticationMapper, token);
+        if (photoUrl != null) {
+            studentAccount.setPhotoUrl(photoUrl);
+        }
+        if (sleepTime != null) {
+            studentAccount.setSleepTime(sleepTime);
+        }
+        if (wakeUpTime != null) {
+            studentAccount.setWakeUpTime(wakeUpTime);
+        }
+        if (airConditionerTemperature != null) {
+            studentAccount.setAirConditionerTemperature(airConditionerTemperature);
+        }
+        if (snore != null) {
+            studentAccount.setSnore(snore);
+        }
+        if (qq != null) {
+            studentAccount.setQq(qq);
+        }
+        if (email != null) {
+            studentAccount.setEmail(email);
+        }
+        if (wechat != null) {
+            studentAccount.setWechat(wechat);
+        }
+        studentAccountMapper.updateById(studentAccount);
+    }
+
+
+    @Deprecated
     @PostMapping("/set")
     public void setProfile(@RequestBody StudentAccount studentAccount,
                            @RequestParam(required = false) String photoUrl,

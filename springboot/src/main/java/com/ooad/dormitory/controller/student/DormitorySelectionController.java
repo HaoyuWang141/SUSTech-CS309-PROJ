@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 @CrossOrigin
 public class DormitorySelectionController {
 
+    private final StudentAccountService studentAccountService;
     private final DormitoryService dormitoryService;
     private final BuildingService buildingService;
     private final RegionService regionService;
@@ -28,7 +29,8 @@ public class DormitorySelectionController {
     private final LayoutService layoutService;
 
     @Autowired
-    public DormitorySelectionController(DormitoryService dormitoryService, BuildingService buildingService, RegionService regionService, TeamFavoriteDormService teamFavoriteDormService, AllocationStageService allocationStageService, AllocationRelationService allocationRelationService, TeamService teamService, AuthenticationMapper authenticationMapper, LayoutService layoutService) {
+    public DormitorySelectionController(StudentAccountService studentAccountService, DormitoryService dormitoryService, BuildingService buildingService, RegionService regionService, TeamFavoriteDormService teamFavoriteDormService, AllocationStageService allocationStageService, AllocationRelationService allocationRelationService, TeamService teamService, AuthenticationMapper authenticationMapper, LayoutService layoutService) {
+        this.studentAccountService = studentAccountService;
         this.dormitoryService = dormitoryService;
         this.buildingService = buildingService;
         this.regionService = regionService;
@@ -67,8 +69,12 @@ public class DormitorySelectionController {
         return dormitoryService.getById(dormitoryId);
     }
 
-    @PostMapping("/favor")
-    public ResponseEntity<?> favorDormitory(@RequestBody StudentAccount studentAccount, @RequestBody Dormitory dormitory, @RequestBody String token) {
+    @PostMapping("/favor2")
+    public ResponseEntity<?> favorDormitory2(@RequestBody String studentAccountId, @RequestBody Integer dormitoryId, @RequestBody String token) {
+        StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
+        Dormitory dormitory = dormitoryService.getById(dormitoryId);
+        assert studentAccount != null && dormitory != null;
+
         LoginController.checkAuthentication(authenticationMapper, token);
         // 判断是否是收藏宿舍阶段
         List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
@@ -89,8 +95,12 @@ public class DormitorySelectionController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/select")
-    public ResponseEntity<?> selectDormitory(@RequestBody StudentAccount studentAccount, @RequestBody Dormitory dormitory, @RequestBody String token) {
+    @PostMapping("/select2")
+    public ResponseEntity<?> selectDormitory2(@RequestBody String studentAccountId, @RequestBody Integer dormitoryId, @RequestBody String token) {
+        StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
+        Dormitory dormitory = dormitoryService.getById(dormitoryId);
+        assert studentAccount != null && dormitory != null;
+
         LoginController.checkAuthentication(authenticationMapper, token);
         // 判断是否是选择宿舍阶段
         List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
@@ -133,4 +143,65 @@ public class DormitorySelectionController {
         return layoutIdSet.stream().map(layoutService::getById).collect(Collectors.toList());
     }
 
+
+    @Deprecated
+    @PostMapping("/favor")
+    public ResponseEntity<?> favorDormitory(@RequestBody StudentAccount studentAccount, @RequestBody Dormitory dormitory, @RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
+        // 判断是否是收藏宿舍阶段
+        List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
+                .eq("entryYear", studentAccount.calEntryYear())
+                .eq("degree", studentAccount.calDegree())
+                .eq("gender", studentAccount.getGender()));
+        if (allocationStageList.isEmpty() || allocationStageList.get(0).getStage() != 1) {
+            throw new RuntimeException("favor dormitory failed! (wrong stage)");
+        }
+        // 收藏宿舍
+        List<TeamFavoriteDorm> teamFavoriteDormList = teamFavoriteDormService.list(new QueryWrapper<TeamFavoriteDorm>()
+                .eq("teamId", studentAccount.getTeamId())
+                .eq("dormitoryId", dormitory.getDormitoryId()));
+        if (teamFavoriteDormList.isEmpty()) {
+            TeamFavoriteDorm teamFavoriteDorm = new TeamFavoriteDorm(null, studentAccount.getTeamId(), dormitory.getDormitoryId(), dormitory);
+            teamFavoriteDormService.save(teamFavoriteDorm);
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    @Deprecated
+    @PostMapping("/select")
+    public ResponseEntity<?> selectDormitory(@RequestBody StudentAccount studentAccount, @RequestBody Dormitory dormitory, @RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
+        // 判断是否是选择宿舍阶段
+        List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
+                .eq("entryYear", studentAccount.calEntryYear())
+                .eq("degree", studentAccount.calDegree())
+                .eq("gender", studentAccount.getGender()));
+        if (allocationStageList.isEmpty() || allocationStageList.get(0).getStage() != 2) {
+            throw new RuntimeException("select dormitory failed! (wrong stage)");
+        }
+        // 判断本队是否已选宿舍
+        Team team = teamService.getById(studentAccount.getTeamId());
+        if (team.getDormitory() != null) {
+            throw new RuntimeException("select dormitory failed! (already has a dormitory)");
+        }
+        // 判断该宿舍是否已被选择
+        List<Team> teamList = teamService.list(new QueryWrapper<Team>()
+                .eq("dormitoryId", dormitory.getDormitoryId()));
+        if (!teamList.isEmpty()) {
+            throw new RuntimeException("select dormitory failed! (the dormitory is already selected)");
+        }
+        // 判断该宿舍是否能够选择
+        if (allocationRelationService.list(new QueryWrapper<AllocationRelation>()
+                .eq("entryYear", studentAccount.calEntryYear())
+                .eq("degree", studentAccount.calDegree())
+                .eq("gender", studentAccount.getGender())
+                .eq("dormitoryId", dormitory.getDormitoryId())).isEmpty()) {
+            throw new RuntimeException("select dormitory failed! (not exists this allocation)");
+        }
+        // 选择宿舍
+        team.setDormitoryId(dormitory.getDormitoryId());
+        team.setDormitory(dormitory);
+        teamService.saveOrUpdate(team);
+        return ResponseEntity.ok().build();
+    }
 }
