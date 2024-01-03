@@ -63,10 +63,11 @@
     </div>
 
     <el-row :gutter="40">
-        <el-col :span="5" v-for="(card, index) in cards" :key="index">
+        <el-col :span="5" v-for="card in layoutList" :key="card.layout_id">
             <LayoutCard
-                :image="card.image"
-                :title="card.title"
+                :id="card.layout_id"
+                :image="card.image_url"
+                :title="card.layout_name"
                 :description="card.description"
             />
         </el-col>

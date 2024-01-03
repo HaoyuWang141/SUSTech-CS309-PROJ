@@ -20,6 +20,7 @@
 
 <script setup lang="ts">
 const props = defineProps({
+    id: Number,
     image: String,
     title: String,
     description: String,

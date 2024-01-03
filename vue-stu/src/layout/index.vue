@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, watch, nextTick } from "vue";
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute, useRouter } from "vue-router";
 
 const bg_color = ref<HTMLElement | null>(null);
 const content = ref<HTMLElement | null>(null);
@@ -11,21 +11,29 @@ const updateBgHeight = () => {
     if (content.value) {
         const contentHeight = content.value.clientHeight;
         if (bg_color.value) {
-            // console.log(contentHeight);
+            console.log(contentHeight);
             bg_color.value.style.height = `${contentHeight}px`;
         }
     }
 };
 
-onMounted(updateBgHeight);
+onMounted(() => {
+    updateBgHeight();
+    if (content.value) {
+        const observer = new MutationObserver((mutations) => {
+            for (let mutation of mutations) {
+                if (mutation.type === "childList") {
+                    updateBgHeight();
+                }
+            }
+        });
 
-watch(() => route.path, () => {
-    // 确保在 DOM 更新后再计算高度
-    nextTick(updateBgHeight);
+        observer.observe(content.value, { childList: true, subtree: true });
+    }
 });
 
 function backToHome() {
-    router.push("/home")
+    router.push("/home");
 }
 </script>
 
@@ -35,9 +43,6 @@ function backToHome() {
     <div class="bg-shadow" />
     <div ref="content" class="content">
         <header class="top-bar">
-            <!-- <div class="logo">
-                <img alt="Vue logo" src="./assets/logo.png" />
-            </div> -->
             <p class="title">SUSTech Dormitory</p>
             <el-link @click.prevent="backToHome()">SUSTech Dormitory</el-link>
             <div class="labels">
