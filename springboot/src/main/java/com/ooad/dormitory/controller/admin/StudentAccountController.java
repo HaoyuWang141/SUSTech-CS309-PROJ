@@ -3,6 +3,7 @@ package com.ooad.dormitory.controller.admin;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ooad.dormitory.controller.student.LoginController;
 import com.ooad.dormitory.entity.StudentAccount;
 import com.ooad.dormitory.service.StudentAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,5 +118,10 @@ public class StudentAccountController {
         }
 
         return studentAccountService.list(queryWrapper);
+    }
+
+    @GetMapping("/getStudent")
+    public StudentAccount getStudent(String studentId) {
+        return studentAccountService.getById(studentId);
     }
 }
