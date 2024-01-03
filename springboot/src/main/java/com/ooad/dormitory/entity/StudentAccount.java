@@ -41,4 +41,8 @@ public class StudentAccount {
             return 2;
         }
     }
+
+    public Double getSimilarity(StudentAccount o) {
+        return 0.0;
+    }
 }

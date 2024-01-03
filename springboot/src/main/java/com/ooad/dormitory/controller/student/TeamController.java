@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -127,8 +128,10 @@ public class TeamController {
     @GetMapping("/getRecommendation")
     public List<StudentAccount> getRecommendation(@RequestBody StudentAccount studentAccount, @RequestBody String token) {
         LoginController.checkAuthentication(authenticationMapper, token);
-        // TODO
-        return new ArrayList<>();
+        return studentAccountService.list().stream()
+                .filter(s -> s.getTeamId() == null && !Objects.equals(studentAccount.getStudentId(), s.getStudentId()))
+                .sorted(Comparator.comparingDouble(s -> studentAccount.getSimilarity((StudentAccount) s)).reversed())
+                .collect(Collectors.toList());
     }
 
     @GetMapping("getStudent")

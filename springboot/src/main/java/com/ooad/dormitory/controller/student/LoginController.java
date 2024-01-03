@@ -28,6 +28,7 @@ public class LoginController {
         this.studentAccountMapper = studentAccountMapper;
     }
 
+    @Deprecated
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody String studentId, @RequestBody String password) {
         Authentication authentication = authenticationMapper.selectById(studentId);

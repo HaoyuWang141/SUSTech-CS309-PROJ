@@ -78,6 +78,12 @@ public class ForumController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/getComment")
+    public List<Comment> getComment(@RequestBody Integer commentId, @RequestBody String token) {
+        LoginController.checkAuthentication(authenticationMapper, token);
+        return commentService.list(new QueryWrapper<Comment>().eq("id", commentId));
+    }
+
     @GetMapping("/getComments")
     public List<Comment> getComments(@RequestBody String token) {
         LoginController.checkAuthentication(authenticationMapper, token);
