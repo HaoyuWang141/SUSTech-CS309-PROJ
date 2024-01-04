@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -203,7 +204,7 @@ public class DormitorySelectionController {
     }
 
     @GetMapping("/getStage")
-    public Integer getStage(String studentAccountId) {
+    public AllocationStage getStage(String studentAccountId) {
         StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
         if (studentAccount == null) {
             throw new NotFoundException("student account not found!");
@@ -214,9 +215,15 @@ public class DormitorySelectionController {
                 .eq("degree", studentAccount.calDegree())
                 .eq("gender", studentAccount.getGender()));
         if (allocationStageList.isEmpty()) {
-            return 0;
+            return null;
         }
-        return allocationStageList.get(0).getStage();
+        for (AllocationStage allocationStage : allocationStageList) {
+            if (allocationStage.getStartTime().compareTo(new Timestamp(System.currentTimeMillis())) < 0
+                    && allocationStage.getEndTime().compareTo(new Timestamp(System.currentTimeMillis())) > 0) {
+                return allocationStage;
+            }
+        }
+        return null;
     }
 
 
