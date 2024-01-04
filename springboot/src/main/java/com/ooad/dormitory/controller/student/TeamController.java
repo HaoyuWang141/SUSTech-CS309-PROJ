@@ -50,7 +50,9 @@ public class TeamController {
     public ResponseEntity<?> quitTeam2(@RequestBody String studentAccountId) {
         try {
             StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
-            assert studentAccount != null;
+            if (studentAccount == null) {
+                throw new BadRequestException("student account not found!");
+            }
 
             List<StudentAccount> studentAccountList = studentAccountService.list(new QueryWrapper<StudentAccount>()
                     .eq("team_id", studentAccount.getTeamId()));
@@ -67,6 +69,8 @@ public class TeamController {
                 }
             }
             return ResponseEntity.ok().build();
+        } catch (BadRequestException e) {
+            throw e;
         } catch (Exception e) {
             throw new BackEndException("quit team failed!\n" + e.getMessage());
         }
