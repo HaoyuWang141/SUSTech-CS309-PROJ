@@ -178,7 +178,7 @@ public class DormitoryManagementController {
 
     @GetMapping("/get/building")
     public List<Building> queryBuilding(Integer regionId) {
-        return buildingService.list(new QueryWrapper<Building>().eq("regionId", regionId));
+        return buildingService.list(new QueryWrapper<Building>().eq("region_id", regionId));
     }
 
     @GetMapping("/get/layout")
