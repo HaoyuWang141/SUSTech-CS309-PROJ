@@ -2,6 +2,7 @@ package com.ooad.dormitory.controller.student;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ooad.dormitory.entity.*;
+import com.ooad.dormitory.exception.BadRequestException;
 import com.ooad.dormitory.mapper.AuthenticationMapper;
 import com.ooad.dormitory.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,7 +106,7 @@ public class DormitorySelectionController {
                 .eq("degree", studentAccount.calDegree())
                 .eq("gender", studentAccount.getGender()));
         if (allocationStageList.isEmpty() || allocationStageList.get(0).getStage() != 1) {
-            throw new RuntimeException("favor dormitory failed! (wrong stage)");
+            throw new BadRequestException("favor dormitory failed! (wrong stage)");
         }
         // 收藏宿舍
         List<TeamFavoriteDorm> teamFavoriteDormList = teamFavoriteDormService.list(new QueryWrapper<TeamFavoriteDorm>()
