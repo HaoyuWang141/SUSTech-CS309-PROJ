@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class AdminNotificationController {
                                      @RequestParam(required = false) Integer degree,
                                      @RequestParam(required = false) Integer gender,
                                      String title, String content) {
-        Notification notification = new Notification(null, adminAccountId, entryYear, degree, gender, title, content, new Time(System.currentTimeMillis()));
+        Notification notification = new Notification(null, adminAccountId, entryYear, degree, gender, title, content, new Timestamp(System.currentTimeMillis()));
         notificationService.save(notification);
         return ResponseEntity.ok().build();
     }

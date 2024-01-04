@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Time;
+import java.sql.Timestamp;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,5 +21,5 @@ public class Notification {
     private Integer gender;
     private String title;
     private String content;
-    private Time publishTime;
+    private Timestamp publishTime;
 }

@@ -42,8 +42,21 @@
             <span>简介：{{ layout?.description }}</span>
         </div>
         <el-button type="primary" @click="bookmark"> 收藏至队伍 </el-button>
-        <div>
+        <div class="comment-container">
             <span>评论</span>
+            <el-form>
+                <el-form-item>
+                    <el-input
+                        v-model="newComment"
+                        placeholder="请输入评论"
+                    />
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="postComment">
+                        发布评论
+                    </el-button>
+                </el-form-item>
+            </el-form>
             <div class="comments-list">
                 <Comment
                     v-for="comment in comments"
@@ -114,37 +127,64 @@ async function fetchCommentsAndReplies(dormitory_id: number) {
         })
         .then((res) => {
             console.log(res);
-            if (res.data.code === 200) {
-                comments.value = res.data.data;
-                ElMessage.success("获取评论成功");
-            } else {
-                ElMessage.error("获取评论失败");
-            }
+            comments.value = res.data;
         })
         .then(() => {
-            comments.value.forEach((comment) => {
-                axiosInstance.get("/student/forum/getReply", {
-                    params: {
-                        commentId: comment.id,
-                    },
-                }).then((res) => {
-                    console.log(res);
-                    if (res.data.code === 200) {
-                        comment.reply_list = res.data.data;
-                        ElMessage.success("获取回复成功");
-                    } else {
-                        ElMessage.error("获取回复失败");
-                    }
+            if (comments.value.length !== 0) {
+                comments.value.forEach((comment) => {
+                    axiosInstance
+                        .get("/student/forum/getReply", {
+                            params: {
+                                commentId: comment.id,
+                            },
+                        })
+                        .then((res) => {
+                            console.log(res);
+                            comment.reply_list = res.data.data;
+                        });
                 });
-            });
+            }
         })
         .catch((err) => {
-            console.log(err);
-            ElMessage.error("获取评论失败");
+            console.error(err);
         });
 }
 
 fetchCommentsAndReplies(props.dormitory.dormitory_id);
+
+const newComment = ref("");
+
+async function postComment() {
+    // 添加发布评论的逻辑
+    console.log("发布评论");
+    if (newComment.value === "") {
+        ElMessage.error("评论不能为空");
+        return;
+    }
+    console.log(localStorage.getItem("studentId"));
+    axiosInstance
+        .post(
+            "/student/forum/launch",
+            {},
+            {
+                params: {
+                    studentAccountId: localStorage.getItem("studentId"),
+                    dormitoryId: props.dormitory.dormitory_id,
+                    content: newComment.value,
+                },
+            }
+        )
+        .then((res) => {
+            console.log(res);
+            ElMessage.success("发布成功");
+            fetchCommentsAndReplies(props.dormitory.dormitory_id);
+            newComment.value = "";
+        })
+        .catch((err) => {
+            console.error(err);
+            ElMessage.error("发布失败");
+        });
+}
 </script>
 
 <style scoped lang="less">

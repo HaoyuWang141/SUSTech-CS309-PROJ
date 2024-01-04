@@ -91,7 +91,7 @@ public class ForumController {
     }
 
     @GetMapping("/getReply")
-    public List<Comment> getReply(Integer commentId) {
-        return commentService.list(new QueryWrapper<Comment>().eq("replying_comment_id", commentId));
+    public List<Reply> getReply(Integer commentId) {
+        return replyService.list(new QueryWrapper<Reply>().eq("comment_id", commentId));
     }
 }

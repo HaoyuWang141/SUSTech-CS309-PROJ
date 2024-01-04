@@ -135,9 +135,7 @@ async function fetchDorms() {
                 },
             }
         );
-        console.log(response.data);
         dormitoryList.value = response.data;
-        console.log(dormitoryList.value);
     } catch (error) {
         console.error(error);
     }

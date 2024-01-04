@@ -143,7 +143,7 @@ CREATE TABLE notification
     gender       INT, -- 0:女, 1:男
     title        TEXT,
     content      TEXT,
-    publish_time TIME,
+    publish_time TIMESTAMP,
     FOREIGN KEY (publisher_id) REFERENCES admin_account (account_id)
 );
 
