@@ -69,7 +69,7 @@ CREATE TABLE team
 (
     team_id      SERIAL PRIMARY KEY,
     dormitory_id INT,
-    owner_id VARCHAR,
+    owner_id     VARCHAR,
     FOREIGN KEY (dormitory_id) REFERENCES dormitory (dormitory_id)
 );
 
@@ -105,63 +105,65 @@ CREATE TABLE team_favorite_dorm
 
 CREATE TABLE allocation_relation
 (
-    id              SERIAL PRIMARY KEY,
-    entry_year      INT, -- eg: 2019
-    degree          INT, -- 0:本科, 1:硕士, 2:博士
-    gender          INT, -- 0:女, 1:男
-    dormitory_id    INT,
+    id           SERIAL PRIMARY KEY,
+    entry_year   INT, -- eg: 2019
+    degree       INT, -- 0:本科, 1:硕士, 2:博士
+    gender       INT, -- 0:女, 1:男
+    dormitory_id INT,
     UNIQUE (entry_year, degree, gender, dormitory_id)
 );
 
 CREATE TABLE allocation_stage
 (
-    id          SERIAL PRIMARY KEY,
-    entry_year  INT, -- eg: 2019
-    degree      INT, -- 0:本科, 1:硕士, 2:博士
-    gender      INT, -- 0:女, 1:男
-    stage       INT NOT NULL, -- 0:组队阶段, 1:收藏阶段, 2:正选阶段, 3:结束阶段
-    UNIQUE (entry_year, degree, gender)
+    id         SERIAL PRIMARY KEY,
+    entry_year INT,          -- eg: 2019
+    degree     INT,          -- 0:本科, 1:硕士, 2:博士
+    gender     INT,          -- 0:女, 1:男
+    stage      INT NOT NULL, -- 0:组队阶段, 1:收藏阶段, 2:正选阶段, 3:结束阶段
+    startTime  TIMESTAMP,
+    endTime    TIMESTAMP,
+    UNIQUE (entry_year, degree, gender, stage)
 );
 
 CREATE TABLE invitation
 (
-    id           SERIAL PRIMARY KEY,
-    inviter_id   VARCHAR,
-    invitee_id   VARCHAR,
-    time         TIMESTAMP
+    id         SERIAL PRIMARY KEY,
+    inviter_id VARCHAR,
+    invitee_id VARCHAR,
+    time       TIMESTAMP
 );
 
 CREATE TABLE notification
 (
-    id              SERIAL PRIMARY KEY,
-    publisher_id    INT,
-    entry_year      INT, -- eg: 2019
-    degree          INT, -- 0:本科, 1:硕士, 2:博士
-    gender          INT, -- 0:女, 1:男
-    title           TEXT,
-    content         TEXT,
-    publish_time    TIME,
+    id           SERIAL PRIMARY KEY,
+    publisher_id INT,
+    entry_year   INT, -- eg: 2019
+    degree       INT, -- 0:本科, 1:硕士, 2:博士
+    gender       INT, -- 0:女, 1:男
+    title        TEXT,
+    content      TEXT,
+    publish_time TIME,
     FOREIGN KEY (publisher_id) REFERENCES admin_account (account_id)
 );
 
 CREATE TABLE comment
 (
-    id              SERIAL PRIMARY KEY,
-    publisher_id    VARCHAR(20),
-    replying_comment_id     INT,  -- 该评论回复的评论的id
-    dormitory_id    INT,
-    content         TEXT,
-    publish_time    TIME,
+    id                  SERIAL PRIMARY KEY,
+    publisher_id        VARCHAR(20),
+    replying_comment_id INT, -- 该评论回复的评论的id
+    dormitory_id        INT,
+    content             TEXT,
+    publish_time        TIME,
     FOREIGN KEY (publisher_id) REFERENCES student_account (student_id),
     FOREIGN KEY (dormitory_id) REFERENCES dormitory (dormitory_id)
 );
 
 CREATE TABLE authentication
 (
-    student_id VARCHAR PRIMARY KEY,
-    student_password VARCHAR(100),
-    token VARCHAR(100),
+    student_id         VARCHAR PRIMARY KEY,
+    student_password   VARCHAR(100),
+    token              VARCHAR(100),
     token_failure_time TIME,
-    online_amount INT, -- 该账户已在线设备数
+    online_amount      INT, -- 该账户已在线设备数
     FOREIGN KEY (student_id) REFERENCES student_account (student_id)
 );

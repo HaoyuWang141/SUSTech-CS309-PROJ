@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,20 +45,20 @@ public class DormitoryAllocationController {
         QueryWrapper<AllocationRelation> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("entry_year", entryYear).eq("degree", degree).eq("gender", gender);
         List<AllocationRelation> allocationRelationList = allocationRelationService.list(queryWrapper);
-        List<Integer> dormitoryList = new ArrayList<>();
+        List<Integer> dormitoryIdList = new ArrayList<>();
         for (AllocationRelation allocationRelation : allocationRelationList) {
-            dormitoryList.add(allocationRelation.getDormitoryId());
+            dormitoryIdList.add(allocationRelation.getDormitoryId());
         }
-        return dormitoryList;
+        return dormitoryIdList;
     }
 
     @PostMapping("/setState")
     @Operation(summary = "dormitory allocation", description = "0:组队阶段, 1:收藏阶段, 2:正选阶段, 3:结束阶段")
-    public ResponseEntity<?> setState(Integer entryYear, Integer degree, Integer gender, Integer state) {
+    public ResponseEntity<?> setState(Integer entryYear, Integer degree, Integer gender, Integer state, Timestamp startTime, Timestamp endTime) {
         List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
                 .eq("entry_year", entryYear).eq("degree", degree).eq("gender", gender));
         if (allocationStageList.isEmpty()) {
-            AllocationStage allocationStage = new AllocationStage(null, entryYear, degree, gender, state);
+            AllocationStage allocationStage = new AllocationStage(null, entryYear, degree, gender, state, startTime, endTime);
             allocationStageService.save(allocationStage);
         } else {
             AllocationStage allocationStage = allocationStageList.get(0);
@@ -65,5 +66,13 @@ public class DormitoryAllocationController {
             allocationStageService.saveOrUpdate(allocationStage);
         }
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/getState")
+    @Operation(summary = "dormitory allocation", description = "0:组队阶段, 1:收藏阶段, 2:正选阶段, 3:结束阶段")
+    public List<AllocationStage> getState(Integer entryYear, Integer degree, Integer gender) {
+        QueryWrapper<AllocationStage> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("entry_year", entryYear).eq("degree", degree).eq("gender", gender);
+        return allocationStageService.list(queryWrapper);
     }
 }

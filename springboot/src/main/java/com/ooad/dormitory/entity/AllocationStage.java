@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -16,4 +18,6 @@ public class AllocationStage {
     private Integer degree;
     private Integer gender;
     private Integer stage;
+    private Timestamp startTime;
+    private Timestamp endTime;
 }

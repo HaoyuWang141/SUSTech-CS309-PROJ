@@ -44,7 +44,13 @@
         <el-button type="primary" @click="bookmark"> 收藏至队伍 </el-button>
         <div>
             <span>评论</span>
-            
+            <div class="comments-list">
+                <Comment
+                    v-for="comment in comments"
+                    :key="comment.id"
+                    :comment="comment"
+                />
+            </div>
         </div>
     </el-dialog>
 </template>
@@ -54,6 +60,7 @@ import { ref, PropType, computed } from "vue";
 import { Dormitory, Layout } from "@/types/globalTypes";
 import axiosInstance from "@/axios/axiosConfig";
 import { ElMessage } from "element-plus";
+import Comment from "./comment.vue";
 
 const props = defineProps({
     dormitory: {
@@ -91,6 +98,48 @@ async function bookmark() {
         .catch((err) => {
             console.log(err);
             ElMessage.error("收藏失败");
+        });
+}
+
+interface ReplyType {
+    id: number;
+    publisher_id: number;
+    content: string;
+    publish_time: string;
+    dormitory_id: number;
+}
+
+interface CommentType {
+    id: number;
+    publisher_id: number;
+    content: string;
+    publish_time: string;
+    dormitory_id: number;
+    reply_list: ReplyType[];
+}
+
+const comments = ref<CommentType[]>([]);
+
+async function fetchComments(dormitory_id: number) {
+    // 添加获取评论的逻辑
+    console.log("获取评论");
+    axiosInstance
+        .get("/student/forum/getCommentsByDormitory", {
+            params: {
+                dormitory_id: dormitory_id,
+            },
+        })
+        .then((res) => {
+            console.log(res);
+            if (res.data.code === 200) {
+                comments.value = res.data.data;
+            } else {
+                ElMessage.error("获取评论失败");
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            ElMessage.error("获取评论失败");
         });
 }
 </script>
