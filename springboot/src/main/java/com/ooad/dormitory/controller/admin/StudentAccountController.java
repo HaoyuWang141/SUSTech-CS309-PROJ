@@ -64,6 +64,7 @@ public class StudentAccountController {
 
         for (String studentId : studentIdList) {
             try {
+                authenticationMapper.deleteById(studentId);
                 if (studentAccountService.removeById(studentId)) {
                     successCount++;
                 }
