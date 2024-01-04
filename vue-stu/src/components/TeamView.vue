@@ -2,6 +2,7 @@
 import {onMounted, reactive, ref} from "vue";
 import axiosInstance from "@/axios/axiosConfig";
 import {HomeFilled} from "@element-plus/icons-vue"
+import {ElMessage} from "element-plus";
 
 const teammates = ref([]);
 const invitationList = ref([]);
@@ -27,6 +28,11 @@ async function invite() {
         ).then(response => {
             console.log("invite() ->")
             console.log(response)
+            inviteDialogVisible.value = false
+            ElMessage({
+                message: '邀请成功',
+                type: 'success',
+            })
         })
     } catch (error) {
         console.error(error);
@@ -46,6 +52,9 @@ async function acceptInvitation(index: number) {
         ).then(response => {
             console.log("TeamView: acceptInvitation() ->")
             console.log(response)
+            invitationListVisible.value = false
+            invitationList.value = []
+            updateTeamMembers()
         })
     } catch (error) {
         console.log(error)
@@ -96,10 +105,16 @@ async function quitTeam() {
     try {
         await axiosInstance.post(
             "/student/team/quitTeam2",
-            localStorage.getItem("studentId"),
+            {},
+            {
+                params: {
+                    studentAccountId: localStorage.getItem("studentId")
+                }
+            }
         ).then(response => {
             console.log("TeamView quitTeam() ->")
             console.log(response)
+            updateTeamMembers()
         })
     } catch (error) {
         console.log(error)

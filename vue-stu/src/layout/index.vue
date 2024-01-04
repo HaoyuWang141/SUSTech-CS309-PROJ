@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted, ref, watch, nextTick} from "vue";
+import {onMounted, ref, watch, nextTick, reactive} from "vue";
 import {useRoute, useRouter} from "vue-router";
 
 const bg_color = ref<HTMLElement | null>(null);
@@ -36,12 +36,15 @@ function backToHome() {
 }
 
 function showLogOut() {
+    console.log(localStorage.getItem('studentId') != undefined)
     return localStorage.getItem('studentId') != undefined
 }
 
 function logout() {
     localStorage.removeItem("studentId")
+    localStorage.removeItem("currentTeam")
     router.push("/welcome")
+    console.log(localStorage.getItem('studentId') != null)
 }
 </script>
 
@@ -52,18 +55,38 @@ function logout() {
   <div class="bg-shadow"/>
   <div ref="content" class="content">
     <header class="top-bar">
-      <el-button @click="backToHome"
-                 link
-                 style="font-size: 30px; font-weight: bold; color: #13ce66">
-        SUSTech Dormitory
-      </el-button>
-      <div class="labels">
-        <el-button type="danger"
-                   v-show="showLogOut()"
-                   @click="logout()">
-          登出
-        </el-button>
-      </div>
+<!--      <el-row style="width: 100%">-->
+<!--        <el-col :span="6">-->
+          <el-button @click="backToHome"
+                     link
+                     style="font-size: 30px; font-weight: bold; color: #13ce66; align-items: center">
+            SUSTech Dormitory
+          </el-button>
+<!--        </el-col>-->
+<!--        <el-col style="align-items: center;"-->
+<!--                :span="12">-->
+          <div class="steps-container">
+            <el-steps align-center
+                      :active="2"
+                      class="stages">
+              <el-step title="111"></el-step>
+              <el-step title="222"></el-step>
+              <el-step title="333"></el-step>
+              <el-step title="444"></el-step>
+            </el-steps>
+          </div>
+<!--        </el-col>-->
+<!--        <el-col style="display: flex; flex-direction: row-reverse; align-items: center"-->
+<!--                :span="6">-->
+          <div class="labels">
+            <el-button type="danger"
+                       v-show="showLogOut()"
+                       @click="logout()">
+              登出
+            </el-button>
+          </div>
+<!--        </el-col>-->
+<!--      </el-row>-->
     </header>
     <main>
       <RouterView/>
@@ -142,5 +165,26 @@ function logout() {
     margin-left: auto;
     margin-right: 1rem;
   }
+
+  .steps-container {
+    width: 50%;
+    padding-top: 20px;
+    margin: 0 120px;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 24px;
+    backdrop-filter: blur(5px);
+  }
+}
+
+/deep/ .el-step__title.is-finish {
+  color: #13ce66 !important;
+  border-color: #13ce66;
+  font-weight: bold;
+}
+
+/deep/ .el-step__title.is-process {
+  color: #13ce66 !important;
+  border-color: #13ce66;
+  font-weight: bold;
 }
 </style>

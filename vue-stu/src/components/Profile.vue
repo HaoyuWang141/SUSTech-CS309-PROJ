@@ -138,9 +138,9 @@ onMounted(() => {
           <el-form-item label="学号">
             <span>{{ student.student_id }}</span>
           </el-form-item>
-          <el-form-item label="书院">
-            <span>{{ student.college }}</span>
-          </el-form-item>
+<!--          <el-form-item label="书院">-->
+<!--            <span>{{ student.college }}</span>-->
+<!--          </el-form-item>-->
         </el-form>
       </div>
       <el-button @click="getStudentInfo()">get</el-button>
