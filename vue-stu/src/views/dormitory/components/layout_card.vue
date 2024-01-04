@@ -107,6 +107,7 @@ interface ReplyType {
     content: string;
     publish_time: string;
     dormitory_id: number;
+    replying_comment_id: number | null;
 }
 
 interface CommentType {
@@ -132,7 +133,39 @@ async function fetchComments(dormitory_id: number) {
         .then((res) => {
             console.log(res);
             if (res.data.code === 200) {
-                comments.value = res.data.data;
+                var raw_comment_list: ReplyType[] = res.data.data;
+                // 创建一个临时映射来存储评论ID到评论对象的映射
+                const commentMap = new Map<number, CommentType>();
+
+                raw_comment_list.forEach((reply) => {
+                    if (reply.replying_comment_id === null) {
+                        // 如果 reply.replying_comment_id 为 null，它是一个主评论
+                        commentMap.set(reply.id, {
+                            ...reply,
+                            reply_list: [],
+                        });
+                    }
+                });
+                raw_comment_list.forEach((reply) => {
+                    if (reply.replying_comment_id === null) {
+                        // 如果 reply.replying_comment_id 为 null，它是一个主评论
+                        commentMap.set(reply.id, {
+                            ...reply,
+                            reply_list: [],
+                        });
+                    } else {
+                        // 否则，它是一个回复
+                        const comment = commentMap.get(
+                            reply.replying_comment_id
+                        );
+                        if (comment) {
+                            comment.reply_list.push(reply);
+                        }
+                    }
+                });
+
+                // 设置评论数组为映射中的值
+                comments.value = Array.from(commentMap.values());
             } else {
                 ElMessage.error("获取评论失败");
             }
@@ -142,6 +175,8 @@ async function fetchComments(dormitory_id: number) {
             ElMessage.error("获取评论失败");
         });
 }
+
+fetchComments(props.dormitory.dormitory_id);
 </script>
 
 <style scoped lang="less">

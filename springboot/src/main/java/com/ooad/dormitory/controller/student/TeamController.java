@@ -56,36 +56,22 @@ public class TeamController {
                 throw new BadRequestException("student account not found!");
             }
 
+            Integer teamId = studentAccount.getTeamId();
+
             List<StudentAccount> studentAccountList = studentAccountService.list(new QueryWrapper<StudentAccount>()
-                    .eq("team_id", studentAccount.getTeamId()));
+                    .eq("team_id", teamId));
             if (studentAccountList.size() > 2) {
-                studentAccount.setTeamId(null);
-                studentAccount.setTeam(null);
-//                studentAccountService.saveOrUpdate(studentAccount);
-                studentAccountService.update(studentAccount, new UpdateWrapper<StudentAccount>()
-                        .eq("student_id", studentAccount.getStudentId()));
-            }
-            else if (studentAccountList.size() == 2) {
+                studentAccountService.update(new UpdateWrapper<StudentAccount>()
+                        .eq("student_id", studentAccount.getStudentId())
+                        .set("team_id", null));
+            } else {
                 for (StudentAccount each : studentAccountList) {
-                    each.setTeamId(null);
-                    each.setTeam(null);
-//                    studentAccountService.saveOrUpdate(each);
-                    studentAccountService.update(each, new UpdateWrapper<StudentAccount>()
-                            .eq("student_id", each.getStudentId()));
+                    studentAccountService.update(new UpdateWrapper<StudentAccount>()
+                            .eq("student_id", each.getStudentId())
+                            .set("team_id", null));
                 }
+                teamService.removeById(teamId);
             }
-
-//            List<StudentAccount> studentAccountList = studentAccountService.list(new UpdateWrapper<StudentAccount>()
-//                    .eq("team_id", studentAccount.getTeamId()));
-//            if (studentAccountList.size() > 2) {
-//                // 设置更新字段
-//                StudentAccount updateEntity = new StudentAccount();
-//                updateEntity.setTeamId(null);
-//                updateEntity.setTeam(null);
-//                // 执行更新
-//                studentAccountService.update(updateEntity, updateWrapper);
-//            }
-
             return ResponseEntity.ok().build();
 
         } catch (BadRequestException e) {
@@ -110,7 +96,7 @@ public class TeamController {
     public ResponseEntity<?> invite2(String inviterId, String inviteeId) {
         StudentAccount inviter = studentAccountService.getById(inviterId);
         StudentAccount invitee = studentAccountService.getById(inviteeId);
-        if( inviter == null || invitee == null) {
+        if (inviter == null || invitee == null) {
             throw new RuntimeException("inviter or invitee not found!");
         }
 
@@ -200,31 +186,30 @@ public class TeamController {
     }
 
     @GetMapping("getStudent")
-    public StudentAccount getStudent(String studentId ) {
-         
+    public StudentAccount getStudent(String studentId) {
+
         return studentAccountService.getById(studentId);
     }
 
 
     @Deprecated
     @GetMapping("/getTeam")
-    public List<StudentAccount> getTeam(@RequestBody StudentAccount studentAccount ) {
-         
+    public List<StudentAccount> getTeam(@RequestBody StudentAccount studentAccount) {
+
         return studentAccountService.list(new QueryWrapper<StudentAccount>().eq("team_id", studentAccount.getTeamId()));
     }
 
     @Deprecated
     @PostMapping("/quitTeam")
-    public ResponseEntity<?> quitTeam(@RequestBody StudentAccount studentAccount ) {
-         
+    public ResponseEntity<?> quitTeam(@RequestBody StudentAccount studentAccount) {
+
         List<StudentAccount> studentAccountList = studentAccountService.list(new QueryWrapper<StudentAccount>()
                 .eq("team_id", studentAccount.getTeamId()));
         if (studentAccountList.size() > 2) {
             studentAccount.setTeamId(null);
             studentAccount.setTeam(null);
             studentAccountService.saveOrUpdate(studentAccount);
-        }
-        else if (studentAccountList.size() == 2) {
+        } else if (studentAccountList.size() == 2) {
             for (StudentAccount each : studentAccountList) {
                 each.setTeamId(null);
                 each.setTeam(null);
@@ -236,14 +221,14 @@ public class TeamController {
 
     @Deprecated
     @GetMapping("/getInvitations")
-    public List<Invitation> getInvitations(@RequestBody StudentAccount studentAccount ) {
+    public List<Invitation> getInvitations(@RequestBody StudentAccount studentAccount) {
         return invitationService.list(new QueryWrapper<Invitation>().eq("invitee_id", studentAccount.getStudentId()));
     }
 
     @Deprecated
     @PostMapping("/invite")
-    public ResponseEntity<?> invite(@RequestBody StudentAccount inviter, @RequestBody StudentAccount invitee ) {
-         
+    public ResponseEntity<?> invite(@RequestBody StudentAccount inviter, @RequestBody StudentAccount invitee) {
+
         if (!Objects.equals(inviter.calEntryYear(), invitee.calEntryYear())
                 || !Objects.equals(inviter.calDegree(), invitee.calDegree())
                 || !Objects.equals(inviter.getGender(), invitee.getGender())
@@ -257,8 +242,8 @@ public class TeamController {
 
     @Deprecated
     @PostMapping("/accept")
-    public ResponseEntity<?> accept(@RequestBody Invitation invitation ) {
-         
+    public ResponseEntity<?> accept(@RequestBody Invitation invitation) {
+
         StudentAccount inviter = invitation.getInviter();
         StudentAccount invitee = invitation.getInvitee();
         if (invitee.getTeam() != null) {
@@ -277,8 +262,8 @@ public class TeamController {
 
     @Deprecated
     @GetMapping("/getRecommendation")
-    public List<StudentAccount> getRecommendation(@RequestBody StudentAccount studentAccount ) {
-         
+    public List<StudentAccount> getRecommendation(@RequestBody StudentAccount studentAccount) {
+
         return studentAccountService.list().stream()
                 .filter(s -> s.getTeamId() == null && !Objects.equals(studentAccount.getStudentId(), s.getStudentId()))
                 .sorted(Comparator.comparingDouble(s -> studentAccount.calSimilarity((StudentAccount) s)).reversed())
