@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ooad.dormitory.entity.Invitation;
 import com.ooad.dormitory.entity.StudentAccount;
 import com.ooad.dormitory.entity.Team;
+import com.ooad.dormitory.exception.BackEndException;
+import com.ooad.dormitory.exception.BadRequestException;
 import com.ooad.dormitory.mapper.AuthenticationMapper;
 import com.ooad.dormitory.service.InvitationService;
 import com.ooad.dormitory.service.StudentAccountService;
@@ -95,23 +97,29 @@ public class TeamController {
 
     @PostMapping("/accept2")
     public ResponseEntity<?> accept2(Integer invitationId) {
-        Invitation invitation = invitationService.getById(invitationId);
-        assert invitation != null;
+        try {
+            Invitation invitation = invitationService.getById(invitationId);
+            assert invitation != null;
 
-        StudentAccount inviter = invitation.getInviter();
-        StudentAccount invitee = invitation.getInvitee();
-        if (invitee.getTeam() != null) {
-            throw new RuntimeException("accept invitation failed! (invitee already has a team)");
+            StudentAccount inviter = invitation.getInviter();
+            StudentAccount invitee = invitation.getInvitee();
+            if (invitee.getTeam() != null) {
+                throw new BadRequestException("accept invitation failed! (invitee already has a team)");
+            }
+            if (inviter.getTeam() == null) {
+                inviter.setTeam(new Team());
+                inviter.setTeamId(inviter.getTeam().getTeamId());
+                studentAccountService.saveOrUpdate(inviter);
+            }
+            invitee.setTeamId(inviter.getTeamId());
+            invitee.setTeam(inviter.getTeam());
+            studentAccountService.saveOrUpdate(invitee);
+            return ResponseEntity.ok().build();
+        } catch (BadRequestException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BackEndException("accept invitation failed!\n" + e.getMessage());
         }
-        if (inviter.getTeam() == null) {
-            inviter.setTeam(new Team());
-            inviter.setTeamId(inviter.getTeam().getTeamId());
-            studentAccountService.saveOrUpdate(inviter);
-        }
-        invitee.setTeamId(inviter.getTeamId());
-        invitee.setTeam(inviter.getTeam());
-        studentAccountService.saveOrUpdate(invitee);
-        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/getStudents")
