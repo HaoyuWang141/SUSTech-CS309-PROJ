@@ -25,6 +25,7 @@ export const useAuthStore = defineStore("auth", {
                         "Authorization"
                     ] = `Bearer ${this.token}`;
                     this.studentId = studentId;
+                    localStorage.setItem("studentId",studentId.toString())
                 })
                 .then(() => {
                     axiosInstance.get("/hello").then((response) => {

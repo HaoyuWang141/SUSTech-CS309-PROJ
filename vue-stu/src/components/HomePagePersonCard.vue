@@ -1,23 +1,56 @@
 <script setup>
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
+import {User} from "@element-plus/icons-vue"
+import axiosInstance from "@/axios/axiosConfig";
+
 
 const router = useRouter();
-const name = ref("xingming");
-const sid = ref("12010000");
-const college = ref("shude");
+const name = ref("");
+const sid = ref("");
+const gender = ref(1);
 const major = ref("CS");
 
 function goProfile() {
     router.push("profile");
 }
+
+async function getSelfInfo() {
+    try {
+        console.log("Current student: "+localStorage.getItem("studentId"))
+        await axiosInstance.get(
+            "/admin/studentAccount/getStudent",
+            {
+                params: {
+                    studentId: localStorage.getItem("studentId"),
+                },
+            }
+        ).then(response => {
+            console.log("getSelfInfo() -> ")
+            console.log(response)
+            name.value = response.data.name
+            sid.value = response.data.student_id
+        })
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+onMounted(() => {
+    getSelfInfo()
+})
 </script>
 
 <template>
   <el-card class="simple-person-card">
     <template #header>
       <div class="simple-card-header">
-        <span>个人信息</span>
+        <el-icon>
+          <User/>
+        </el-icon>
+        <span>
+          个人信息
+        </span>
       </div>
     </template>
     <div class="simple-card-body">
@@ -34,8 +67,8 @@ function goProfile() {
           <span>{{ sid }}</span>
         </el-row>
         <el-row style="margin-bottom: 10px">
-          <span>书院：</span>
-          <span>{{ college }}</span>
+          <span>性别：</span>
+          <span>{{ gender === 1 ? "男" : "女" }}</span>
         </el-row>
         <el-row style="margin-bottom: 10px">
           <span>专业：</span>
@@ -74,9 +107,7 @@ function goProfile() {
 
 .simple-card-left {
     margin-right: 10%;
-    //display: flex;
-    //flex-direction: column;
-    width: 20%;
+//display: flex; //flex-direction: column; width: 20%;
 }
 
 .simple-card-right {

@@ -1,12 +1,11 @@
-
 <script setup lang="ts">
-import {reactive, ref} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import type {CSSProperties} from "vue";
 import axiosInstance from "@/axios/axiosConfig";
 
 const student = ref({
-    name: "王浩羽",
-    studentId: "11910000",
+    name: "",
+    student_id: "",
     gender: 1,
     photoUrl: "string",
     college: "树德",
@@ -85,18 +84,18 @@ const editInfoForm = ref({
 })
 
 async function confirmEdit() {
-    try{
+    try {
         console.log(editInfoForm.value.wakeUpTime)
         await axiosInstance.post(
             "student/profile/set2",
             {
-                studentAccountId: "11911612",
+                studentAccountId: localStorage.getItem("studentId"),
                 token: "tokentokentoken"
             },
             {
                 params: editInfoForm.value,
             },
-        ).then(response =>{
+        ).then(response => {
             console.log(response)
             showEditInfo.value = false
         })
@@ -111,12 +110,12 @@ async function getStudentInfo() {
             "admin/studentAccount/getStudent",
             {
                 params: {
-                    studentId: "11911612",
+                    studentId: localStorage.getItem("studentId"),
                 },
             },
         ).then(response => {
                 student.value = response.data
-                console.log("getStudentInfo() success")
+                console.log("Profile: getStudentInfo() ->")
                 console.log(response)
             }
         )
@@ -138,6 +137,10 @@ async function createStudentInfo() {
         console.log(error)
     }
 }
+
+onMounted(() => {
+    getStudentInfo()
+})
 </script>
 
 <template>
@@ -157,7 +160,7 @@ async function createStudentInfo() {
             <span>{{ student.gender === 1 ? "男" : "女" }}</span>
           </el-form-item>
           <el-form-item label="学号">
-            <span>{{ student.studentId }}</span>
+            <span>{{ student.student_id }}</span>
           </el-form-item>
           <el-form-item label="书院">
             <span>{{ student.college }}</span>

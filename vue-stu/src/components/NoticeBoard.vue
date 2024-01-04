@@ -1,9 +1,9 @@
 <script setup>
 import {onMounted, ref} from "vue";
 import axiosInstance from "@/axios/axiosConfig";
+import {Notification} from "@element-plus/icons-vue"
 
 const notices = ref([
-    {content:"weijiazai"},
 ])
 // const currentNoticeIndex = ref(0)
 // const currentNotice = ref(notices.value[currentNoticeIndex.value])
@@ -14,10 +14,11 @@ async function getNotifications() {
             "/student/notification/get2",
             {
                 params: {
-                    studentAccountId: "11911612",
+                    studentAccountId: localStorage.getItem("studentId"),
                 },
             }
         ).then(response => {
+            console.log("getNotification() ->")
             console.log(response)
             notices.value = response.data
         })
@@ -27,7 +28,6 @@ async function getNotifications() {
 }
 
 onMounted(() => {
-    // 在组件被挂载后调用getNotifications()
     getNotifications();
 });
 </script>
@@ -36,6 +36,7 @@ onMounted(() => {
   <el-card class="notice-board-card">
     <template #header>
       <div class="notice-board-header">
+        <el-icon><Notification /></el-icon>
         <span>通知公告</span>
       </div>
     </template>
