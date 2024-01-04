@@ -2,6 +2,7 @@ package com.ooad.dormitory.controller.student;
 
 import com.ooad.dormitory.entity.Authentication;
 import com.ooad.dormitory.entity.StudentAccount;
+import com.ooad.dormitory.exception.BackEndException;
 import com.ooad.dormitory.mapper.AuthenticationMapper;
 import com.ooad.dormitory.mapper.StudentAccountMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class LoginController {
             return ResponseEntity.ok(token);
         }
         else {
-            throw new RuntimeException("login failed!");
+            throw new BackEndException("login failed!");
         }
     }
 

@@ -3,6 +3,7 @@ package com.ooad.dormitory.controller.student;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ooad.dormitory.entity.Comment;
 import com.ooad.dormitory.entity.StudentAccount;
+import com.ooad.dormitory.exception.BackEndException;
 import com.ooad.dormitory.mapper.AuthenticationMapper;
 import com.ooad.dormitory.service.CommentService;
 import com.ooad.dormitory.service.DormitoryService;
@@ -37,7 +38,6 @@ public class ForumController {
         StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
         assert studentAccount != null;
 
-
         try {
             Comment comment = new Comment();
             comment.setPublisherId(studentAccount.getStudentId());
@@ -55,7 +55,7 @@ public class ForumController {
             comment.setPublishTime(new java.sql.Time(System.currentTimeMillis()));
             commentService.save(comment);
         } catch (Exception e) {
-            throw new RuntimeException("launch comment failed!");
+            throw new BackEndException("launch comment failed!");
         }
         return ResponseEntity.ok().build();
     }
@@ -79,7 +79,7 @@ public class ForumController {
             comment.setPublishTime(new java.sql.Time(System.currentTimeMillis()));
             commentService.save(comment);
         } catch (Exception e) {
-            throw new RuntimeException("reply comment failed!");
+            throw new BackEndException("reply comment failed!");
         }
         return ResponseEntity.ok().build();
     }
@@ -140,7 +140,7 @@ public class ForumController {
             comment.setPublishTime(new java.sql.Time(System.currentTimeMillis()));
             commentService.save(comment);
         } catch (Exception e) {
-            throw new RuntimeException("launch comment failed!");
+            throw new BackEndException("launch comment failed!");
         }
         return ResponseEntity.ok().build();
     }
@@ -162,7 +162,7 @@ public class ForumController {
             comment.setPublishTime(new java.sql.Time(System.currentTimeMillis()));
             commentService.save(comment);
         } catch (Exception e) {
-            throw new RuntimeException("reply comment failed!");
+            throw new BackEndException("reply comment failed!");
         }
         return ResponseEntity.ok().build();
     }

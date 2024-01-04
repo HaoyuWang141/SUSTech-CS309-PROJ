@@ -3,6 +3,7 @@ package com.ooad.dormitory.controller.student;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ooad.dormitory.entity.*;
 import com.ooad.dormitory.exception.BadRequestException;
+import com.ooad.dormitory.exception.NotFoundException;
 import com.ooad.dormitory.mapper.AuthenticationMapper;
 import com.ooad.dormitory.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,7 +142,7 @@ public class DormitorySelectionController {
                 .eq("degree", studentAccount.calDegree())
                 .eq("gender", studentAccount.getGender()));
         if (allocationStageList.isEmpty() || allocationStageList.get(0).getStage() != 2) {
-            throw new RuntimeException("select dormitory failed! (wrong stage)");
+            throw new BadRequestException("select dormitory failed! (wrong stage)");
         }
 
         // 判断本队是否已选宿舍
@@ -154,14 +155,14 @@ public class DormitorySelectionController {
             redisTemplate.opsForValue().set(teamKey, team);
         }
         if (team.getDormitory() != null) {
-            throw new RuntimeException("select dormitory failed! (already has a dormitory)");
+            throw new BadRequestException("select dormitory failed! (already has a dormitory)");
         }
 
         // 判断该宿舍是否已被选择
         List<Team> teamList = teamService.list(new QueryWrapper<Team>()
                 .eq("dormitory_id", dormitory.getDormitoryId()));
         if (!teamList.isEmpty()) {
-            throw new RuntimeException("select dormitory failed! (the dormitory is already selected)");
+            throw new BadRequestException("select dormitory failed! (the dormitory is already selected)");
         }
         // 判断该宿舍是否能够选择
         if (allocationRelationService.list(new QueryWrapper<AllocationRelation>()
@@ -169,7 +170,7 @@ public class DormitorySelectionController {
                 .eq("degree", studentAccount.calDegree())
                 .eq("gender", studentAccount.getGender())
                 .eq("dormitory_id", dormitory.getDormitoryId())).isEmpty()) {
-            throw new RuntimeException("select dormitory failed! (not exists this allocation)");
+            throw new BadRequestException("select dormitory failed! (not exists this allocation)");
         }
         // 选择宿舍
         team.setDormitoryId(dormitory.getDormitoryId());
@@ -205,7 +206,7 @@ public class DormitorySelectionController {
                 .eq("degree", studentAccount.calDegree())
                 .eq("gender", studentAccount.getGender()));
         if (allocationStageList.isEmpty() || allocationStageList.get(0).getStage() != 1) {
-            throw new RuntimeException("favor dormitory failed! (wrong stage)");
+            throw new BadRequestException("favor dormitory failed! (wrong stage)");
         }
         // 收藏宿舍
         List<TeamFavoriteDorm> teamFavoriteDormList = teamFavoriteDormService.list(new QueryWrapper<TeamFavoriteDorm>()
@@ -228,18 +229,18 @@ public class DormitorySelectionController {
                 .eq("degree", studentAccount.calDegree())
                 .eq("gender", studentAccount.getGender()));
         if (allocationStageList.isEmpty() || allocationStageList.get(0).getStage() != 2) {
-            throw new RuntimeException("select dormitory failed! (wrong stage)");
+            throw new BadRequestException("select dormitory failed! (wrong stage)");
         }
         // 判断本队是否已选宿舍
         Team team = teamService.getById(studentAccount.getTeamId());
         if (team.getDormitory() != null) {
-            throw new RuntimeException("select dormitory failed! (already has a dormitory)");
+            throw new BadRequestException("select dormitory failed! (already has a dormitory)");
         }
         // 判断该宿舍是否已被选择
         List<Team> teamList = teamService.list(new QueryWrapper<Team>()
                 .eq("dormitory_id", dormitory.getDormitoryId()));
         if (!teamList.isEmpty()) {
-            throw new RuntimeException("select dormitory failed! (the dormitory is already selected)");
+            throw new BadRequestException("select dormitory failed! (the dormitory is already selected)");
         }
         // 判断该宿舍是否能够选择
         if (allocationRelationService.list(new QueryWrapper<AllocationRelation>()
@@ -247,7 +248,7 @@ public class DormitorySelectionController {
                 .eq("degree", studentAccount.calDegree())
                 .eq("gender", studentAccount.getGender())
                 .eq("dormitory_id", dormitory.getDormitoryId())).isEmpty()) {
-            throw new RuntimeException("select dormitory failed! (not exists this allocation)");
+            throw new BadRequestException("select dormitory failed! (not exists this allocation)");
         }
         // 选择宿舍
         team.setDormitoryId(dormitory.getDormitoryId());
@@ -270,18 +271,18 @@ public class DormitorySelectionController {
                 .eq("degree", studentAccount.calDegree())
                 .eq("gender", studentAccount.getGender()));
         if (allocationStageList.isEmpty() || allocationStageList.get(0).getStage() != 2) {
-            throw new RuntimeException("select dormitory failed! (wrong stage)");
+            throw new BadRequestException("select dormitory failed! (wrong stage)");
         }
         // 判断本队是否已选宿舍
         Team team = teamService.getById(studentAccount.getTeamId());
         if (team.getDormitory() != null) {
-            throw new RuntimeException("select dormitory failed! (already has a dormitory)");
+            throw new BadRequestException("select dormitory failed! (already has a dormitory)");
         }
         // 判断该宿舍是否已被选择
         List<Team> teamList = teamService.list(new QueryWrapper<Team>()
                 .eq("dormitory_id", dormitory.getDormitoryId()));
         if (!teamList.isEmpty()) {
-            throw new RuntimeException("select dormitory failed! (the dormitory is already selected)");
+            throw new BadRequestException("select dormitory failed! (the dormitory is already selected)");
         }
         // 判断该宿舍是否能够选择
         if (allocationRelationService.list(new QueryWrapper<AllocationRelation>()
@@ -289,7 +290,7 @@ public class DormitorySelectionController {
                 .eq("degree", studentAccount.calDegree())
                 .eq("gender", studentAccount.getGender())
                 .eq("dormitory_id", dormitory.getDormitoryId())).isEmpty()) {
-            throw new RuntimeException("select dormitory failed! (not exists this allocation)");
+            throw new BadRequestException("select dormitory failed! (not exists this allocation)");
         }
         // 选择宿舍
         team.setDormitoryId(dormitory.getDormitoryId());

@@ -3,6 +3,7 @@ package com.ooad.dormitory.controller.student;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ooad.dormitory.entity.Notification;
 import com.ooad.dormitory.entity.StudentAccount;
+import com.ooad.dormitory.exception.BackEndException;
 import com.ooad.dormitory.mapper.AuthenticationMapper;
 import com.ooad.dormitory.mapper.NotificationMapper;
 import com.ooad.dormitory.service.NotificationService;
@@ -41,7 +42,7 @@ public class NotificationController {
                     .filter(notification -> notification.getGender() == null || notification.getGender().equals(studentAccount.getGender()))
                     .collect(Collectors.toList());
         } catch (Exception e) {
-            throw new RuntimeException("get notifications failed!\n" + e.getMessage());
+            throw new BackEndException("get notifications failed!\n" + e.getMessage());
         }
     }
 
