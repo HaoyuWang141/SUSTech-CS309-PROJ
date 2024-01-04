@@ -68,22 +68,25 @@
               content="请上传Excel表格，需按照下方表格的表头格式"
               placement="bottom-start"
           >
-            <el-upload
-                class="upload"
-                :show-file-list="false"
-                action=""
-                :multiple="false"
-                accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                :on-change="importExcel"
-                :limit="1"
-            >
-              <el-button type="success">
-                <el-icon size="14">
-                  <circle-plus/>
-                </el-icon>
-                批量上传
-              </el-button>
-            </el-upload>
+
+<!--            <el-upload-->
+<!--                class="upload"-->
+<!--                :show-file-list="false"-->
+<!--                action=""-->
+<!--                :multiple="false"-->
+<!--                accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"-->
+<!--                :on-change="importExcel"-->
+<!--                :limit="1"-->
+<!--            >-->
+<!--              <el-button type="success">-->
+<!--                <el-icon size="14">-->
+<!--                  <circle-plus/>-->
+<!--                </el-icon>-->
+<!--                批量上传-->
+<!--              </el-button>-->
+<!--            </el-upload>-->
+
+
           </el-tooltip>
 
 
@@ -225,7 +228,7 @@ import HeadMenu from "@/components/util/HeadMenu";
 import AsideMenu from "@/components/util/AsideMenu";
 import axios from "axios";
 import {Search, CirclePlus} from "@element-plus/icons-vue";
-import XLSX from 'xlsx';
+// import XLSX from 'xlsx';
 import {ElMessage, ElMessageBox} from "element-plus";
 
 export default {
@@ -329,50 +332,6 @@ export default {
             })
 
       }
-    },
-
-
-    // 导入表格
-    importExcel(param) {
-      console.log(param);
-      let _this = this;
-      _this.file2Xce(param).then(item => {
-        if (item && item.length > 0) {
-          // xlsxJson就是解析出来的json数据,数据格式如下
-          // [{sheetName: sheet1, sheet: sheetData }]
-          if (item[0] && item[0].sheet && item[0].sheet.length) {
-            // _this.tableData = item[0].sheet  //把数据塞到表格预览
-            console.log(item[0].sheet)
-          }
-        }
-      })
-          .catch(error => {
-            // loading.close();
-            console.log(error)
-          });
-    },
-
-    file2Xce(file) {
-      return new Promise(function (resolve, reject) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          const data = e.target.result;
-          this.wb = XLSX.read(data, {
-            type: "binary"
-          });
-          const result = [];
-          this.wb.SheetNames.forEach(sheetName => {
-            result.push({
-              sheetName: sheetName,
-              sheet: XLSX.utils.sheet_to_json(this.wb.Sheets[sheetName])
-            });
-          });
-          /* console.log("解析")
-          console.log(result) */
-          resolve(result);
-        };
-        reader.readAsBinaryString(file.raw);
-      });
     },
 
     cancelFormUpdate() {
