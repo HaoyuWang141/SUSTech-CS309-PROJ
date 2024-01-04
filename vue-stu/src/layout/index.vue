@@ -59,7 +59,7 @@ function logout() {
 <!--        <el-col :span="6">-->
           <el-button @click="backToHome"
                      link
-                     style="font-size: 30px; font-weight: bold; color: #13ce66; align-items: center">
+                     style="font-size: 30px; font-weight: bold; color: #dfe1d9; align-items: center">
             SUSTech Dormitory
           </el-button>
 <!--        </el-col>-->

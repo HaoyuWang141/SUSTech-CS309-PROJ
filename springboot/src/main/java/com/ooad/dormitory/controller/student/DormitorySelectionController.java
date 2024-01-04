@@ -218,8 +218,8 @@ public class DormitorySelectionController {
             return null;
         }
         for (AllocationStage allocationStage : allocationStageList) {
-            if (allocationStage.getStarttime().compareTo(new Timestamp(System.currentTimeMillis())) < 0
-                    && allocationStage.getEndtime().compareTo(new Timestamp(System.currentTimeMillis())) > 0) {
+            if (allocationStage.getStartTime().compareTo(new Timestamp(System.currentTimeMillis())) < 0
+                    && allocationStage.getEndTime().compareTo(new Timestamp(System.currentTimeMillis())) > 0) {
                 return allocationStage;
             }
         }
