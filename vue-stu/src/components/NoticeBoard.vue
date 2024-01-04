@@ -1,17 +1,35 @@
 <script setup>
-import { ref } from "vue";
+import {onMounted, ref} from "vue";
+import axiosInstance from "@/axios/axiosConfig";
 
 const notices = ref([
-    "这是第一条通知。",
-    "这是第二条通知，很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长。",
-    "3",
-    "4",
+    {content:"weijiazai"},
 ])
-const currentNoticeIndex = ref(0)
-const currentNotice = ref(notices.value[currentNoticeIndex.value])
-// function formatNotice(notice) {
-//     return notice.length > 20 ? `${notice.slice(0, 20)}...` : notice;
-// }
+// const currentNoticeIndex = ref(0)
+// const currentNotice = ref(notices.value[currentNoticeIndex.value])
+
+async function getNotifications() {
+    try {
+        const response = await axiosInstance.get(
+            "/student/notification/get2",
+            {
+                params: {
+                    studentAccountId: "11911612",
+                },
+            }
+        ).then(response => {
+            console.log(response)
+            notices.value = response.data
+        })
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+onMounted(() => {
+    // 在组件被挂载后调用getNotifications()
+    getNotifications();
+});
 </script>
 
 <template>
@@ -24,7 +42,7 @@ const currentNotice = ref(notices.value[currentNoticeIndex.value])
     <div class="notice-board-body">
       <ul>
         <li v-for="(notice, index) in notices" :key="index" class="notice-item">
-          {{ notice }}
+          {{ notice.content }}
         </li>
       </ul>
     </div>

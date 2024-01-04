@@ -4,15 +4,14 @@ import type {CSSProperties} from "vue";
 import axiosInstance from "@/axios/axiosConfig";
 
 const student = ref({
-    name: "姓名",
-    studentId: "12010000",
+    name: "王浩羽",
+    studentId: "11910000",
     gender: 1,
     photoUrl: "string",
-    college: "ShuDe",
+    college: "树德",
     sleepTime: "23:59", // may be a ( DateTime )
     wakeUpTime: "7:59", // like above
-    airConditionerTemperature: "23",
-    acTempInt:23,
+    airConditionerTemperature: 23,
     snore: false,
     qq: "123456789",
     email: "123456789@email.com",
@@ -51,8 +50,6 @@ const student = ref({
         }
     }
 })
-const testTemp = ref(26);
-const showEditInfo = ref(false);
 
 interface Mark {
     style: CSSProperties
@@ -74,7 +71,7 @@ const marks = reactive<Marks>({
         label: '30°C',
     },
 });
-const isSnore = ref(false);
+const showEditInfo = ref(false);
 const editInfoForm = ref({
     sleepTime: "",
     wakeUpTime: "",
@@ -94,17 +91,35 @@ const editInfoForm = ref({
 // }
 
 async function getStudentInfo() {
+    try {
+        const response = await axiosInstance.get(
+            "admin/studentAccount/getStudent",
+            {
+                params: {
+                    studentId: "11911612",
+                },
+            },
+        ).then(response => {
+                student.value = response.data
+                console.log("getStudentInfo() success")
+                console.log(response)
+            }
+        )
 
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 async function createStudentInfo() {
-    try{
+    try {
         const response = await axiosInstance.post(
             "admin/studentAccount/create",
             [student.value]
         )
         console.log("createStudentInfo() success")
-    }catch (error) {
+        console.log(response)
+    } catch (error) {
         console.log(error)
     }
 }
@@ -134,11 +149,12 @@ async function createStudentInfo() {
           </el-form-item>
         </el-form>
       </div>
-      <el-button @click="createStudentInfo()">ceshi</el-button>
+      <el-button @click="getStudentInfo()">get</el-button>
+      <el-button @click="createStudentInfo()">create</el-button>
     </el-card>
     <el-card class="profile-right-card">
       <template #header>
-        <el-row>
+        <el-row style="padding: 0">
           <el-col :span="12">
             <div>附加信息</div>
           </el-col>
