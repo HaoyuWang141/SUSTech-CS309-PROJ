@@ -22,7 +22,7 @@ public class DormitoryServiceImpl extends ServiceImpl<DormitoryMapper, Dormitory
         }
 
     @Override
-    public List<Dormitory> getDormitories(QueryWrapper<Dormitory> queryWrapper) {
-        return dormitoryMapper.getDormitories(queryWrapper);
+    public List<Dormitory> getDormitories() {
+        return dormitoryMapper.getDormitories();
     }
 }
