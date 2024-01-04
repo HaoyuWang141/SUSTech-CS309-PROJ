@@ -94,7 +94,7 @@ public class TeamController {
     }
 
     @PostMapping("/accept2")
-    public ResponseEntity<?> accept2(@RequestBody Integer invitationId) {
+    public ResponseEntity<?> accept2(Integer invitationId) {
         Invitation invitation = invitationService.getById(invitationId);
         assert invitation != null;
 
