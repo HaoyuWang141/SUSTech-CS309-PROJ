@@ -69,6 +69,7 @@ CREATE TABLE team
 (
     team_id      SERIAL PRIMARY KEY,
     dormitory_id INT,
+    owner_id VARCHAR,
     FOREIGN KEY (dormitory_id) REFERENCES dormitory (dormitory_id)
 );
 
@@ -152,7 +153,6 @@ CREATE TABLE comment
     content         TEXT,
     publish_time    TIME,
     FOREIGN KEY (publisher_id) REFERENCES student_account (student_id),
-    FOREIGN KEY (replying_id) REFERENCES comment (id),
     FOREIGN KEY (dormitory_id) REFERENCES dormitory (dormitory_id)
 );
 

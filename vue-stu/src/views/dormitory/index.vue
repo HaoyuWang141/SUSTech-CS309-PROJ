@@ -39,6 +39,14 @@
             <el-input v-model="floor" placeholder="floor" clearable />
         </el-form-item>
 
+        <el-form-item>
+            <el-input
+                v-model="room_number"
+                placeholder="room number"
+                clearable
+            />
+        </el-form-item>
+
         <el-button type="primary" @click="fetchDorms">View</el-button>
     </el-form>
 
@@ -87,31 +95,7 @@ const floor = ref(null);
 
 const room_number = ref(null);
 
-const layoutList = ref<Layout[]>([]);
 const dormitoryList = ref<Dormitory[]>([]);
-
-const cards = ref([
-    {
-        image: "http://114.132.51.227:7777/images/2024/01/02/dorm3.jpg",
-        title: "Title 1",
-        description: "Description 1",
-    },
-    {
-        image: "http://114.132.51.227:7777/images/2024/01/02/dorm2.md.jpg",
-        title: "Title 1",
-        description: "Description 1",
-    },
-    {
-        image: "http://114.132.51.227:7777/images/2024/01/02/dorm1.md.jpg",
-        title: "Title 1",
-        description: "Description 1",
-    },
-    {
-        image: "http://114.132.51.227:7777/images/2024/01/02/dorm5.jpg",
-        title: "Title 1",
-        description: "Description 1",
-    },
-]);
 
 async function fetchRegions() {
     try {
@@ -147,6 +131,7 @@ async function fetchDorms() {
                 params: {
                     buildingId: selectedBuilding.value?.building_id,
                     floor: floor.value,
+                    roomNumber: room_number.value,
                 },
             }
         );
@@ -190,7 +175,7 @@ main {
         flex: 1;
         min-width: 200px;
         max-width: 20%;
-        margin: 0;
+        // margin: 0;
 
         .el-select {
             background-color: @mainColor;
@@ -205,10 +190,6 @@ main {
             background-color: darken(@button-color-light, 15%);
         }
     }
-}
-
-el-select select {
-    background-color: red; // 这里设置你想要的背景色
 }
 
 .dormitroy_description {

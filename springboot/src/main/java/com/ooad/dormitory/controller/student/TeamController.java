@@ -9,6 +9,7 @@ import com.ooad.dormitory.exception.BadRequestException;
 import com.ooad.dormitory.mapper.AuthenticationMapper;
 import com.ooad.dormitory.service.InvitationService;
 import com.ooad.dormitory.service.StudentAccountService;
+import com.ooad.dormitory.service.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,8 @@ public class TeamController {
     private final StudentAccountService studentAccountService;
     private final InvitationService invitationService;
     private final AuthenticationMapper authenticationMapper;
+    @Autowired
+    private TeamService teamService;
 
     @Autowired
     public TeamController(StudentAccountService studentAccountService, InvitationService invitationService, AuthenticationMapper authenticationMapper) {
@@ -99,25 +102,34 @@ public class TeamController {
     public ResponseEntity<?> accept2(Integer invitationId) {
         try {
             Invitation invitation = invitationService.getById(invitationId);
-            assert invitation != null;
-
-            StudentAccount inviter = invitation.getInviter();
-            StudentAccount invitee = invitation.getInvitee();
-            if (invitee.getTeam() != null) {
-                throw new BadRequestException("accept invitation failed! (invitee already has a team)");
+            if (invitation == null) {
+                throw new BadRequestException("invitation not found!");
             }
+
+            StudentAccount inviter = studentAccountService.getById(invitation.getInviterId());
+            StudentAccount invitee = studentAccountService.getById(invitation.getInviteeId());
+
+            inviter.setTeam(teamService.getById(inviter.getTeamId()));
+            invitee.setTeam(teamService.getById(invitee.getTeamId()));
+
             if (inviter.getTeam() == null) {
-                inviter.setTeam(new Team());
-                inviter.setTeamId(inviter.getTeam().getTeamId());
+                Team team = new Team();
+                team.setOwnerId(inviter.getStudentId());
+                teamService.save(team);
+                inviter.setTeam(team);
+                inviter.setTeamId(team.getTeamId());
                 studentAccountService.saveOrUpdate(inviter);
             }
             invitee.setTeamId(inviter.getTeamId());
-            invitee.setTeam(inviter.getTeam());
             studentAccountService.saveOrUpdate(invitee);
+
+            List<Integer> invitationIdList = invitationService.list(new QueryWrapper<Invitation>().eq("invitee_id", invitee.getStudentId())).stream().map(Invitation::getId).toList();
+            invitationService.removeByIds(invitationIdList);
             return ResponseEntity.ok().build();
         } catch (BadRequestException e) {
             throw e;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new BackEndException("accept invitation failed!\n" + e.getMessage());
         }
     }
