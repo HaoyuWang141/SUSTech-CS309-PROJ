@@ -234,7 +234,4 @@ public class TeamController {
                 .sorted(Comparator.comparingDouble(s -> studentAccount.calSimilarity((StudentAccount) s)).reversed())
                 .collect(Collectors.toList());
     }
-
-
-
 }
