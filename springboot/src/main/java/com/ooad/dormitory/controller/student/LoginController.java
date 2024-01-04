@@ -65,7 +65,8 @@ public class LoginController {
             return true;
         }
         else {
-            throw new RuntimeException("invalid token!");
+//            throw new RuntimeException("invalid token!");
+            return false;
         }
     }
 
