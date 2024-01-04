@@ -58,7 +58,12 @@ public class DormitorySelectionController {
     }
 
     @GetMapping("/getDormitories")
-    public List<Dormitory> queryDormitory(Integer buildingId) {
+    public List<Dormitory> queryDormitory(Integer buildingId, String floor) {
+        if (floor != null) {
+            return dormitoryService.list(new QueryWrapper<Dormitory>()
+                    .eq("building_id", buildingId)
+                    .eq("floor", floor));
+        }
         return dormitoryService.getDormitories(new QueryWrapper<Dormitory>().eq("building_id", buildingId));
     }
 

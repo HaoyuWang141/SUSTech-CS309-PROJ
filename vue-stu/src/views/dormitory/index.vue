@@ -35,6 +35,10 @@
             </el-select>
         </el-form-item>
 
+        <el-form-item>
+            <el-input v-model="floor" placeholder="floor" clearable />
+        </el-form-item>
+
         <el-button type="primary" @click="fetchDorms">View</el-button>
     </el-form>
 
@@ -71,9 +75,7 @@
                 v-for="dorm in dormitoryList"
                 :key="dorm.dormitory_id"
             >
-                <LayoutCard
-                    :dormitory="dorm"
-                />
+                <LayoutCard :dormitory="dorm" />
             </el-col>
         </el-row>
     </div>
@@ -90,6 +92,8 @@ const selectedRegion = ref<Region>();
 
 const buildings = ref<Building[]>([]);
 const selectedBuilding = ref<Building>();
+
+const floor = ref(null);
 
 const room_number = ref(null);
 
@@ -152,6 +156,7 @@ async function fetchDorms() {
             {
                 params: {
                     buildingId: selectedBuilding.value?.building_id,
+                    floor: floor.value,
                 },
             }
         );

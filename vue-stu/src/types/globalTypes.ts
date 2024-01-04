@@ -8,6 +8,7 @@ export interface Building {
     building_name: string;
     description: string;
     region_id: number;
+    region: Region;
 }
 
 export interface Layout {

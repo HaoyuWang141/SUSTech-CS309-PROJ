@@ -4,13 +4,14 @@
         <div
             style="
                 display: flex;
+                flex-direction: column;
                 justify-content: center;
                 align-items: center;
-                padding: 30px 30px;
+                padding: 30px;
             "
         >
-            <span>{{ layout?.layout_name }}</span>
-            
+            <span style="margin-bottom: 5px">{{ dormitory.room_number }}</span>
+            <span style="margin-bottom: 20px">{{ layout?.layout_name }}</span>
             <el-button type="primary" @click="viewDetails">
                 查看详情
             </el-button>
@@ -18,7 +19,7 @@
     </el-card>
 
     <!-- 模态框内容 -->
-    <el-dialog title="详细信息" v-model="dialogVisible" width=40%;>
+    <el-dialog title="详细信息" v-model="dialogVisible" width="40%;">
         <div class="image-container">
             <el-image
                 :src="layout?.image_url"
@@ -33,8 +34,12 @@
             </el-image>
         </div>
         <span>{{ layout?.layout_name }}</span>
-        <div class="text item">
-            {{ layout?.description }}
+        <div class="text-item">
+            <span>区域：{{ dormitory.building.region.region_name }}</span>
+            <span>楼栋：{{ dormitory.building.building_name }}</span>
+            <span>房号：{{ dormitory.room_number }}</span>
+            <span>床数：{{ dormitory.bed_count }}</span>
+            <span>简介：{{ layout?.description }}</span>
         </div>
     </el-dialog>
 </template>
@@ -47,7 +52,7 @@ const props = defineProps({
     dormitory: {
         type: Object as PropType<Dormitory>,
         required: true,
-    }
+    },
 });
 
 const layout = computed(() => props.dormitory.layout);
@@ -89,7 +94,6 @@ const viewDetails = () => {
 }
 
 .el-dialog {
-    
     .image-container {
         display: flex;
         justify-content: center; // 水平居中
@@ -104,12 +108,14 @@ const viewDetails = () => {
 
     span {
         display: block;
+        margin: auto;
         margin-bottom: 10px; // 标题下的间距
         font-size: large;
         font-weight: bold;
     }
 
-    .text.item {
+    .text-item {
+        padding: 0 10%; // 左右留白
         font-size: large;
     }
 }
