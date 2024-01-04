@@ -102,7 +102,9 @@ public class TeamController {
     public ResponseEntity<?> accept2(Integer invitationId) {
         try {
             Invitation invitation = invitationService.getById(invitationId);
-            assert invitation != null;
+            if (invitation == null) {
+                throw new BadRequestException("invitation not found!");
+            }
 
             StudentAccount inviter = studentAccountService.getById(invitation.getInviterId());
             StudentAccount invitee = studentAccountService.getById(invitation.getInviteeId());
@@ -120,7 +122,9 @@ public class TeamController {
             }
             invitee.setTeamId(inviter.getTeamId());
             studentAccountService.saveOrUpdate(invitee);
-            
+
+            List<Integer> invitationIdList = invitationService.list(new QueryWrapper<Invitation>().eq("invitee_id", invitee.getStudentId())).stream().map(Invitation::getId).toList();
+            invitationService.removeByIds(invitationIdList);
             return ResponseEntity.ok().build();
         } catch (BadRequestException e) {
             throw e;
