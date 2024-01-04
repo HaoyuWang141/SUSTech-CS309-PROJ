@@ -69,6 +69,7 @@ public class ForumController {
             reply.setContent(content);
             reply.setPublishTime(new Timestamp(System.currentTimeMillis()));
             reply.setCommentId(commentId);
+            System.out.println(reply);
             replyService.save(reply);
         } catch (Exception e) {
             throw new BackEndException("reply comment failed!");

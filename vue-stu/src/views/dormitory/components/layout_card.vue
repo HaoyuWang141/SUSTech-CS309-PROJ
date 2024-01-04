@@ -19,7 +19,7 @@
     </el-card>
 
     <!-- 模态框内容 -->
-    <el-dialog title="详细信息" v-model="dialogVisible" width="40%;">
+    <el-dialog title="详细信息" v-model="dialogVisible">
         <div class="image-container">
             <el-image
                 :src="layout?.image_url"
@@ -46,10 +46,7 @@
             <span>评论</span>
             <el-form>
                 <el-form-item>
-                    <el-input
-                        v-model="newComment"
-                        placeholder="请输入评论"
-                    />
+                    <el-input v-model="newComment" placeholder="请输入评论" />
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="postComment">
@@ -101,12 +98,8 @@ async function bookmark() {
         })
         .then((res) => {
             console.log(res);
-            if (res.data.code === 200) {
-                ElMessage.success("收藏成功");
-                dialogVisible.value = false;
-            } else {
-                ElMessage.error("收藏失败");
-            }
+            ElMessage.success("收藏成功");
+            dialogVisible.value = false;
         })
         .catch((err) => {
             console.log(err);
@@ -116,7 +109,7 @@ async function bookmark() {
 
 const comments = ref<CommentType[]>([]);
 
-async function fetchCommentsAndReplies(dormitory_id: number) {
+async function fetchCommentsAndApplies(dormitory_id: number) {
     // 添加获取评论的逻辑
     console.log("获取评论");
     axiosInstance
@@ -130,30 +123,29 @@ async function fetchCommentsAndReplies(dormitory_id: number) {
             comments.value = res.data;
         })
         .then(() => {
-            if (comments.value.length !== 0) {
-                comments.value.forEach((comment) => {
-                    axiosInstance
-                        .get("/student/forum/getReply", {
-                            params: {
-                                commentId: comment.id,
-                            },
-                        })
-                        .then((res) => {
-                            console.log(res);
-                            comment.reply_list = res.data.data;
-                        });
-                });
-            }
+            comments.value.forEach((comment) => {
+                axiosInstance
+                    .get("/student/forum/getReply", {
+                        params: {
+                            commentId: comment.id,
+                        },
+                    })
+                    .then((res) => {
+                        console.log(res);
+                        comment.reply_list = res.data;
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+            });
         })
         .catch((err) => {
             console.error(err);
         });
 }
-
-fetchCommentsAndReplies(props.dormitory.dormitory_id);
+fetchCommentsAndApplies(props.dormitory.dormitory_id);
 
 const newComment = ref("");
-
 async function postComment() {
     // 添加发布评论的逻辑
     console.log("发布评论");
@@ -177,7 +169,7 @@ async function postComment() {
         .then((res) => {
             console.log(res);
             ElMessage.success("发布成功");
-            fetchCommentsAndReplies(props.dormitory.dormitory_id);
+            fetchCommentsAndApplies(props.dormitory.dormitory_id);
             newComment.value = "";
         })
         .catch((err) => {

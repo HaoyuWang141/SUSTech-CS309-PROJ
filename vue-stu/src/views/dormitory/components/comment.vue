@@ -4,12 +4,8 @@
             <span>[{{ publish_time }}] {{ comment.publisher_id }}</span>
             <p>{{ comment.content }}</p>
         </div>
-        <div class="replies">
-            <Reply
-                v-for="reply in comment.reply_list"
-                :key="reply.id"
-                :reply="reply"
-            />
+        <div class="replies" v-for="reply in comment.reply_list">
+            <span>{{ reply.publisher_id }}: {{ reply.content }}</span>
         </div>
         <el-form>
             <el-form-item>
@@ -41,29 +37,54 @@ const props = defineProps({
     },
 });
 
-const publish_time = computed(() => new Date(props.comment.publish_time).toLocaleString());
+const publish_time = computed(() =>
+    new Date(props.comment.publish_time).toLocaleString()
+);
 
+async function fetchApplies(comment_id: number) {
+    // 添加获取回复的逻辑
+    console.log("获取回复");
+    axiosInstance
+        .get("/student/forum/getReply", {
+            params: {
+                commentId: comment_id,
+            },
+        })
+        .then((res) => {
+            console.log(res);
+            props.comment.reply_list = res.data;
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+}
 const newReply = ref("");
 async function postReply() {
     // 添加发布回复的逻辑
     console.log("发布回复被点击");
     axiosInstance
-        .post("/student/forum/reply", {
-            studentAccountId: localStorage.getItem("studentId"),
-            commentId: props.comment.id,
-            content: newReply.value,
-        })
+        .post(
+            "/student/forum/reply",
+            {},
+            {
+                params: {
+                    studentAccountId: localStorage.getItem("studentId"),
+                    commentId: props.comment.id,
+                    content: newReply.value,
+                },
+            }
+        )
         .then((res) => {
             console.log(res);
-            newReply.value = "";
             ElMessage.success("回复成功");
+            fetchApplies(props.comment.id);
+            newReply.value = "";
         })
         .catch((err) => {
             console.log(err);
             ElMessage.error("回复失败");
         });
 }
-
 </script>
 
 <style scoped>
