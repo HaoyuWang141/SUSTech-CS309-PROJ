@@ -43,7 +43,7 @@
             />
         </el-form-item>
 
-        <el-button type="primary" @click="fetchLayout">View</el-button>
+        <el-button type="primary" @click="fetchDorms">View</el-button>
     </el-form>
 
     <div class="dormitroy_description">
@@ -88,7 +88,7 @@ const selectedRegion = ref<Region>();
 const buildings = ref<Building[]>([]);
 const selectedBuilding = ref<Building>();
 
-const room_number = ref<string>("");
+const room_number = ref(null);
 
 const layoutList = ref<Layout[]>([]);
 
@@ -141,13 +141,14 @@ async function fetchBuildings() {
     }
 }
 
-async function fetchLayout() {
+async function fetchDorms() {
     try {
         const response = await axiosInstance.get(
             "/student/dormitory/getLayout",
             {
                 params: {
                     buildingId: selectedBuilding.value?.building_id,
+                    roomNumber: room_number.value,
                 },
             }
         );
