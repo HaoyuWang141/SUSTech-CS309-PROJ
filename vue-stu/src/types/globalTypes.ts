@@ -24,8 +24,10 @@ export interface Dormitory {
     bed_count: number;
     description: string;
     layout_id: number;
+    layout: Layout;
     is_empty: boolean;
     gender: string;
     degree: string;
     building_id: number;
+    building: Building;
 }

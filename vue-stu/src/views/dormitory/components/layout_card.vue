@@ -1,6 +1,6 @@
 <template>
     <el-card :body-style="{ padding: '0' }">
-        <img :src="image" class="image" alt="Card image" />
+        <img :src="layout?.image_url" class="image" alt="Card image" />
         <div
             style="
                 display: flex;
@@ -9,7 +9,7 @@
                 padding: 30px 30px;
             "
         >
-            <span>{{ title }}</span>
+            <span>{{ layout?.layout_name }}</span>
             
             <el-button type="primary" @click="viewDetails">
                 查看详情
@@ -21,37 +21,36 @@
     <el-dialog title="详细信息" v-model="dialogVisible" width=40%;>
         <div class="image-container">
             <el-image
-                :src="image"
+                :src="layout?.image_url"
                 :zoom-rate="1.5"
                 :max-scale="7"
                 :min-scale="0.2"
-                :preview-src-list="[image]"
+                :preview-src-list="[layout?.image_url]"
                 :initial-index="1"
                 fit="cover"
                 alt="Card image"
             >
             </el-image>
         </div>
-        <span>{{ title }}</span>
+        <span>{{ layout?.layout_name }}</span>
         <div class="text item">
-            {{ description }}
+            {{ layout?.description }}
         </div>
     </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { ref, PropType } from "vue";
+import { ref, PropType, computed } from "vue";
 import { Dormitory, Layout } from "@/types/globalTypes";
 
 const props = defineProps({
-    id: Number,
-    image: String,
-    title: String,
-    description: String,
-    dormitory: Object as PropType<Dormitory>,
-    layout: Object as PropType<Layout>,
+    dormitory: {
+        type: Object as PropType<Dormitory>,
+        required: true,
+    }
 });
 
+const layout = computed(() => props.dormitory.layout);
 const dialogVisible = ref(false);
 
 const viewDetails = () => {

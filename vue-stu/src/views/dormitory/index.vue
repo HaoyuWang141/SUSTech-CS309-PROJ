@@ -68,14 +68,11 @@
         <el-row :gutter="40">
             <el-col
                 :span="7"
-                v-for="layout in layoutList"
-                :key="layout.layout_id"
+                v-for="dorm in dormitoryList"
+                :key="dorm.dormitory_id"
             >
                 <LayoutCard
-                    :id="layout.layout_id"
-                    :image="layout.image_url"
-                    :title="layout.layout_name"
-                    :description="layout.description"
+                    :dormitory="dorm"
                 />
             </el-col>
         </el-row>
@@ -151,14 +148,16 @@ async function fetchBuildings() {
 async function fetchDorms() {
     try {
         const response = await axiosInstance.get(
-            "/student/dormitory/getDormitory",
+            "/student/dormitory/getDormitories",
             {
                 params: {
                     buildingId: selectedBuilding.value?.building_id,
                 },
             }
         );
+        console.log(response.data);
         dormitoryList.value = response.data;
+        console.log(dormitoryList.value);
     } catch (error) {
         console.error(error);
     }

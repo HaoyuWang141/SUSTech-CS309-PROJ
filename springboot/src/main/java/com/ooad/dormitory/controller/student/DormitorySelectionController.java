@@ -59,7 +59,7 @@ public class DormitorySelectionController {
 
     @GetMapping("/getDormitories")
     public List<Dormitory> queryDormitory(Integer buildingId) {
-        return dormitoryService.list(new QueryWrapper<Dormitory>().eq("building_id", buildingId));
+        return dormitoryService.getDormitories(new QueryWrapper<Dormitory>().eq("building_id", buildingId));
     }
 
     @GetMapping("/getFavoriteList")
