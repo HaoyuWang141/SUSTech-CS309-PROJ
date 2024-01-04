@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { onMounted, ref, watch, nextTick } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import {onMounted, ref, watch, nextTick} from "vue";
+import {useRoute, useRouter} from "vue-router";
 
 const bg_color = ref<HTMLElement | null>(null);
 const content = ref<HTMLElement | null>(null);
@@ -27,31 +27,48 @@ onMounted(() => {
             }
         });
 
-        observer.observe(content.value, { childList: true, subtree: true });
+        observer.observe(content.value, {childList: true, subtree: true});
     }
 });
 
 function backToHome() {
     router.push("/home");
 }
+
+function showLogOut() {
+    return localStorage.getItem('studentId') != undefined
+}
+
+function logout() {
+    localStorage.removeItem("studentId")
+    router.push("/welcome")
+}
 </script>
 
+
 <template>
-    <div ref="bg_color" class="bg-color" />
-    <div class="bg-picture" />
-    <div class="bg-shadow" />
-    <div ref="content" class="content">
-        <header class="top-bar">
-            <p class="title">SUSTech Dormitory</p>
-            <el-link @click.prevent="backToHome()">SUSTech Dormitory</el-link>
-            <div class="labels">
-                <p>................</p>
-            </div>
-        </header>
-        <main>
-            <RouterView />
-        </main>
-    </div>
+  <div ref="bg_color" class="bg-color"/>
+  <div class="bg-picture"/>
+  <div class="bg-shadow"/>
+  <div ref="content" class="content">
+    <header class="top-bar">
+      <el-button @click="backToHome"
+                 link
+                 style="font-size: 30px; font-weight: bold; color: #13ce66">
+        SUSTech Dormitory
+      </el-button>
+      <div class="labels">
+        <el-button type="danger"
+                   v-show="showLogOut()"
+                   @click="logout()">
+          登出
+        </el-button>
+      </div>
+    </header>
+    <main>
+      <RouterView/>
+    </main>
+  </div>
 </template>
 
 <style scoped lang="less">
@@ -66,66 +83,64 @@ function backToHome() {
 @feature-text-size: 1.5rem; // 特性区域文本大小
 
 .bg-color {
-    background-color: @background-color;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
-    width: 100%;
+  background-color: @background-color;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 100%;
 }
 
 .bg-picture {
-    width: 100%;
-    height: 100%;
-    background: url("../assets/bg.png") no-repeat center center fixed;
-    background-size: cover;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 2;
+  width: 100%;
+  height: 100%;
+  background: url("../assets/bg.png") no-repeat center center fixed;
+  background-size: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
 }
 
 .bg-shadow {
-    width: 100%;
-    height: 100px;
-    background: linear-gradient(
-        to bottom,
-        rgba(13, 25, 51, 0),
-        rgba(13, 25, 51, 1)
-    );
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    z-index: 3;
+  width: 100%;
+  height: 100px;
+  background: linear-gradient(to bottom,
+  rgba(13, 25, 51, 0),
+  rgba(13, 25, 51, 1));
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 3;
 }
 
 .content {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 4;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 4;
 }
 
 /* 头部样式 */
 .top-bar {
-    display: flex;
-    align-items: center;
-    height: 100px;
-    background: linear-gradient(to bottom, black, rgba(0, 0, 0, 0));
-    color: white;
-    padding: 0 4rem;
+  display: flex;
+  align-items: center;
+  height: 100px;
+  background: linear-gradient(to bottom, black, rgba(0, 0, 0, 0));
+  color: white;
+  padding: 0 4rem;
 
-    .title {
-        font-size: 1.5rem;
-        color: @primary-color;
-        margin-left: 1rem;
-        margin-right: auto;
-    }
+  .title {
+    font-size: 1.5rem;
+    color: @primary-color;
+    margin-left: 1rem;
+    margin-right: auto;
+  }
 
-    .labels {
-        margin-left: auto;
-        margin-right: 1rem;
-    }
+  .labels {
+    margin-left: auto;
+    margin-right: 1rem;
+  }
 }
 </style>

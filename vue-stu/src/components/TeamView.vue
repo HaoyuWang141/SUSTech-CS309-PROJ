@@ -1,21 +1,15 @@
 <script setup lang="ts">
-import {reactive, ref} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import axiosInstance from "@/axios/axiosConfig";
+import {HomeFilled} from "@element-plus/icons-vue"
 
-const teammates = ref([
-    {
-        name: "wanghaoyu",
-        sid: 11911612,
-    },
-    {
-        name: "liuyiyu",
-        sid: 12116666,
-    }
-]);
+const teammates = ref([]);
+const invitationList = ref([]);
 const inviteDialogVisible = ref(false);
+const invitationListVisible = ref(false);
 const inviteForm = reactive({
     studentID: "",
-})
+});
 
 function removeTeammate(index: number) {
     teammates.value.splice(index, 1)
@@ -29,18 +23,68 @@ async function invite() {
             {},
             {
                 params: {
-                    inviterId: "12326667",
+                    inviterId: localStorage.getItem("studentId"),
                     inviteeId: inviteForm.studentID,
                     token: "tokentokentoken",
                 }
             },
         ).then(response => {
+            console.log("invite() ->")
             console.log(response)
         })
     } catch (error) {
         console.error(error);
     }
 }
+
+async function acceptInvitation(index:number) {
+    try{
+
+    }catch (error) {
+        console.log(error)
+    }
+}
+async function updateTeamMembers() {
+    try {
+        await axiosInstance.get(
+            "student/team/getTeam2",
+            {
+                params: {
+                    studentAccountId: localStorage.getItem("studentId"),
+                },
+            }
+        ).then(
+            response => {
+                console.log("updateTeamMembers() ->")
+                console.log(response)
+            }
+        )
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+async function getInvitations() {
+    try {
+        await axiosInstance.get(
+            "student/team/getInvitations2",
+            {
+                params: {
+                    studentAccountId: localStorage.getItem("studentId"),
+                },
+            }
+        ).then(response => {
+            console.log("getInvitations() ->")
+            console.log(response)
+        })
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+onMounted(() => {
+
+})
 </script>
 
 <template>
@@ -60,10 +104,28 @@ async function invite() {
       </span>
     </template>
   </el-dialog>
+  <el-dialog title="被邀请记录"
+             style="width: 50%; min-width: 300px">
+    <el-table style="width: 100%"
+              :data="invitationList">
+      <el-table-column prop="name" label="姓名"></el-table-column>
+      <el-table-column prop="student_id" label="学号"></el-table-column>
+      <el-table-column fixed="right" label="操作">
+        <template #default="scope">
+          <el-button type="primary" @click="">
+            接受
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+  </el-dialog>
   <!--  invisible part end-->
   <el-card class="team-view-card">
     <template #header>
       <div class="team-view-header">
+        <el-icon>
+          <HomeFilled/>
+        </el-icon>
         <span>组队信息</span>
       </div>
     </template>
@@ -74,6 +136,9 @@ async function invite() {
         </el-button>
         <el-button type="primary">
           查看收藏
+        </el-button>
+        <el-button type="primary" @click="getInvitations()">
+          查看邀请
         </el-button>
       </div>
       <div>

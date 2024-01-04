@@ -41,15 +41,15 @@
             <span>床数：{{ dormitory.bed_count }}</span>
             <span>简介：{{ layout?.description }}</span>
         </div>
-        <el-button type="primary" @click="bookmark">
-            收藏至队伍
-        </el-button>
+        <el-button type="primary" @click="bookmark"> 收藏至队伍 </el-button>
     </el-dialog>
 </template>
 
 <script setup lang="ts">
 import { ref, PropType, computed } from "vue";
 import { Dormitory, Layout } from "@/types/globalTypes";
+import axiosInstance from "@/axios/axiosConfig";
+import { ElMessage } from "element-plus";
 
 const props = defineProps({
     dormitory: {
@@ -67,10 +67,27 @@ const viewDetails = () => {
     dialogVisible.value = true;
 };
 
-function bookmark() {
+async function bookmark() {
     // 添加收藏的逻辑
     console.log("收藏至队伍被点击");
-    dialogVisible.value = false;
+    axiosInstance
+        .post("/student/dormitory/favor2", {
+            studentAccountId: localStorage.getItem("studentId"),
+            dormitory_id: props.dormitory.dormitory_id,
+        })
+        .then((res) => {
+            console.log(res);
+            if (res.data.code === 200) {
+                ElMessage.success("收藏成功");
+                dialogVisible.value = false;
+            } else {
+                ElMessage.error("收藏失败");
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            ElMessage.error("收藏失败");
+        });
 }
 </script>
 
