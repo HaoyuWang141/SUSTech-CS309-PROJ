@@ -54,11 +54,11 @@ public class DormitoryAllocationController {
 
     @PostMapping("/setState")
     @Operation(summary = "dormitory allocation", description = "0:组队阶段, 1:收藏阶段, 2:正选阶段, 3:结束阶段")
-    public ResponseEntity<?> setState(Integer entryYear, Integer degree, Integer gender, Integer state, Timestamp startTime, Timestamp endTime) {
+    public ResponseEntity<?> setState(Integer entryYear, Integer degree, Integer gender, Integer state, Long startTime, Long endTime) {
         List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
                 .eq("entry_year", entryYear).eq("degree", degree).eq("gender", gender));
         if (allocationStageList.isEmpty()) {
-            AllocationStage allocationStage = new AllocationStage(null, entryYear, degree, gender, state, startTime, endTime);
+            AllocationStage allocationStage = new AllocationStage(null, entryYear, degree, gender, state, new Timestamp(startTime), new Timestamp(endTime));
             allocationStageService.save(allocationStage);
         } else {
             AllocationStage allocationStage = allocationStageList.get(0);

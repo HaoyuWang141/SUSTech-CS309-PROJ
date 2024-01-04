@@ -121,8 +121,8 @@ CREATE TABLE allocation_stage
     degree     INT,          -- 0:本科, 1:硕士, 2:博士
     gender     INT,          -- 0:女, 1:男
     stage      INT NOT NULL, -- 0:组队阶段, 1:收藏阶段, 2:正选阶段, 3:结束阶段
-    startTime  TIMESTAMP,
-    endTime    TIMESTAMP,
+    start_time TIMESTAMP,
+    end_time   TIMESTAMP,
     UNIQUE (entry_year, degree, gender, stage)
 );
 
