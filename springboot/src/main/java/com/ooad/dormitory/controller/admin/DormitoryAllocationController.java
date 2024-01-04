@@ -71,6 +71,6 @@ public class DormitoryAllocationController {
     @GetMapping("/getState")
     @Operation(summary = "dormitory allocation", description = "0:组队阶段, 1:收藏阶段, 2:正选阶段, 3:结束阶段")
     public List<AllocationStage> getState() {
-        return allocationStageService.list(new QueryWrapper<>());
+        return allocationStageService.list();
     }
 }

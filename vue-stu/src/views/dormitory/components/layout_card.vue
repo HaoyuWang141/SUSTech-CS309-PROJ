@@ -46,7 +46,7 @@
             <span>评论</span>
             <el-form>
                 <el-form-item>
-                    <el-input v-model="newComment" placeholder="请输入评论" />
+                    <el-input v-model="newComment" placeholder="请输入评论" type="textarea" :rows="3"/>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="postComment">
@@ -255,7 +255,6 @@ async function postComment() {
         margin-top: 20px;
         padding: 10px 30px;
         margin-left: auto;
-        margin-right: 100px;
     }
 }
 </style>

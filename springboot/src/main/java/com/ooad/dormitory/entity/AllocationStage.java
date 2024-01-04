@@ -18,6 +18,6 @@ public class AllocationStage {
     private Integer degree;
     private Integer gender;
     private Integer stage;
-    private Timestamp startTime;
-    private Timestamp endTime;
+    private Timestamp starttime;
+    private Timestamp endtime;
 }

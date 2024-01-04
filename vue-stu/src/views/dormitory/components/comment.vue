@@ -62,6 +62,10 @@ const newReply = ref("");
 async function postReply() {
     // 添加发布回复的逻辑
     console.log("发布回复被点击");
+    if (newReply.value === "") {
+        ElMessage.warning("回复不能为空");
+        return;
+    }
     axiosInstance
         .post(
             "/student/forum/reply",
@@ -93,6 +97,10 @@ async function postReply() {
 }
 
 .replies {
-    margin-left: 20px; /* 回复的缩进 */
+    margin-left: 50px; /* 回复的缩进 */
+}
+
+.el-button {
+    margin-left: auto;
 }
 </style>
