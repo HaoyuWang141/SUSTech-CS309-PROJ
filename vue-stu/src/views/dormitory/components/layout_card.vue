@@ -9,16 +9,25 @@
                 padding: 30px 30px;
             "
         >
-            <!-- <span>{{ title }}</span>
-            <div class="text item">
-                {{ description }}
-            </div> -->
-            <el-button type="primary" @click="viewDetails">查看详情</el-button>
+            <el-button type="primary" @click="viewDetails">
+                查看详情
+            </el-button>
         </div>
     </el-card>
+
+    <!-- 模态框内容 -->
+    <el-dialog title="详细信息" v-model="dialogVisible" width="30%">
+        <img :src="image" class="image" alt="Card image" />
+        <span>{{ title }}</span>
+        <div class="text item">
+            {{ description }}
+        </div>
+    </el-dialog>
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
+
 const props = defineProps({
     id: Number,
     image: String,
@@ -26,9 +35,12 @@ const props = defineProps({
     description: String,
 });
 
+const dialogVisible = ref(false);
+
 const viewDetails = () => {
     // 添加查看详情的逻辑
     console.log("查看详情被点击");
+    dialogVisible.value = true;
 };
 </script>
 

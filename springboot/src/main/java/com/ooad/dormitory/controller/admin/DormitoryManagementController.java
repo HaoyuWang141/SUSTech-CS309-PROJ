@@ -43,7 +43,12 @@ public class DormitoryManagementController {
     @Operation(summary = "create dormitory",
             description = """
                     创建宿舍, dormitory 需要依赖于 building 和 layout
-                    building:
+                    id字段不存在即可，数据库会自增创建
+                    
+                    创建时必填的字段：floor，roomNumber，
+                    
+                    可以发现同时有building对象和buildingId两个字段， 解释如下：
+                    1. building:
                     若 buildingId 存在, 则直接使用该 buildingId;
                     若 buildingId 不存在, 则使用 building.id; 若 building.id 不存在, 则创建 building, 并使用 building.id
                     注: 创建 building 时, 需要依赖于 region, 逻辑同上.
@@ -140,17 +145,24 @@ public class DormitoryManagementController {
     }
 
     @GetMapping("/get/dormitory")
+    @Operation(summary = "get dormitory",
+            description = """
+                    获取宿舍, type 为 region, building, dormitory 之一, id 为对应的 id
+                    type 为 region 时, 返回该 region 下的所有宿舍
+                    type 为 building 时, 返回该 building 下的所有宿舍
+                    type 为 dormitory 时, 返回该 dormitory (数据结构为 List<Dormitory>，但只有一个元素)
+                    """)
     public List<Dormitory> queryDormitory(String type, Integer id) {
         List<Dormitory> dormitoryList = new ArrayList<>();
         switch (type) {
             case "region":
-                List<Building> buildingIdList = buildingService.list(new QueryWrapper<Building>().eq("regionId", id));
+                List<Building> buildingIdList = buildingService.list(new QueryWrapper<Building>().eq("region_id", id));
                 for (Building building : buildingIdList) {
-                    dormitoryList.addAll(dormitoryService.list(new QueryWrapper<Dormitory>().eq("buildingId", building.getBuildingId())));
+                    dormitoryList.addAll(dormitoryService.list(new QueryWrapper<Dormitory>().eq("building_id", building.getBuildingId())));
                 }
                 break;
             case "building":
-                dormitoryList.addAll(dormitoryService.list(new QueryWrapper<Dormitory>().eq("buildingId", id)));
+                dormitoryList.addAll(dormitoryService.list(new QueryWrapper<Dormitory>().eq("building_id", id)));
                 break;
             case "dormitory":
                 dormitoryList.add(dormitoryService.getById(id));
