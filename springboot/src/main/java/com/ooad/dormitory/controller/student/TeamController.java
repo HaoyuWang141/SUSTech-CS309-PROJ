@@ -47,7 +47,7 @@ public class TeamController {
     }
 
     @PostMapping("/quitTeam2")
-    public ResponseEntity<?> quitTeam2(@RequestBody String studentAccountId) {
+    public ResponseEntity<?> quitTeam2(String studentAccountId) {
         try {
             StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
             if (studentAccount == null) {
