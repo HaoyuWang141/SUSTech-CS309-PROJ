@@ -29,7 +29,7 @@ import FunctionBoard from "@/components/FunctionBoard.vue";
     grid-template-columns: repeat(10, 1fr);
     grid-template-rows: repeat(10, 1fr);
     background-color: #f2f2f2;
-    height: 85vh;
+    height: 86.4vh;
     width: 100%;
     margin: 0;
     padding: 0;

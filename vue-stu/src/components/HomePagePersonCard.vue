@@ -30,6 +30,8 @@ async function getSelfInfo() {
             console.log(response)
             name.value = response.data.name
             sid.value = response.data.student_id
+            gender.value = response.data.gender
+            localStorage.setItem("currentTeam", response.data.team_id)
         })
     } catch (error) {
         console.error(error);

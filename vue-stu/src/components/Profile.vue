@@ -8,47 +8,15 @@ const student = ref({
     student_id: "",
     gender: 1,
     photoUrl: "string",
-    college: "树德",
-    sleepTime: "23:59", // may be a ( DateTime )
-    wakeUpTime: "7:59", // like above
-    airConditionerTemperature: 23,
+    college: "",
+    sleep_time: "", // may be a ( DateTime )
+    wake_up_time: "", // like above
+    air_conditioner_temperature: 23,
     snore: false,
-    qq: "123456789",
-    email: "123456789@email.com",
-    wechat: "wx_id_123456789",
+    qq: "",
+    email: "",
+    wechat: "",
     teamId: 0,
-    team: {
-        teamId: 0,
-        dormitoryId: 0,
-        dormitory: {
-            dormitoryId: 0,
-            floor: 0,
-            roomNumber: "string",
-            bedCount: 0,
-            description: "string",
-            layoutId: 0,
-            layout: {
-                layoutId: 0,
-                layoutName: "string",
-                description: "string",
-                imageUrl: "string"
-            },
-            isEmpty: true,
-            gender: 0,
-            degree: 0,
-            buildingId: 0,
-            building: {
-                buildingId: 0,
-                buildingName: "string",
-                description: "string",
-                regionId: 0,
-                region: {
-                    regionId: 0,
-                    regionName: "string"
-                }
-            }
-        }
-    }
 })
 
 interface Mark {
@@ -73,31 +41,39 @@ const marks = reactive<Marks>({
 });
 const showEditInfo = ref(false);
 const editInfoForm = ref({
+    studentAccountId: localStorage.getItem("studentId"),
     photoUrl: "",
-    sleepTime: "",
-    wakeUpTime: "",
-    airConditionerTemperature: 26,
+    sleepTimeString: "",
+    wakeUpTimeString: "",
+    airConditionerTemperature: 23,
     snore: false,
-    QQ: "",
+    qq: "",
     email: "",
     wechat: "",
 })
 
 async function confirmEdit() {
     try {
-        console.log(editInfoForm.value.wakeUpTime)
         await axiosInstance.post(
             "student/profile/set2",
+            {},
             {
-                studentAccountId: localStorage.getItem("studentId"),
-                token: "tokentokentoken"
-            },
-            {
-                params: editInfoForm.value,
+                params: {
+                    studentAccountId: localStorage.getItem("studentId"),
+                    sleepTimeString: editInfoForm.value.sleepTimeString,
+                    wakeUpTimeString: editInfoForm.value.wakeUpTimeString,
+                    airConditionerTemperature: editInfoForm.value.airConditionerTemperature,
+                    snore: editInfoForm.value.snore,
+                    qq: editInfoForm.value.qq,
+                    email: editInfoForm.value.email,
+                    wechat: editInfoForm.value.wechat,
+                },
             },
         ).then(response => {
+            console.log("Profile confirmEdit() ->")
             console.log(response)
             showEditInfo.value = false
+            getStudentInfo()
         })
     } catch (error) {
         console.log(error)
@@ -107,16 +83,16 @@ async function confirmEdit() {
 async function getStudentInfo() {
     try {
         await axiosInstance.get(
-            "admin/studentAccount/getStudent",
+              "admin/studentAccount/getStudent",
             {
                 params: {
                     studentId: localStorage.getItem("studentId"),
                 },
             },
         ).then(response => {
-                student.value = response.data
-                console.log("Profile: getStudentInfo() ->")
-                console.log(response)
+                student.value = response.data;
+                console.log("Profile: getStudentInfo() ->");
+                console.log(response);
             }
         )
 
@@ -187,13 +163,13 @@ onMounted(() => {
       </template>
       <el-form label-position="left" label-width="80px">
         <el-form-item label="睡觉时间">
-          <span>{{ student.sleepTime }}</span>
+          <span>{{ student.sleep_time }}</span>
         </el-form-item>
         <el-form-item label="起床时间">
-          <span>{{ student.wakeUpTime }}</span>
+          <span>{{ student.wake_up_time }}</span>
         </el-form-item>
         <el-form-item label="空调温度">
-          <span>{{ student.airConditionerTemperature + "℃" }}</span>
+          <span>{{ student.air_conditioner_temperature + "℃" }}</span>
         </el-form-item>
         <el-form-item label="是否打鼾">
           <span>{{ student.snore === true ? "是" : "否" }}</span>
@@ -220,15 +196,15 @@ onMounted(() => {
 
     <el-form style="margin: 20px; max-width: 400px" label-width="80px" label-position="left">
       <el-form-item label="睡觉时间">
-        <el-time-picker v-model="editInfoForm.sleepTime"
-                        format="HH:mm:ss"
-                        value-format="HH:mm:ss">
+        <el-time-picker v-model="editInfoForm.sleepTimeString"
+                        format="HH:mm"
+                        value-format="HH:mm">
         </el-time-picker>
       </el-form-item>
       <el-form-item label="起床时间">
-        <el-time-picker v-model="editInfoForm.wakeUpTime"
-                        format="HH:mm:ss"
-                        value-format="HH:mm:ss">
+        <el-time-picker v-model="editInfoForm.wakeUpTimeString"
+                        format="HH:mm"
+                        value-format="HH:mm">
         </el-time-picker>
       </el-form-item>
       <el-form-item label="空调温度">
@@ -254,7 +230,7 @@ onMounted(() => {
         </el-input>
       </el-form-item>
       <el-form-item label="QQ">
-        <el-input v-model="editInfoForm.QQ"
+        <el-input v-model="editInfoForm.qq"
                   placeholder="输入QQ"
                   clearable>
         </el-input>
