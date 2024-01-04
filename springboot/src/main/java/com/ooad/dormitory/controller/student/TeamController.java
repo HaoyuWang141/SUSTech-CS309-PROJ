@@ -190,8 +190,7 @@ public class TeamController {
     @Deprecated
     @GetMapping("/getInvitations")
     public List<Invitation> getInvitations(@RequestBody StudentAccount studentAccount ) {
-         
-        return invitationService.list(new QueryWrapper<Invitation>().eq("invitee_id", studentAccount.getTeamId()));
+        return invitationService.list(new QueryWrapper<Invitation>().eq("invitee_id", studentAccount.getStudentId()));
     }
 
     @Deprecated
