@@ -48,24 +48,28 @@ public class TeamController {
 
     @PostMapping("/quitTeam2")
     public ResponseEntity<?> quitTeam2(@RequestBody String studentAccountId) {
-        StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
-        assert studentAccount != null;
+        try {
+            StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
+            assert studentAccount != null;
 
-        List<StudentAccount> studentAccountList = studentAccountService.list(new QueryWrapper<StudentAccount>()
-                .eq("team_id", studentAccount.getTeamId()));
-        if (studentAccountList.size() > 2) {
-            studentAccount.setTeamId(null);
-            studentAccount.setTeam(null);
-            studentAccountService.saveOrUpdate(studentAccount);
-        }
-        else if (studentAccountList.size() == 2) {
-            for (StudentAccount each : studentAccountList) {
-                each.setTeamId(null);
-                each.setTeam(null);
-                studentAccountService.saveOrUpdate(each);
+            List<StudentAccount> studentAccountList = studentAccountService.list(new QueryWrapper<StudentAccount>()
+                    .eq("team_id", studentAccount.getTeamId()));
+            if (studentAccountList.size() > 2) {
+                studentAccount.setTeamId(null);
+                studentAccount.setTeam(null);
+                studentAccountService.saveOrUpdate(studentAccount);
             }
+            else if (studentAccountList.size() == 2) {
+                for (StudentAccount each : studentAccountList) {
+                    each.setTeamId(null);
+                    each.setTeam(null);
+                    studentAccountService.saveOrUpdate(each);
+                }
+            }
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            throw new BackEndException("quit team failed!\n" + e.getMessage());
         }
-        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/getInvitations2")

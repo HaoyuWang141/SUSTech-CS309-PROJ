@@ -99,10 +99,18 @@
             <version>2.11.1</version>
         </dependency>
 
-        <!--引入 Spring Security-->
+<!--        &lt;!&ndash;引入 Spring Security&ndash;&gt;-->
 <!--        <dependency>-->
 <!--            <groupId>org.springframework.boot</groupId>-->
 <!--            <artifactId>spring-boot-starter-security</artifactId>-->
+<!--        </dependency>-->
+
+<!--        &lt;!&ndash;CustomAuthenticationFilter类需用&ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>javax.servlet</groupId>-->
+<!--            <artifactId>javax.servlet-api</artifactId>-->
+<!--            <version>3.1.0</version> &lt;!&ndash; 使用你项目需要的版本 &ndash;&gt;-->
+<!--            <scope>provided</scope>-->
 <!--        </dependency>-->
 
     </dependencies>
