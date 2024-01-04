@@ -75,7 +75,7 @@ public class TeamController {
             assert studentAccount != null;
             return invitationService.list(new QueryWrapper<Invitation>().eq("invitee_id", studentAccount.getStudentId()));
         } catch (Exception e) {
-            throw new RuntimeException("get invitations failed!\n" + e.getMessage());
+            throw new BackEndException("get invitations failed!\n" + e.getMessage());
         }
     }
 
