@@ -38,12 +38,13 @@ public class LoginInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 在进入Controller方法前执行，用于拦截处理逻辑
 
+
         // 验证token
-        String token = request.getHeader("Authorization");
-        if (!TokenUtils.validateToken(token)) {
-            response.sendRedirect("/student/login");
-            return false;
-        }
+//        String token = request.getHeader("Authorization");
+//        if (!TokenUtils.validateToken(token)) {
+//            response.sendRedirect("/student/login");
+//            return false;
+//        }
         return true;
     }
 

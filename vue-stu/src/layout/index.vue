@@ -69,10 +69,10 @@ function logout() {
             <el-steps align-center
                       :active="2"
                       class="stages">
-              <el-step title="111"></el-step>
-              <el-step title="222"></el-step>
-              <el-step title="333"></el-step>
-              <el-step title="444"></el-step>
+              <el-step title="组队阶段"></el-step>
+              <el-step title="收藏阶段"></el-step>
+              <el-step title="正选阶段"></el-step>
+              <el-step title="结束阶段"></el-step>
             </el-steps>
           </div>
 <!--        </el-col>-->
@@ -96,6 +96,7 @@ function logout() {
 
 <style scoped lang="less">
 // 定义一些常用变量
+@import "@/assets/colors.less";
 @main-font: "Arial", sans-serif;
 @primary-color: #faf6f6; // 主要文字颜色
 @secondary-color: #dfe1d9; // 次要文字颜色
@@ -177,14 +178,14 @@ function logout() {
 }
 
 /deep/ .el-step__title.is-finish {
-  color: #13ce66 !important;
-  border-color: #13ce66;
+  color: @text-color4 !important;
+  // border-color: #13ce66;
   font-weight: bold;
 }
 
 /deep/ .el-step__title.is-process {
-  color: #13ce66 !important;
-  border-color: #13ce66;
-  font-weight: bold;
+  color: @light !important;
+  // border-color: #13ce66;
+  font-weight: bold;  
 }
 </style>
