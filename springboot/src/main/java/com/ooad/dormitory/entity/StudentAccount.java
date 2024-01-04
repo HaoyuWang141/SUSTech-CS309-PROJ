@@ -34,12 +34,13 @@ public class StudentAccount {
         if (this.studentId.charAt(3) == '1') {
             return 0;
         }
-        else if (this.studentId.charAt(3) == '3' || this.studentId.charAt(3) == '6') {
+        else if (this.studentId.charAt(3) == '2') {
             return 1;
         }
-        else {
+        else if (this.studentId.charAt(3) == '3') {
             return 2;
         }
+        return -1;
     }
 
     public Double calSimilarity(Object o) {

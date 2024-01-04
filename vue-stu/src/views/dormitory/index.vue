@@ -62,16 +62,18 @@
         </p>
     </div>
 
-    <el-row :gutter="40">
-        <el-col :span="5" v-for="card in layoutList" :key="card.layout_id">
-            <LayoutCard
-                :id="card.layout_id"
-                :image="card.image_url"
-                :title="card.layout_name"
-                :description="card.description"
-            />
-        </el-col>
-    </el-row>
+    <div class="cards">
+        <el-row :gutter="40">
+            <el-col :span="7" v-for="card in layoutList" :key="card.layout_id">
+                <LayoutCard
+                    :id="card.layout_id"
+                    :image="card.image_url"
+                    :title="card.layout_name"
+                    :description="card.description"
+                />
+            </el-col>
+        </el-row>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -139,7 +141,7 @@ async function fetchBuildings() {
     }
 }
 
-async function fetchLayout () {
+async function fetchLayout() {
     try {
         const response = await axiosInstance.get(
             "/student/dormitory/getLayout",
@@ -153,7 +155,7 @@ async function fetchLayout () {
     } catch (error) {
         console.error(error);
     }
-};
+}
 
 fetchRegions();
 </script>
@@ -235,8 +237,11 @@ el-select select {
     }
 }
 
-.el-row {
-    padding: 0 20px;
-    justify-content: center;
+.cards {
+    padding: 0 10%;
+
+    .el-row {
+        justify-content: center;
+    }
 }
 </style>

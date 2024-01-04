@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ooad.dormitory.controller.student.LoginController;
 import com.ooad.dormitory.entity.StudentAccount;
 import com.ooad.dormitory.service.StudentAccountService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -87,36 +88,39 @@ public class StudentAccountController {
     }
 
     @GetMapping("/get")
-    public List<StudentAccount> getStudentAccount(@RequestParam(required = false) Integer entryYear, @RequestParam(required = false) String degree) {
+    @Operation(
+            summary = "get student account",
+            description = """
+                    entryYear: 入学年份 (如 2019, 2020)
+                    degree: 学位 (如 undergraduate, master, doctor)
+                    gender: 0:女, 1:男
+                    三个参数均可为空, 为空时表示不限制
+                    """
+    )
+    public List<StudentAccount> getStudentAccount(@RequestParam(required = false) Integer entryYear,
+                                                  @RequestParam(required = false) String degree,
+                                                  @RequestParam(required = false) Integer gender) {
         QueryWrapper<StudentAccount> queryWrapper = new QueryWrapper<>();
-        if ((entryYear == null && (degree == null || degree.isEmpty()))) {
-            System.out.println("entryYear and degree is null");
-        } else if (entryYear == null) {
-            if (degree.equals("master")) {
-                queryWrapper.like("student_id", "________");
-            } else if (degree.equals("doctor")) {
-                queryWrapper.like("student_id", "________");
-            } else {
-                throw new RuntimeException("degree is Not doctor or master");
-            }
-        } else if (degree == null) {
-            if (entryYear > 100) {
-                entryYear = entryYear % 100;
-            }
-            queryWrapper.like("student_id", "_" + entryYear + "_____");
+        String entryYearShort = entryYear == null ? "__" : String.valueOf(entryYear % 100);
+        if (degree == null) {
+            degree = "_";
+        } else if (degree.equals("undergraduate")) {
+            degree = "1";
+        } else if (degree.equals("master")) {
+            degree = "2";
+        } else if (degree.equals("doctor")) {
+            degree = "3";
         } else {
-            if (entryYear > 100) {
-                entryYear = entryYear % 100;
-            }
-            if (degree.equals("master")) {
-                queryWrapper.like("student_id", "_" + entryYear + "_____");
-            } else if (degree.equals("doctor")) {
-                queryWrapper.like("student_id", "_" + entryYear + "_____");
-            } else {
-                throw new RuntimeException("degree is Not doctor or master");
+            throw new RuntimeException("Degree is invalid");
+        }
+        queryWrapper.like("student_id", "1" + entryYearShort + degree + "____");
+        if (gender != null) {
+            if (gender == 1) {
+                queryWrapper.eq("gender", 1);
+            } else if (gender == 0) {
+                queryWrapper.eq("gender", 0);
             }
         }
-
         return studentAccountService.list(queryWrapper);
     }
 
