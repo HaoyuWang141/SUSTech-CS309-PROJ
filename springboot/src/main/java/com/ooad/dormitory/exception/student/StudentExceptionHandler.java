@@ -29,6 +29,11 @@ public class StudentExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("An error in database occurred: " + ex.getMessage());
     }
 
+    @ExceptionHandler(UnauthorizedException.class) // 前端错误：未登录
+    public ResponseEntity<String> handleRuntimeException(UnauthorizedException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: " + ex.getMessage());
+    }
+
     @ExceptionHandler(FrontEndException.class)
     public ResponseEntity<String> handleRuntimeException(FrontEndException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("An error in front end occurred: " + ex.getMessage());

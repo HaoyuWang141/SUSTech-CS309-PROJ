@@ -3,6 +3,7 @@ package com.ooad.dormitory.controller.student;
 import com.ooad.dormitory.entity.Authentication;
 import com.ooad.dormitory.entity.StudentAccount;
 import com.ooad.dormitory.exception.BackEndException;
+import com.ooad.dormitory.interceptor.TokenUtils;
 import com.ooad.dormitory.mapper.AuthenticationMapper;
 import com.ooad.dormitory.mapper.StudentAccountMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,9 +40,11 @@ public class LoginController {
                 return ResponseEntity.ok(authentication.getToken());
             }
 
-            String token = createToken(studentId);
-            authentication.setToken(token);
-            authentication.setTokenFailureTime(new Time(new Time(System.currentTimeMillis()).getTime() + (failureTimeInMinutes * 60 * 1000)));
+            String token = TokenUtils.generateToken(studentId);
+
+//            String token = createToken(studentId);
+//            authentication.setToken(token);
+//            authentication.setTokenFailureTime(new Time(new Time(System.currentTimeMillis()).getTime() + (failureTimeInMinutes * 60 * 1000)));
 //            authentication.setOnlineAmount(authentication.getOnlineAmount() + 1);
             authenticationMapper.updateById(authentication);
             return ResponseEntity.ok(token);
