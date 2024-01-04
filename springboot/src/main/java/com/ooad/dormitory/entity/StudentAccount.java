@@ -42,7 +42,33 @@ public class StudentAccount {
         }
     }
 
-    public Double getSimilarity(StudentAccount o) {
-        return 0.0;
+    public Double calSimilarity(Object o) {
+        if (o.getClass() != this.getClass()) {
+            throw new RuntimeException("comparing object is not a student account!");
+        }
+        StudentAccount studentAccount = (StudentAccount) o;
+        double timeWeight = 0.5;
+        double temperatureWeight = 0.3;
+        double snoreWeight = 0.2;
+        return timeWeight * calTimeSimilarity(this.sleepTime, this.wakeUpTime, studentAccount.sleepTime, studentAccount.wakeUpTime)
+                + temperatureWeight * calTemperatureSimilarity(this.airConditionerTemperature, studentAccount.airConditionerTemperature)
+                + snoreWeight * calSnoreSimilarity(this.snore, studentAccount.snore);
+    }
+
+    private static Double calTimeSimilarity(Time sleep1, Time wake1, Time sleep2, Time wake2) {
+        int delta_sleep = Math.abs((int) (sleep1.getTime() - sleep2.getTime()) / 1000 / 60);
+        double sleep_similarity = Math.max( (double) (-1/57600) * (delta_sleep - 240) * (delta_sleep + 240), 0.0);
+        int delta_wake = Math.abs((int) (wake1.getTime() - wake2.getTime()) / 1000 / 60);
+        double wake_similarity = Math.max( (double) (-1/57600) * (delta_wake - 240) * (delta_wake + 240), 0.0);
+        return (sleep_similarity + wake_similarity) / 2.0;
+    }
+
+    private static Double calTemperatureSimilarity(Integer temperature1, Integer temperature2) {
+        int delta = Math.abs(temperature1 - temperature2);
+        return Math.max( (double) (-1/100) * (delta - 10) * (delta + 10), 0.0);
+    }
+
+    private static Double calSnoreSimilarity(Boolean snore1, Boolean snore2) {
+        return snore1.equals(snore2) ? 1.0 : 0.0;
     }
 }

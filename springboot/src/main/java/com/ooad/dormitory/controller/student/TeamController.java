@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -148,8 +147,12 @@ public class TeamController {
 
         LoginController.checkAuthentication(authenticationMapper, token);
         return studentAccountService.list().stream()
-                .filter(s -> s.getTeamId() == null && !Objects.equals(studentAccount.getStudentId(), s.getStudentId()))
-                .sorted(Comparator.comparingDouble(s -> studentAccount.getSimilarity((StudentAccount) s)).reversed())
+                .filter(s -> s.getTeamId() == null
+                        && !Objects.equals(studentAccount.getStudentId(), s.getStudentId())
+                        && Objects.equals(studentAccount.getGender(), s.getGender())
+                        && Objects.equals(studentAccount.calEntryYear(), s.calEntryYear())
+                        && Objects.equals(studentAccount.calDegree(), s.calDegree()))
+                .sorted(Comparator.comparingDouble(studentAccount::calSimilarity).reversed())
                 .collect(Collectors.toList());
     }
 
@@ -236,7 +239,7 @@ public class TeamController {
         LoginController.checkAuthentication(authenticationMapper, token);
         return studentAccountService.list().stream()
                 .filter(s -> s.getTeamId() == null && !Objects.equals(studentAccount.getStudentId(), s.getStudentId()))
-                .sorted(Comparator.comparingDouble(s -> studentAccount.getSimilarity((StudentAccount) s)).reversed())
+                .sorted(Comparator.comparingDouble(s -> studentAccount.calSimilarity((StudentAccount) s)).reversed())
                 .collect(Collectors.toList());
     }
 
