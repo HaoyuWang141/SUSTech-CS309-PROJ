@@ -58,8 +58,15 @@ public class DormitorySelectionController {
     }
 
     @GetMapping("/getDormitories")
-    public List<Dormitory> queryDormitory(Integer buildingId, Integer floor) {
+    public List<Dormitory> queryDormitory(Integer buildingId, Integer floor, String roomNumber) {
         List<Dormitory> dormitoryList = dormitoryService.getDormitories();
+        System.out.println(roomNumber);
+        if (roomNumber != null) {
+            return dormitoryList
+                    .stream()
+                    .filter(dormitory -> dormitory.getBuildingId().equals(buildingId) && dormitory.getFloor().equals(floor) && dormitory.getRoomNumber().equals(roomNumber))
+                    .collect(Collectors.toList());
+        }
         if (floor != null) {
             return dormitoryList.stream().filter(dormitory -> dormitory.getBuildingId().equals(buildingId) && dormitory.getFloor().equals(floor)).collect(Collectors.toList());
         }

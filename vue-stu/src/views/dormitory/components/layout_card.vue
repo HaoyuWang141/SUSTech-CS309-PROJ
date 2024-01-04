@@ -42,6 +42,10 @@
             <span>简介：{{ layout?.description }}</span>
         </div>
         <el-button type="primary" @click="bookmark"> 收藏至队伍 </el-button>
+        <div>
+            <span>评论</span>
+            
+        </div>
     </el-dialog>
 </template>
 
