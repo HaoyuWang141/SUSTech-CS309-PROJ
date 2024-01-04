@@ -68,7 +68,7 @@ public class TeamController {
         try {
             StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
             assert studentAccount != null;
-            return invitationService.list(new QueryWrapper<Invitation>().eq("inviteeId", studentAccount.getTeamId()));
+            return invitationService.list(new QueryWrapper<Invitation>().eq("invitee_id", studentAccount.getTeamId()));
         } catch (Exception e) {
             throw new RuntimeException("get invitations failed!\n" + e.getMessage());
         }
