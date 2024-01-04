@@ -33,7 +33,7 @@
             >
             </el-image>
         </div>
-        <span>{{ layout?.layout_name }}</span>
+        <span class="title">{{ layout?.layout_name }}</span>
         <div class="text-item">
             <span>区域：{{ dormitory.building.region.region_name }}</span>
             <span>楼栋：{{ dormitory.building.building_name }}</span>
@@ -41,6 +41,9 @@
             <span>床数：{{ dormitory.bed_count }}</span>
             <span>简介：{{ layout?.description }}</span>
         </div>
+        <el-button type="primary" @click="bookmark">
+            收藏至队伍
+        </el-button>
     </el-dialog>
 </template>
 
@@ -63,6 +66,12 @@ const viewDetails = () => {
     console.log("查看详情被点击");
     dialogVisible.value = true;
 };
+
+function bookmark() {
+    // 添加收藏的逻辑
+    console.log("收藏至队伍被点击");
+    dialogVisible.value = false;
+}
 </script>
 
 <style scoped lang="less">
@@ -94,6 +103,10 @@ const viewDetails = () => {
 }
 
 .el-dialog {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; // 确保子元素从容器的左边开始
+
     .image-container {
         display: flex;
         justify-content: center; // 水平居中
@@ -106,9 +119,15 @@ const viewDetails = () => {
         }
     }
 
+    .title {
+        text-align: center; // 文本居中
+        color: @text-color4; // 文本颜色
+        font-size: x-large; // 字体大小
+        font-weight: bold; // 字体加粗
+    }
+
     span {
         display: block;
-        margin: auto;
         margin-bottom: 10px; // 标题下的间距
         font-size: large;
         font-weight: bold;
@@ -117,6 +136,21 @@ const viewDetails = () => {
     .text-item {
         padding: 0 10%; // 左右留白
         font-size: large;
+    }
+
+    .el-button {
+        border: None;
+        background-color: @button-color;
+        &:hover {
+            background-color: darken(@button-color, 5%);
+        }
+
+        display: block;
+
+        margin-top: 20px;
+        padding: 10px 30px;
+        margin-left: auto;
+        margin-right: 100px;
     }
 }
 </style>

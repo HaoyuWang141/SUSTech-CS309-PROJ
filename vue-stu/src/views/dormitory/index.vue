@@ -43,16 +43,6 @@
     </el-form>
 
     <div class="dormitroy_description">
-        <el-form-item>
-            <el-input
-                v-model="room_number"
-                placeholder="Room Number"
-                clearable
-            />
-        </el-form-item>
-    </div>
-
-    <div class="dormitroy_description">
         <h1>简介</h1>
         <h2>
             {{ selectedRegion?.region_name }}

@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface DormitoryService extends IService<Dormitory> {
 
-    public List<Dormitory> getDormitories(QueryWrapper<Dormitory> queryWrapper);
+    public List<Dormitory> getDormitories();
 }

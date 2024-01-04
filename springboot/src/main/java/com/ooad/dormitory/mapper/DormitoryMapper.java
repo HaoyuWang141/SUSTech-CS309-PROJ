@@ -27,5 +27,5 @@ public interface DormitoryMapper extends BaseMapper<Dormitory> {
             @Result(column = "building_id", property = "buildingId"),
             @Result(column = "building_id", property = "building", one = @org.apache.ibatis.annotations.One(select = "com.ooad.dormitory.mapper.BuildingMapper.selectById"))
     })
-    List<Dormitory> getDormitories(QueryWrapper<Dormitory> queryWrapper);
+    List<Dormitory> getDormitories();
 }

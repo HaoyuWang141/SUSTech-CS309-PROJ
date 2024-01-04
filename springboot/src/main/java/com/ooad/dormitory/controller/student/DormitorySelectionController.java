@@ -58,13 +58,12 @@ public class DormitorySelectionController {
     }
 
     @GetMapping("/getDormitories")
-    public List<Dormitory> queryDormitory(Integer buildingId, String floor) {
+    public List<Dormitory> queryDormitory(Integer buildingId, Integer floor) {
+        List<Dormitory> dormitoryList = dormitoryService.getDormitories();
         if (floor != null) {
-            return dormitoryService.list(new QueryWrapper<Dormitory>()
-                    .eq("building_id", buildingId)
-                    .eq("floor", floor));
+            return dormitoryList.stream().filter(dormitory -> dormitory.getBuildingId().equals(buildingId) && dormitory.getFloor().equals(floor)).collect(Collectors.toList());
         }
-        return dormitoryService.getDormitories(new QueryWrapper<Dormitory>().eq("building_id", buildingId));
+        return dormitoryList.stream().filter(dormitory -> dormitory.getBuildingId().equals(buildingId)).collect(Collectors.toList());
     }
 
     @GetMapping("/getFavoriteList")
