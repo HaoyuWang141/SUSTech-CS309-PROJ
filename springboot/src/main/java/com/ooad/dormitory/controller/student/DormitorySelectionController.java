@@ -203,7 +203,7 @@ public class DormitorySelectionController {
     }
 
     @GetMapping("/getStage")
-    public Integer getStage(String studentAccountId) {
+    public AllocationStage getStage(String studentAccountId) {
         StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
         if (studentAccount == null) {
             throw new NotFoundException("student account not found!");
@@ -214,9 +214,9 @@ public class DormitorySelectionController {
                 .eq("degree", studentAccount.calDegree())
                 .eq("gender", studentAccount.getGender()));
         if (allocationStageList.isEmpty()) {
-            return 0;
+            return null;
         }
-        return allocationStageList.get(0).getStage();
+        return allocationStageList.get(0);
     }
 
 
