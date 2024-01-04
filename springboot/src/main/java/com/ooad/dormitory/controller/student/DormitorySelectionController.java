@@ -74,7 +74,7 @@ public class DormitorySelectionController {
         return dormitoryService.getById(dormitoryId);
     }
 
-    @GetMapping("/getDormitory")
+    @GetMapping("/getDormitory2")
     public Dormitory getDormitory(String buildingId, String roomNumber) {
         return dormitoryService.getOne(new QueryWrapper<Dormitory>()
                 .eq("building_id", buildingId)

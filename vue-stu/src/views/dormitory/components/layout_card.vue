@@ -41,7 +41,7 @@
 
 <script setup lang="ts">
 import { ref, PropType } from "vue";
-import { Dormitory } from "@/types/globalTypes";
+import { Dormitory, Layout } from "@/types/globalTypes";
 
 const props = defineProps({
     id: Number,
@@ -49,6 +49,7 @@ const props = defineProps({
     title: String,
     description: String,
     dormitory: Object as PropType<Dormitory>,
+    layout: Object as PropType<Layout>,
 });
 
 const dialogVisible = ref(false);
