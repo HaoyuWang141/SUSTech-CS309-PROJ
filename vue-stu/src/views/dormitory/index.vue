@@ -35,6 +35,10 @@
             </el-select>
         </el-form-item>
 
+        <el-button type="primary" @click="fetchDorms">View</el-button>
+    </el-form>
+
+    <div class="dormitroy_description">
         <el-form-item>
             <el-input
                 v-model="room_number"
@@ -42,9 +46,7 @@
                 clearable
             />
         </el-form-item>
-
-        <el-button type="primary" @click="fetchLayout">View</el-button>
-    </el-form>
+    </div>
 
     <div class="dormitroy_description">
         <h1>简介</h1>
@@ -64,12 +66,13 @@
 
     <div class="cards">
         <el-row :gutter="40">
-            <el-col :span="7" v-for="layout in layoutList" :key="layout.layout_id">
+            <el-col
+                :span="7"
+                v-for="dorm in dormitoryList"
+                :key="dorm.dormitory_id"
+            >
                 <LayoutCard
-                    :id="layout.layout_id"
-                    :image="layout.image_url"
-                    :title="layout.layout_name"
-                    :description="layout.description"
+                    :dormitory="dorm"
                 />
             </el-col>
         </el-row>
@@ -88,9 +91,10 @@ const selectedRegion = ref<Region>();
 const buildings = ref<Building[]>([]);
 const selectedBuilding = ref<Building>();
 
-const room_number = ref<string>("");
+const room_number = ref(null);
 
 const layoutList = ref<Layout[]>([]);
+const dormitoryList = ref<Dormitory[]>([]);
 
 const cards = ref([
     {
@@ -141,17 +145,19 @@ async function fetchBuildings() {
     }
 }
 
-async function fetchLayout() {
+async function fetchDorms() {
     try {
         const response = await axiosInstance.get(
-            "/student/dormitory/getLayout",
+            "/student/dormitory/getDormitories",
             {
                 params: {
                     buildingId: selectedBuilding.value?.building_id,
                 },
             }
         );
-        layoutList.value = response.data;
+        console.log(response.data);
+        dormitoryList.value = response.data;
+        console.log(dormitoryList.value);
     } catch (error) {
         console.error(error);
     }

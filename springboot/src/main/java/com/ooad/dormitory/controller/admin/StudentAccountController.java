@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ooad.dormitory.controller.student.LoginController;
+import com.ooad.dormitory.entity.Authentication;
 import com.ooad.dormitory.entity.StudentAccount;
+import com.ooad.dormitory.mapper.AuthenticationMapper;
 import com.ooad.dormitory.service.StudentAccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -21,10 +23,12 @@ import java.util.List;
 public class StudentAccountController {
 
     private final StudentAccountService studentAccountService;
+    private final AuthenticationMapper authenticationMapper;
 
     @Autowired
-    public StudentAccountController(StudentAccountService studentAccountService) {
+    public StudentAccountController(StudentAccountService studentAccountService, AuthenticationMapper authenticationMapper) {
         this.studentAccountService = studentAccountService;
+        this.authenticationMapper = authenticationMapper;
     }
 
     @PostMapping("/create")
@@ -32,15 +36,16 @@ public class StudentAccountController {
         record Response(int successCount, List<StudentAccount> failedStudentList) {
         }
 
-        for (StudentAccount studentAccount : studentAccountList) {
-            System.out.println(studentAccount);
-        }
-
         int successCount = 0;
         List<StudentAccount> failedStudentList = new ArrayList<>();
         for (StudentAccount studentAccount : studentAccountList) {
             try {
                 if (studentAccountService.save(studentAccount)) {
+                    Authentication authentication = new Authentication();
+                    authentication.setStudentId(studentAccount.getStudentId());
+                    authentication.setStudentPassword("123456");
+                    authentication.setOnlineAmount(0);
+                    authenticationMapper.insert(authentication);
                     successCount++;
                 }
             } catch (Exception e) {

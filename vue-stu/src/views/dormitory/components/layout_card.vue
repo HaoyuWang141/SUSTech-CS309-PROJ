@@ -1,6 +1,6 @@
 <template>
     <el-card :body-style="{ padding: '0' }">
-        <img :src="image" class="image" alt="Card image" />
+        <img :src="layout?.image_url" class="image" alt="Card image" />
         <div
             style="
                 display: flex;
@@ -9,6 +9,8 @@
                 padding: 30px 30px;
             "
         >
+            <span>{{ layout?.layout_name }}</span>
+            
             <el-button type="primary" @click="viewDetails">
                 查看详情
             </el-button>
@@ -16,25 +18,39 @@
     </el-card>
 
     <!-- 模态框内容 -->
-    <el-dialog title="详细信息" v-model="dialogVisible" width="30%">
-        <img :src="image" class="image" alt="Card image" />
-        <span>{{ title }}</span>
+    <el-dialog title="详细信息" v-model="dialogVisible" width=40%;>
+        <div class="image-container">
+            <el-image
+                :src="layout?.image_url"
+                :zoom-rate="1.5"
+                :max-scale="7"
+                :min-scale="0.2"
+                :preview-src-list="[layout?.image_url]"
+                :initial-index="1"
+                fit="cover"
+                alt="Card image"
+            >
+            </el-image>
+        </div>
+        <span>{{ layout?.layout_name }}</span>
         <div class="text item">
-            {{ description }}
+            {{ layout?.description }}
         </div>
     </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, PropType, computed } from "vue";
+import { Dormitory, Layout } from "@/types/globalTypes";
 
 const props = defineProps({
-    id: Number,
-    image: String,
-    title: String,
-    description: String,
+    dormitory: {
+        type: Object as PropType<Dormitory>,
+        required: true,
+    }
 });
 
+const layout = computed(() => props.dormitory.layout);
 const dialogVisible = ref(false);
 
 const viewDetails = () => {
@@ -46,6 +62,7 @@ const viewDetails = () => {
 
 <style scoped lang="less">
 @import "@/assets/colors.less";
+
 .el-card {
     min-width: 100px;
     margin-bottom: 30px;
@@ -68,6 +85,32 @@ const viewDetails = () => {
     background-color: @button-color;
     &:hover {
         background-color: darken(@button-color, 5%);
+    }
+}
+
+.el-dialog {
+    
+    .image-container {
+        display: flex;
+        justify-content: center; // 水平居中
+        align-items: center; // 垂直居中
+        margin-bottom: 15px; // 提供一些间距
+
+        .el-image {
+            max-width: 100%; // 限制最大宽度，以适应容器
+            // 高度将自动调整以保持纵横比
+        }
+    }
+
+    span {
+        display: block;
+        margin-bottom: 10px; // 标题下的间距
+        font-size: large;
+        font-weight: bold;
+    }
+
+    .text.item {
+        font-size: large;
     }
 }
 </style>
