@@ -5,6 +5,7 @@ import com.ooad.dormitory.entity.StudentAccount;
 import com.ooad.dormitory.mapper.AuthenticationMapper;
 import com.ooad.dormitory.mapper.StudentAccountMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,13 +61,42 @@ public class LoginController {
     }
 
     public static boolean checkAuthentication(AuthenticationMapper authenticationMapper, String token) {
-        Authentication authentication = authenticationMapper.selectByToken(token);
-        if (authentication != null && new Time(System.currentTimeMillis()).compareTo(authentication.getTokenFailureTime()) < 0) {
-            return true;
-        }
-        else {
+        try {
+            Authentication authentication = authenticationMapper.selectByToken(token);
+            if (authentication != null && new Time(System.currentTimeMillis()).compareTo(authentication.getTokenFailureTime()) < 0) {
+                return true;
+            }
+            else {
 //            throw new RuntimeException("invalid token!");
-            return false;
+                return false;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("authenticate failed!\n" + e.getMessage());
+        }
+    }
+
+    public static boolean checkAuthentication2(RedisTemplate<String, Object> redisTemplate, AuthenticationMapper authenticationMapper, String token) {
+        // 处理高并发
+        try {
+//            Authentication authentication = authenticationMapper.selectByToken(token);
+            String authenticationKey = "authentication:" + token;
+            Authentication authentication = (Authentication) redisTemplate.opsForValue().get(authenticationKey);
+            if (authentication == null) {
+                authentication = authenticationMapper.selectByToken(token);
+                if (authentication != null) {
+                    redisTemplate.opsForValue().set(authenticationKey, authentication);
+                }
+            }
+
+            if (authentication != null && new Time(System.currentTimeMillis()).compareTo(authentication.getTokenFailureTime()) < 0) {
+                return true;
+            }
+            else {
+//            throw new RuntimeException("invalid token!");
+                return false;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("authenticate failed!\n" + e.getMessage());
         }
     }
 

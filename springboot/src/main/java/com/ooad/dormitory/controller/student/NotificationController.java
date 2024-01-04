@@ -31,15 +31,19 @@ public class NotificationController {
 
     @GetMapping("/get2")
     public List<Notification> getNotifications2(String studentAccountId, @RequestBody String token) {
-        StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
-        assert studentAccount != null;
+        try {
+            StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
+            assert studentAccount != null;
 
-        LoginController.checkAuthentication(authenticationMapper, token);
-        return notificationService.list().stream()
-                .filter(notification -> notification.getEntryYear() == null || notification.getEntryYear().equals(studentAccount.calEntryYear()))
-                .filter(notification -> notification.getDegree() == null || notification.getDegree().equals(studentAccount.calDegree()))
-                .filter(notification -> notification.getGender() == null || notification.getGender().equals(studentAccount.getGender()))
-                .collect(Collectors.toList());
+            LoginController.checkAuthentication(authenticationMapper, token);
+            return notificationService.list().stream()
+                    .filter(notification -> notification.getEntryYear() == null || notification.getEntryYear().equals(studentAccount.calEntryYear()))
+                    .filter(notification -> notification.getDegree() == null || notification.getDegree().equals(studentAccount.calDegree()))
+                    .filter(notification -> notification.getGender() == null || notification.getGender().equals(studentAccount.getGender()))
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new RuntimeException("get notifications failed!\n" + e.getMessage());
+        }
     }
 
 
