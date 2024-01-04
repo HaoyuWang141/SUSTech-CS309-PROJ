@@ -27,8 +27,8 @@ public class ProfileController {
     @PostMapping("/set2")
     public ResponseEntity<?> setProfile2(String studentAccountId,
                                       @RequestParam(required = false) String photoUrl,
-                                      @RequestParam(required = false) Time sleepTime,
-                                      @RequestParam(required = false) Time wakeUpTime,
+                                      @RequestParam(required = false) String sleepTimeString,
+                                      @RequestParam(required = false) String wakeUpTimeString,
                                       @RequestParam(required = false) Integer airConditionerTemperature,
                                       @RequestParam(required = false) Boolean snore,
                                       @RequestParam(required = false) String qq,
@@ -41,11 +41,13 @@ public class ProfileController {
             if (photoUrl != null) {
                 studentAccount.setPhotoUrl(photoUrl);
             }
-            if (sleepTime != null) {
-//            studentAccount.setSleepTime(sleepTime);
+            if (sleepTimeString != null) {
+                Time sleepTime = Time.valueOf(sleepTimeString + ":00");
+                studentAccount.setSleepTime(sleepTime);
             }
-            if (wakeUpTime != null) {
-//            studentAccount.setWakeUpTime(wakeUpTime);
+            if (wakeUpTimeString != null) {
+                Time wakeUpTime = Time.valueOf(wakeUpTimeString + ":00");
+                studentAccount.setWakeUpTime(wakeUpTime);
             }
             if (airConditionerTemperature != null) {
                 studentAccount.setAirConditionerTemperature(airConditionerTemperature);
@@ -65,7 +67,7 @@ public class ProfileController {
             studentAccountMapper.updateById(studentAccount);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            throw new BackEndException("set profile failed!");
+            throw new BackEndException("set profile failed!\n" + e.getMessage());
         }
     }
 
