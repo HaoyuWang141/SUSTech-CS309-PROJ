@@ -65,9 +65,13 @@ public class TeamController {
 
     @GetMapping("/getInvitations2")
     public List<Invitation> getInvitations2(String studentAccountId) {
-        StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
-        assert studentAccount != null;
-        return invitationService.list(new QueryWrapper<Invitation>().eq("inviteeId", studentAccount.getTeamId()));
+        try {
+            StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
+            assert studentAccount != null;
+            return invitationService.list(new QueryWrapper<Invitation>().eq("inviteeId", studentAccount.getTeamId()));
+        } catch (Exception e) {
+            throw new RuntimeException("get invitations failed!\n" + e.getMessage());
+        }
     }
 
     @PostMapping("/invite2")
