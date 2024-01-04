@@ -134,11 +134,20 @@ public class DormitorySelectionController {
         if (allocationStageList.isEmpty() || allocationStageList.get(0).getStage() != 2) {
             throw new RuntimeException("select dormitory failed! (wrong stage)");
         }
+
         // 判断本队是否已选宿舍
-        Team team = teamService.getById(studentAccount.getTeamId());
+//        Team team = teamService.getById(studentAccount.getTeamId());
+        String teamKey = "team:" + studentAccount.getTeamId();
+        Team team = (Team) redisTemplate.opsForValue().get(teamKey);
+        if (team == null) {
+            team = teamService.getById(studentAccount.getTeamId());
+            assert team != null;
+            redisTemplate.opsForValue().set(teamKey, team);
+        }
         if (team.getDormitory() != null) {
             throw new RuntimeException("select dormitory failed! (already has a dormitory)");
         }
+
         // 判断该宿舍是否已被选择
         List<Team> teamList = teamService.list(new QueryWrapper<Team>()
                 .eq("dormitoryId", dormitory.getDormitoryId()));
@@ -157,6 +166,7 @@ public class DormitorySelectionController {
         team.setDormitoryId(dormitory.getDormitoryId());
         team.setDormitory(dormitory);
         teamService.saveOrUpdate(team);
+        redisTemplate.opsForValue().set(teamKey, team);
         return ResponseEntity.ok().build();
     }
 
