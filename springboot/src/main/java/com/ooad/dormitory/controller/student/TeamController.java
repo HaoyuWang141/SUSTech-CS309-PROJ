@@ -1,6 +1,7 @@
 package com.ooad.dormitory.controller.student;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.ooad.dormitory.entity.Invitation;
 import com.ooad.dormitory.entity.StudentAccount;
 import com.ooad.dormitory.entity.Team;
@@ -10,6 +11,7 @@ import com.ooad.dormitory.mapper.AuthenticationMapper;
 import com.ooad.dormitory.service.InvitationService;
 import com.ooad.dormitory.service.StudentAccountService;
 import com.ooad.dormitory.service.TeamService;
+import org.apache.ibatis.jdbc.SQL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -59,16 +61,33 @@ public class TeamController {
             if (studentAccountList.size() > 2) {
                 studentAccount.setTeamId(null);
                 studentAccount.setTeam(null);
-                studentAccountService.saveOrUpdate(studentAccount);
+//                studentAccountService.saveOrUpdate(studentAccount);
+                studentAccountService.update(studentAccount, new UpdateWrapper<StudentAccount>()
+                        .eq("student_id", studentAccount.getStudentId()));
             }
             else if (studentAccountList.size() == 2) {
                 for (StudentAccount each : studentAccountList) {
                     each.setTeamId(null);
                     each.setTeam(null);
-                    studentAccountService.saveOrUpdate(each);
+//                    studentAccountService.saveOrUpdate(each);
+                    studentAccountService.update(each, new UpdateWrapper<StudentAccount>()
+                            .eq("student_id", each.getStudentId()));
                 }
             }
+
+//            List<StudentAccount> studentAccountList = studentAccountService.list(new UpdateWrapper<StudentAccount>()
+//                    .eq("team_id", studentAccount.getTeamId()));
+//            if (studentAccountList.size() > 2) {
+//                // 设置更新字段
+//                StudentAccount updateEntity = new StudentAccount();
+//                updateEntity.setTeamId(null);
+//                updateEntity.setTeam(null);
+//                // 执行更新
+//                studentAccountService.update(updateEntity, updateWrapper);
+//            }
+
             return ResponseEntity.ok().build();
+
         } catch (BadRequestException e) {
             throw e;
         } catch (Exception e) {

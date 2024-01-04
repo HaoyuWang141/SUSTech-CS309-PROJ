@@ -202,6 +202,23 @@ public class DormitorySelectionController {
         return layoutIdSet.stream().map(layoutService::getById).collect(Collectors.toList());
     }
 
+    @GetMapping("/getStage")
+    public Integer getStage(String studentAccountId) {
+        StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
+        if (studentAccount == null) {
+            throw new NotFoundException("student account not found!");
+        }
+
+        List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
+                .eq("entry_year", studentAccount.calEntryYear())
+                .eq("degree", studentAccount.calDegree())
+                .eq("gender", studentAccount.getGender()));
+        if (allocationStageList.isEmpty()) {
+            return 0;
+        }
+        return allocationStageList.get(0).getStage();
+    }
+
 
     @Deprecated
     @PostMapping("/favor")
