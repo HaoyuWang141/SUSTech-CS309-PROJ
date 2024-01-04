@@ -2,16 +2,19 @@ package com.ooad.dormitory.controller.student;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ooad.dormitory.entity.Comment;
+import com.ooad.dormitory.entity.Reply;
 import com.ooad.dormitory.entity.StudentAccount;
 import com.ooad.dormitory.exception.BackEndException;
 import com.ooad.dormitory.mapper.AuthenticationMapper;
 import com.ooad.dormitory.service.CommentService;
 import com.ooad.dormitory.service.DormitoryService;
+import com.ooad.dormitory.service.ReplyService;
 import com.ooad.dormitory.service.StudentAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +27,8 @@ public class ForumController {
     private final DormitoryService dormitoryService;
     private final StudentAccountService studentAccountService;
     private final AuthenticationMapper authenticationMapper;
+    @Autowired
+    private ReplyService replyService;
 
     @Autowired
     public ForumController(CommentService commentService, DormitoryService dormitoryService, StudentAccountService studentAccountService, AuthenticationMapper authenticationMapper) {
@@ -33,26 +38,17 @@ public class ForumController {
         this.authenticationMapper = authenticationMapper;
     }
 
-    @PostMapping("/launch2")
-    public ResponseEntity<?> launch2(@RequestBody String studentAccountId, @RequestBody Integer dormitoryId, @RequestBody String content) {
+    @PostMapping("/launch")
+    public ResponseEntity<?> launch(String studentAccountId, Integer dormitoryId, String content) {
         StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
         assert studentAccount != null;
 
         try {
             Comment comment = new Comment();
             comment.setPublisherId(studentAccount.getStudentId());
-            comment.setPublisher(studentAccount);
-            if (dormitoryId != null) {
-                comment.setDormitoryId(dormitoryId);
-                comment.setDormitory(dormitoryService.getById(dormitoryId));
-                assert (comment.getDormitory() != null);
-            }
-            else {
-                comment.setDormitoryId(null);
-                comment.setDormitory(null);
-            }
+            comment.setDormitoryId(dormitoryId);
             comment.setContent(content);
-            comment.setPublishTime(new java.sql.Time(System.currentTimeMillis()));
+            comment.setPublishTime(new Timestamp(System.currentTimeMillis()));
             commentService.save(comment);
         } catch (Exception e) {
             throw new BackEndException("launch comment failed!");
@@ -60,24 +56,20 @@ public class ForumController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/reply2")
-    public ResponseEntity<?> reply2(@RequestBody String studentAccountId, @RequestBody Integer replyingCommentId, @RequestBody String content) {
+    @PostMapping("/reply")
+    public ResponseEntity<?> reply(String studentAccountId, Integer commentId, String content) {
         StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
         assert studentAccount != null;
 
-
         try {
-            Comment comment = new Comment();
-            comment.setPublisherId(studentAccount.getStudentId());
-            comment.setPublisher(studentAccount);
-            comment.setReplyingCommentId(replyingCommentId);
-            comment.setReplyingComment(commentService.getById(replyingCommentId));
-            assert comment.getReplyingComment() != null;
-            comment.setDormitory(comment.getReplyingComment().getDormitory());
-            comment.setDormitoryId(comment.getReplyingComment().getDormitoryId());
-            comment.setContent(content);
-            comment.setPublishTime(new java.sql.Time(System.currentTimeMillis()));
-            commentService.save(comment);
+            Comment comment = commentService.getById(commentId);
+            Reply reply = new Reply();
+            reply.setPublisherId(studentAccount.getStudentId());
+            reply.setDormitoryId(comment.getDormitoryId());
+            reply.setContent(content);
+            reply.setPublishTime(new Timestamp(System.currentTimeMillis()));
+            reply.setCommentId(commentId);
+            replyService.save(reply);
         } catch (Exception e) {
             throw new BackEndException("reply comment failed!");
         }
@@ -91,79 +83,15 @@ public class ForumController {
     }
 
     @GetMapping("/getComments")
-    public List<Comment> getComments() {
-
+    public List<Comment> getComments(Integer dormitoryId) {
+        if (dormitoryId != null) {
+            return commentService.list(new QueryWrapper<Comment>().eq("dormitory_id", dormitoryId));
+        }
         return commentService.list();
     }
 
-    @GetMapping("/getCommentsByDormitory")
-    public List<Comment> getCommentsByDormitory(@RequestBody Integer dormitoryId) {
-
-        return commentService.list(new QueryWrapper<Comment>().eq("dormitory_id", dormitoryId));
-    }
-
-    @GetMapping("/getCommentsByBuilding")
-    public List<Comment> getCommentsByBuilding(@RequestBody Integer buildingId) {
-
-        return commentService.list().stream()
-                .filter(comment -> comment.getDormitory() != null && comment.getDormitory().getBuildingId().equals(buildingId))
-                .collect(Collectors.toList());
-    }
-
-    @GetMapping("/getCommentsByRegion")
-    public List<Comment> getCommentsByRegion(@RequestBody Integer regionId) {
-
-        return commentService.list().stream()
-                .filter(comment -> comment.getDormitory() != null && comment.getDormitory().getBuilding().getRegionId().equals(regionId))
-                .collect(Collectors.toList());
-    }
-
-
-    @Deprecated
-    @PostMapping("/launch")
-    public ResponseEntity<?> launch(@RequestBody StudentAccount studentAccount, @RequestBody Integer dormitoryId, @RequestBody String content) {
-
-        try {
-            Comment comment = new Comment();
-            comment.setPublisherId(studentAccount.getStudentId());
-            comment.setPublisher(studentAccount);
-            if (dormitoryId != null) {
-                comment.setDormitoryId(dormitoryId);
-                comment.setDormitory(dormitoryService.getById(dormitoryId));
-                assert (comment.getDormitory() != null);
-            }
-            else {
-                comment.setDormitoryId(null);
-                comment.setDormitory(null);
-            }
-            comment.setContent(content);
-            comment.setPublishTime(new java.sql.Time(System.currentTimeMillis()));
-            commentService.save(comment);
-        } catch (Exception e) {
-            throw new BackEndException("launch comment failed!");
-        }
-        return ResponseEntity.ok().build();
-    }
-
-    @Deprecated
-    @PostMapping("/reply")
-    public ResponseEntity<?> reply(@RequestBody StudentAccount studentAccount, @RequestBody Integer replyingCommentId, @RequestBody String content) {
-
-        try {
-            Comment comment = new Comment();
-            comment.setPublisherId(studentAccount.getStudentId());
-            comment.setPublisher(studentAccount);
-            comment.setReplyingCommentId(replyingCommentId);
-            comment.setReplyingComment(commentService.getById(replyingCommentId));
-            assert comment.getReplyingComment() != null;
-            comment.setDormitory(comment.getReplyingComment().getDormitory());
-            comment.setDormitoryId(comment.getReplyingComment().getDormitoryId());
-            comment.setContent(content);
-            comment.setPublishTime(new java.sql.Time(System.currentTimeMillis()));
-            commentService.save(comment);
-        } catch (Exception e) {
-            throw new BackEndException("reply comment failed!");
-        }
-        return ResponseEntity.ok().build();
+    @GetMapping("/getReply")
+    public List<Comment> getReply(Integer commentId) {
+        return commentService.list(new QueryWrapper<Comment>().eq("replying_comment_id", commentId));
     }
 }

@@ -12,6 +12,7 @@ DROP TABLE IF EXISTS allocation_stage CASCADE;
 DROP TABLE IF EXISTS invitation CASCADE;
 DROP TABLE IF EXISTS notification CASCADE;
 DROP TABLE IF EXISTS comment CASCADE;
+DROP TABLE IF EXISTS reply CASCADE;
 DROP TABLE IF EXISTS authentication CASCADE;
 
 -- 管理员账号表
@@ -148,12 +149,23 @@ CREATE TABLE notification
 
 CREATE TABLE comment
 (
-    id                  SERIAL PRIMARY KEY,
-    publisher_id        VARCHAR(20),
-    replying_comment_id INT, -- 该评论回复的评论的id
-    dormitory_id        INT,
-    content             TEXT,
-    publish_time        TIME,
+    id           SERIAL PRIMARY KEY,
+    publisher_id VARCHAR(20),
+    dormitory_id INT,
+    content      TEXT,
+    publish_time TIMESTAMP,
+    FOREIGN KEY (publisher_id) REFERENCES student_account (student_id),
+    FOREIGN KEY (dormitory_id) REFERENCES dormitory (dormitory_id)
+);
+
+CREATE TABLE reply
+(
+    id           SERIAL PRIMARY KEY,
+    publisher_id VARCHAR(20),
+    dormitory_id INT,
+    content      TEXT,
+    publish_time TIMESTAMP,
+    comment_id   INT,
     FOREIGN KEY (publisher_id) REFERENCES student_account (student_id),
     FOREIGN KEY (dormitory_id) REFERENCES dormitory (dormitory_id)
 );

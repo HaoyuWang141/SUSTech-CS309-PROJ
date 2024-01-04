@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Time;
+import java.util.Iterator;
 import java.util.List;
 
 @RestController
@@ -24,24 +25,24 @@ public class AdminNotificationController {
     }
 
     @PostMapping("/publish")
-    public ResponseEntity<?> publish(@RequestBody AdminAccount adminAccount,
+    public ResponseEntity<?> publish(Integer adminAccountId,
                                      @RequestParam(required = false) Integer entryYear,
                                      @RequestParam(required = false) Integer degree,
                                      @RequestParam(required = false) Integer gender,
                                      String title, String content) {
-        Notification notification = new Notification(null, adminAccount.getAccountId(), entryYear, degree, gender, title, content, new Time(System.currentTimeMillis()));
+        Notification notification = new Notification(null, adminAccountId, entryYear, degree, gender, title, content, new Time(System.currentTimeMillis()));
         notificationService.save(notification);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/get")
-    public List<Notification> getNotifications(@RequestBody AdminAccount adminAccount) {
-        return notificationService.list(new QueryWrapper<Notification>().eq("publisher_id", adminAccount.getAccountId()));
+    public List<Notification> getNotifications(Integer adminAccountId) {
+        return notificationService.list(new QueryWrapper<Notification>().eq("publisher_id", adminAccountId));
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<?> delete(@RequestBody Notification notification) {
-        notificationService.removeById(notification);
+    public ResponseEntity<?> delete(Integer notificationId) {
+        notificationService.removeById(notificationId);
         return ResponseEntity.ok().build();
     }
 }

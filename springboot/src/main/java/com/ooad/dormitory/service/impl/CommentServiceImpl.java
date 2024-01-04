@@ -10,10 +10,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> implements CommentService {
 
-    private final CommentMapper commentMapper;
-
     @Autowired
-    public CommentServiceImpl(CommentMapper commentMapper) {
-        this.commentMapper = commentMapper;
-    }
+    private CommentMapper commentMapper;
 }

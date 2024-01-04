@@ -1,12 +1,12 @@
 <template>
-    <div class="comment">
-        <div class="comment-content">
-            <p>{{ comment.content }}</p>
+    <div class="comment-container">
+        <div class="comment">
+            <p>{{ props.comment.content }}</p>
             <span>{{ comment.publish_time }}</span>
             <!-- 显示评论发布者等信息 -->
         </div>
         <div class="replies">
-            <Comment
+            <Reply
                 v-for="reply in comment.reply_list"
                 :key="reply.id"
                 :comment="reply"
@@ -16,17 +16,17 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, PropType } from "vue";
+import { CommentType, ReplyType } from "@/types/globalTypes";
 
-const props = {
+
+const props = defineProps({
     comment: {
-        type: Object,
+        type: Object as PropType<CommentType>,
         required: true,
     },
-};
-const comment = defineComponent({
-    props,
 });
+
 </script>
 
 <style scoped>

@@ -9,22 +9,22 @@ import lombok.NoArgsConstructor;
 
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Comment {
+public class Reply {
     @TableId(type = IdType.AUTO)
     private Integer id;
     private String publisherId;
     private Integer dormitoryId;
     private String content;
     private Timestamp publishTime;
+    private Integer commentId;
     @TableField(exist = false)
     private StudentAccount publisher;
     @TableField(exist = false)
     private Dormitory dormitory;
     @TableField(exist = false)
-    private List<Reply> replyList;
+    private Comment comment;
 }

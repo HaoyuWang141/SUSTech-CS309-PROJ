@@ -57,7 +57,7 @@
 
 <script setup lang="ts">
 import { ref, PropType, computed } from "vue";
-import { Dormitory, Layout } from "@/types/globalTypes";
+import { Dormitory, CommentType } from "@/types/globalTypes";
 import axiosInstance from "@/axios/axiosConfig";
 import { ElMessage } from "element-plus";
 import Comment from "./comment.vue";
@@ -101,74 +101,42 @@ async function bookmark() {
         });
 }
 
-interface ReplyType {
-    id: number;
-    publisher_id: number;
-    content: string;
-    publish_time: string;
-    dormitory_id: number;
-    replying_comment_id: number | null;
-}
-
-interface CommentType {
-    id: number;
-    publisher_id: number;
-    content: string;
-    publish_time: string;
-    dormitory_id: number;
-    reply_list: ReplyType[];
-}
-
 const comments = ref<CommentType[]>([]);
 
-async function fetchComments(dormitory_id: number) {
+async function fetchCommentsAndReplies(dormitory_id: number) {
     // 添加获取评论的逻辑
     console.log("获取评论");
     axiosInstance
-        .get("/student/forum/getCommentsByDormitory", {
+        .get("/student/forum/getComments", {
             params: {
-                dormitory_id: dormitory_id,
+                dormitoryId: dormitory_id,
             },
         })
         .then((res) => {
             console.log(res);
             if (res.data.code === 200) {
-                var raw_comment_list: ReplyType[] = res.data.data;
-                // 创建一个临时映射来存储评论ID到评论对象的映射
-                const commentMap = new Map<number, CommentType>();
-
-                raw_comment_list.forEach((reply) => {
-                    if (reply.replying_comment_id === null) {
-                        // 如果 reply.replying_comment_id 为 null，它是一个主评论
-                        commentMap.set(reply.id, {
-                            ...reply,
-                            reply_list: [],
-                        });
-                    }
-                });
-                raw_comment_list.forEach((reply) => {
-                    if (reply.replying_comment_id === null) {
-                        // 如果 reply.replying_comment_id 为 null，它是一个主评论
-                        commentMap.set(reply.id, {
-                            ...reply,
-                            reply_list: [],
-                        });
-                    } else {
-                        // 否则，它是一个回复
-                        const comment = commentMap.get(
-                            reply.replying_comment_id
-                        );
-                        if (comment) {
-                            comment.reply_list.push(reply);
-                        }
-                    }
-                });
-
-                // 设置评论数组为映射中的值
-                comments.value = Array.from(commentMap.values());
+                comments.value = res.data.data;
+                ElMessage.success("获取评论成功");
             } else {
                 ElMessage.error("获取评论失败");
             }
+        })
+        .then(() => {
+            comments.value.forEach((comment) => {
+                axiosInstance.get("/student/forum/getReply", {
+                    params: {
+                        commentId: comment.id,
+                    },
+                }).then((res) => {
+                    console.log(res);
+                    if (res.data.code === 200) {
+                        comment.reply_list = res.data.data;
+                        ElMessage.success("获取回复成功");
+                    } else {
+                        ElMessage.error("获取回复失败");
+                    }
+                });
+            });
         })
         .catch((err) => {
             console.log(err);
@@ -176,7 +144,7 @@ async function fetchComments(dormitory_id: number) {
         });
 }
 
-fetchComments(props.dormitory.dormitory_id);
+fetchCommentsAndReplies(props.dormitory.dormitory_id);
 </script>
 
 <style scoped lang="less">

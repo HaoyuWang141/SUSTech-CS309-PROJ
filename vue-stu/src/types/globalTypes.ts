@@ -32,3 +32,21 @@ export interface Dormitory {
     building_id: number;
     building: Building;
 }
+
+export interface ReplyType {
+    id: number;
+    publisher_id: number;
+    dormitory_id: number;
+    content: string;
+    publish_time: string;
+    comment_id: number;
+}
+
+export interface CommentType {
+    id: number;
+    publisher_id: number;
+    dormitory_id: number;
+    content: string;
+    publish_time: string;
+    reply_list: ReplyType[];
+}
