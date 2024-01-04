@@ -19,5 +19,6 @@ public class Invitation {
     private Timestamp time;
     @TableField(exist = false)
     private StudentAccount inviter;
+    @TableField(exist = false)
     private StudentAccount invitee;
 }

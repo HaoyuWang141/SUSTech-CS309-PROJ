@@ -30,12 +30,11 @@ public class NotificationController {
     }
 
     @GetMapping("/get2")
-    public List<Notification> getNotifications2(String studentAccountId, @RequestBody String token) {
+    public List<Notification> getNotifications2(String studentAccountId) {
         try {
             StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
             assert studentAccount != null;
 
-            LoginController.checkAuthentication(authenticationMapper, token);
             return notificationService.list().stream()
                     .filter(notification -> notification.getEntryYear() == null || notification.getEntryYear().equals(studentAccount.calEntryYear()))
                     .filter(notification -> notification.getDegree() == null || notification.getDegree().equals(studentAccount.calDegree()))
@@ -49,8 +48,7 @@ public class NotificationController {
 
     @Deprecated
     @GetMapping("/get")
-    public List<Notification> getNotifications(@RequestBody StudentAccount studentAccount, @RequestBody String token) {
-        LoginController.checkAuthentication(authenticationMapper, token);
+    public List<Notification> getNotifications(@RequestBody StudentAccount studentAccount) {
         return notificationService.list().stream()
                 .filter(notification -> notification.getEntryYear() == null || notification.getEntryYear().equals(studentAccount.calEntryYear()))
                 .filter(notification -> notification.getDegree() == null || notification.getDegree().equals(studentAccount.calDegree()))

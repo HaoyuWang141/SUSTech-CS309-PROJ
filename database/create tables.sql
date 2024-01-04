@@ -125,8 +125,8 @@ CREATE TABLE allocation_stage
 CREATE TABLE invitation
 (
     id           SERIAL PRIMARY KEY,
-    inviter_id   INT,
-    invitee_id   INT,
+    inviter_id   VARCHAR,
+    invitee_id   VARCHAR,
     time         TIMESTAMP
 );
 

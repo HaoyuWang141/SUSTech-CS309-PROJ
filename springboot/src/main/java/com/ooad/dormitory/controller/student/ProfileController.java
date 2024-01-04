@@ -31,20 +31,18 @@ public class ProfileController {
                            @RequestParam(required = false) Boolean snore,
                            @RequestParam(required = false) String qq,
                            @RequestParam(required = false) String email,
-                           @RequestParam(required = false) String wechat,
-                           @RequestBody String token) {
+                           @RequestParam(required = false) String wechat) {
         StudentAccount studentAccount = studentAccountMapper.selectById(studentAccountId);
         assert studentAccount != null;
 
-        LoginController.checkAuthentication(authenticationMapper, token);
         if (photoUrl != null) {
             studentAccount.setPhotoUrl(photoUrl);
         }
         if (sleepTime != null) {
-            studentAccount.setSleepTime(sleepTime);
+//            studentAccount.setSleepTime(sleepTime);
         }
         if (wakeUpTime != null) {
-            studentAccount.setWakeUpTime(wakeUpTime);
+//            studentAccount.setWakeUpTime(wakeUpTime);
         }
         if (airConditionerTemperature != null) {
             studentAccount.setAirConditionerTemperature(airConditionerTemperature);
@@ -75,9 +73,7 @@ public class ProfileController {
                            @RequestParam(required = false) Boolean snore,
                            @RequestParam(required = false) String qq,
                            @RequestParam(required = false) String email,
-                           @RequestParam(required = false) String wechat,
-                           @RequestBody String token) {
-        LoginController.checkAuthentication(authenticationMapper, token);
+                           @RequestParam(required = false) String wechat) {
         if (photoUrl != null) {
             studentAccount.setPhotoUrl(photoUrl);
         }

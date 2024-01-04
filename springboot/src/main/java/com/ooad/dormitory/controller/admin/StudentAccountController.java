@@ -7,6 +7,7 @@ import com.ooad.dormitory.controller.student.LoginController;
 import com.ooad.dormitory.entity.StudentAccount;
 import com.ooad.dormitory.service.StudentAccountService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,10 @@ public class StudentAccountController {
         record Response(int successCount, List<StudentAccount> failedStudentList) {
         }
 
+        for (StudentAccount studentAccount : studentAccountList) {
+            System.out.println(studentAccount);
+        }
+
         int successCount = 0;
         List<StudentAccount> failedStudentList = new ArrayList<>();
         for (StudentAccount studentAccount : studentAccountList) {
@@ -47,6 +52,7 @@ public class StudentAccountController {
     }
 
     @DeleteMapping("/delete")
+    @Operation(summary = "delete student account", description = "通过学号列表删除学生账号")
     public ResponseEntity<?> deleteStudentAccount(@RequestBody List<String> studentIdList) {
         record Response(int successCount, List<String> failedIdList) {
         }
@@ -97,9 +103,9 @@ public class StudentAccountController {
                     三个参数均可为空, 为空时表示不限制
                     """
     )
-    public List<StudentAccount> getStudentAccount(@RequestParam(required = false) Integer entryYear,
-                                                  @RequestParam(required = false) String degree,
-                                                  @RequestParam(required = false) Integer gender) {
+    public List<StudentAccount> getStudentAccount(@RequestParam @Schema(example = "2019") Integer entryYear,
+                                                  @RequestParam @Schema(description = "可选: undergraduate, master, doctor") String degree,
+                                                  @RequestParam @Schema(description = "0:女, 1:男") Integer gender) {
         QueryWrapper<StudentAccount> queryWrapper = new QueryWrapper<>();
         String entryYearShort = entryYear == null ? "__" : String.valueOf(entryYear % 100);
         if (degree == null) {

@@ -29,15 +29,19 @@ public class LoginController {
         this.studentAccountMapper = studentAccountMapper;
     }
 
-    @Deprecated
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody String studentId, @RequestBody String password) {
+        public ResponseEntity<?> login(String studentId, String password) {
+        System.out.println(studentId + " " + password);
         Authentication authentication = authenticationMapper.selectById(studentId);
         if (authentication != null && Objects.equals(authentication.getStudentPassword(), password) && authentication.getOnlineAmount() < 1) {
+            if (authentication.getToken()!=null && new Time(System.currentTimeMillis()).compareTo(authentication.getTokenFailureTime()) >= 0) {
+                return ResponseEntity.ok(authentication.getToken());
+            }
+
             String token = createToken(studentId);
             authentication.setToken(token);
             authentication.setTokenFailureTime(new Time(new Time(System.currentTimeMillis()).getTime() + (failureTimeInMinutes * 60 * 1000)));
-            authentication.setOnlineAmount(authentication.getOnlineAmount() + 1);
+//            authentication.setOnlineAmount(authentication.getOnlineAmount() + 1);
             authenticationMapper.updateById(authentication);
             return ResponseEntity.ok(token);
         }
@@ -47,8 +51,7 @@ public class LoginController {
     }
 
     @GetMapping("/getSelf")
-    public StudentAccount getSelf(@RequestBody String studentId, @RequestBody String token) {
-        LoginController.checkAuthentication(authenticationMapper, token);
+    public StudentAccount getSelf(@RequestBody String studentId) {
         return studentAccountMapper.selectById(studentId);
     }
 

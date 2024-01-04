@@ -33,11 +33,11 @@ public class ForumController {
     }
 
     @PostMapping("/launch2")
-    public ResponseEntity<?> launch2(@RequestBody String studentAccountId, @RequestBody Integer dormitoryId, @RequestBody String content, @RequestBody String token) {
+    public ResponseEntity<?> launch2(@RequestBody String studentAccountId, @RequestBody Integer dormitoryId, @RequestBody String content) {
         StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
         assert studentAccount != null;
 
-        LoginController.checkAuthentication(authenticationMapper, token);
+
         try {
             Comment comment = new Comment();
             comment.setPublisherId(studentAccount.getStudentId());
@@ -61,11 +61,11 @@ public class ForumController {
     }
 
     @PostMapping("/reply2")
-    public ResponseEntity<?> reply2(@RequestBody String studentAccountId, @RequestBody Integer replyingCommentId, @RequestBody String content, @RequestBody String token) {
+    public ResponseEntity<?> reply2(@RequestBody String studentAccountId, @RequestBody Integer replyingCommentId, @RequestBody String content) {
         StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
         assert studentAccount != null;
 
-        LoginController.checkAuthentication(authenticationMapper, token);
+
         try {
             Comment comment = new Comment();
             comment.setPublisherId(studentAccount.getStudentId());
@@ -85,34 +85,34 @@ public class ForumController {
     }
 
     @GetMapping("/getComment")
-    public List<Comment> getComment(@RequestBody Integer commentId, @RequestBody String token) {
-        LoginController.checkAuthentication(authenticationMapper, token);
+    public List<Comment> getComment(@RequestBody Integer commentId) {
+
         return commentService.list(new QueryWrapper<Comment>().eq("id", commentId));
     }
 
     @GetMapping("/getComments")
-    public List<Comment> getComments(@RequestBody String token) {
-        LoginController.checkAuthentication(authenticationMapper, token);
+    public List<Comment> getComments() {
+
         return commentService.list();
     }
 
     @GetMapping("/getCommentsByDormitory")
-    public List<Comment> getCommentsByDormitory(@RequestBody Integer dormitoryId, @RequestBody String token) {
-        LoginController.checkAuthentication(authenticationMapper, token);
+    public List<Comment> getCommentsByDormitory(@RequestBody Integer dormitoryId) {
+
         return commentService.list(new QueryWrapper<Comment>().eq("dormitoryId", dormitoryId));
     }
 
     @GetMapping("/getCommentsByBuilding")
-    public List<Comment> getCommentsByBuilding(@RequestBody Integer buildingId, @RequestBody String token) {
-        LoginController.checkAuthentication(authenticationMapper, token);
+    public List<Comment> getCommentsByBuilding(@RequestBody Integer buildingId) {
+
         return commentService.list().stream()
                 .filter(comment -> comment.getDormitory() != null && comment.getDormitory().getBuildingId().equals(buildingId))
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/getCommentsByRegion")
-    public List<Comment> getCommentsByRegion(@RequestBody Integer regionId, @RequestBody String token) {
-        LoginController.checkAuthentication(authenticationMapper, token);
+    public List<Comment> getCommentsByRegion(@RequestBody Integer regionId) {
+
         return commentService.list().stream()
                 .filter(comment -> comment.getDormitory() != null && comment.getDormitory().getBuilding().getRegionId().equals(regionId))
                 .collect(Collectors.toList());
@@ -121,8 +121,8 @@ public class ForumController {
 
     @Deprecated
     @PostMapping("/launch")
-    public ResponseEntity<?> launch(@RequestBody StudentAccount studentAccount, @RequestBody Integer dormitoryId, @RequestBody String content, @RequestBody String token) {
-        LoginController.checkAuthentication(authenticationMapper, token);
+    public ResponseEntity<?> launch(@RequestBody StudentAccount studentAccount, @RequestBody Integer dormitoryId, @RequestBody String content) {
+
         try {
             Comment comment = new Comment();
             comment.setPublisherId(studentAccount.getStudentId());
@@ -147,8 +147,8 @@ public class ForumController {
 
     @Deprecated
     @PostMapping("/reply")
-    public ResponseEntity<?> reply(@RequestBody StudentAccount studentAccount, @RequestBody Integer replyingCommentId, @RequestBody String content, @RequestBody String token) {
-        LoginController.checkAuthentication(authenticationMapper, token);
+    public ResponseEntity<?> reply(@RequestBody StudentAccount studentAccount, @RequestBody Integer replyingCommentId, @RequestBody String content) {
+
         try {
             Comment comment = new Comment();
             comment.setPublisherId(studentAccount.getStudentId());

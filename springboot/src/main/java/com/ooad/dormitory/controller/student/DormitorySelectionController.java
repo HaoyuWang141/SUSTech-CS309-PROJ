@@ -31,7 +31,7 @@ public class DormitorySelectionController {
     private final LayoutService layoutService;
 
     @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    private RedisTemplate redisTemplate;
 
     @Autowired
     public DormitorySelectionController(StudentAccountService studentAccountService, DormitoryService dormitoryService, BuildingService buildingService, RegionService regionService, TeamFavoriteDormService teamFavoriteDormService, AllocationStageService allocationStageService, AllocationRelationService allocationRelationService, TeamService teamService, AuthenticationMapper authenticationMapper, LayoutService layoutService) {
@@ -63,8 +63,8 @@ public class DormitorySelectionController {
     }
 
     @GetMapping("/getFavoriteList")
-    public List<Dormitory> getFavoriteDormitories(Integer teamId, @RequestBody String token) {
-        LoginController.checkAuthentication(authenticationMapper, token);
+    public List<Dormitory> getFavoriteDormitories(Integer teamId) {
+        
         return teamFavoriteDormService.list(new QueryWrapper<TeamFavoriteDorm>().eq("team_id", teamId))
                 .stream().map(TeamFavoriteDorm::getDormitory).collect(Collectors.toList());
     }
@@ -75,12 +75,12 @@ public class DormitorySelectionController {
     }
 
     @PostMapping("/favor2")
-    public ResponseEntity<?> favorDormitory2(@RequestBody String studentAccountId, @RequestBody Integer dormitoryId, @RequestBody String token) {
+    public ResponseEntity<?> favorDormitory2(@RequestBody String studentAccountId, @RequestBody Integer dormitoryId) {
         StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
         Dormitory dormitory = dormitoryService.getById(dormitoryId);
         assert studentAccount != null && dormitory != null;
 
-        LoginController.checkAuthentication(authenticationMapper, token);
+        
         // 判断是否是收藏宿舍阶段
         List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
                 .eq("entryYear", studentAccount.calEntryYear())
@@ -101,7 +101,7 @@ public class DormitorySelectionController {
     }
 
     @PostMapping("/select3")
-    public ResponseEntity<?> selectDormitory3(@RequestBody String studentAccountId, @RequestBody Integer dormitoryId, @RequestBody String token) {
+    public ResponseEntity<?> selectDormitory3(@RequestBody String studentAccountId, @RequestBody Integer dormitoryId) {
 
         // 获取studentAccount
 //        StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
@@ -122,9 +122,6 @@ public class DormitorySelectionController {
             assert dormitory != null;
             redisTemplate.opsForValue().set(dormitoryKey, dormitory);
         }
-
-        // 处理高并发地检查权限
-        LoginController.checkAuthentication2(redisTemplate, authenticationMapper, token);
 
         // 判断是否是选择宿舍阶段
         List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
@@ -161,8 +158,16 @@ public class DormitorySelectionController {
     }
 
     @GetMapping("/getLayout")
-    public List<Layout> getLayout(Integer buildingId) {
-        List<Dormitory> dormitoryList = dormitoryService.list(new QueryWrapper<Dormitory>().eq("building_id", buildingId));
+    public List<Layout> getLayout(Integer buildingId, @RequestParam(required = false) String roomNumber) {
+        List<Dormitory> dormitoryList;
+        if (roomNumber != null) {
+            dormitoryList = dormitoryService.list(new QueryWrapper<Dormitory>()
+                    .eq("building_id", buildingId)
+                    .eq("room_number", roomNumber));
+        } else {
+            dormitoryList = dormitoryService.list(new QueryWrapper<Dormitory>()
+                    .eq("building_id", buildingId));
+        }
         Set<Integer> layoutIdSet = dormitoryList.stream().map(Dormitory::getLayoutId).collect(Collectors.toSet());
         return layoutIdSet.stream().map(layoutService::getById).collect(Collectors.toList());
     }
@@ -170,8 +175,8 @@ public class DormitorySelectionController {
 
     @Deprecated
     @PostMapping("/favor")
-    public ResponseEntity<?> favorDormitory(@RequestBody StudentAccount studentAccount, @RequestBody Dormitory dormitory, @RequestBody String token) {
-        LoginController.checkAuthentication(authenticationMapper, token);
+    public ResponseEntity<?> favorDormitory(@RequestBody StudentAccount studentAccount, @RequestBody Dormitory dormitory) {
+        
         // 判断是否是收藏宿舍阶段
         List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
                 .eq("entryYear", studentAccount.calEntryYear())
@@ -193,8 +198,8 @@ public class DormitorySelectionController {
 
     @Deprecated
     @PostMapping("/select")
-    public ResponseEntity<?> selectDormitory(@RequestBody StudentAccount studentAccount, @RequestBody Dormitory dormitory, @RequestBody String token) {
-        LoginController.checkAuthentication(authenticationMapper, token);
+    public ResponseEntity<?> selectDormitory(@RequestBody StudentAccount studentAccount, @RequestBody Dormitory dormitory) {
+        
         // 判断是否是选择宿舍阶段
         List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
                 .eq("entryYear", studentAccount.calEntryYear())
@@ -231,12 +236,12 @@ public class DormitorySelectionController {
 
     @Deprecated
     @PostMapping("/select2")
-    public ResponseEntity<?> selectDormitory2(@RequestBody String studentAccountId, @RequestBody Integer dormitoryId, @RequestBody String token) {
+    public ResponseEntity<?> selectDormitory2(@RequestBody String studentAccountId, @RequestBody Integer dormitoryId) {
         StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
         Dormitory dormitory = dormitoryService.getById(dormitoryId);
         assert studentAccount != null && dormitory != null;
 
-        LoginController.checkAuthentication(authenticationMapper, token);
+        
         // 判断是否是选择宿舍阶段
         List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
                 .eq("entryYear", studentAccount.calEntryYear())

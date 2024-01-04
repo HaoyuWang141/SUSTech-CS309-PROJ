@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import axiosInstance from "@/axios/axiosConfig";
+import { useAuthStore } from "@/stores/auth";
 
 const credentials = ref({
     username: "",
@@ -8,9 +10,18 @@ const credentials = ref({
 });
 
 const router = useRouter();
-const login = () => {
-    router.push("home");
-};
+const authStore = useAuthStore();
+
+async function login() {
+    await authStore
+        .login(credentials.value.username, credentials.value.password)
+        .then(() => {
+            router.push("home");
+        })
+        .catch(() => {
+            alert("用户名或密码错误");
+        });
+}
 </script>
 
 <template>

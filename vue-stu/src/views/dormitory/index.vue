@@ -35,13 +35,13 @@
             </el-select>
         </el-form-item>
 
-        <!-- <el-form-item>
+        <el-form-item>
             <el-input
                 v-model="room_number"
                 placeholder="Room Number"
                 clearable
             />
-        </el-form-item> -->
+        </el-form-item>
 
         <el-button type="primary" @click="fetchLayout">View</el-button>
     </el-form>
@@ -64,12 +64,12 @@
 
     <div class="cards">
         <el-row :gutter="40">
-            <el-col :span="7" v-for="card in layoutList" :key="card.layout_id">
+            <el-col :span="7" v-for="layout in layoutList" :key="layout.layout_id">
                 <LayoutCard
-                    :id="card.layout_id"
-                    :image="card.image_url"
-                    :title="card.layout_name"
-                    :description="card.description"
+                    :id="layout.layout_id"
+                    :image="layout.image_url"
+                    :title="layout.layout_name"
+                    :description="layout.description"
                 />
             </el-col>
         </el-row>
