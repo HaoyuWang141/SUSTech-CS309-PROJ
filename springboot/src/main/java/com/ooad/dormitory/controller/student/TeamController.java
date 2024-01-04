@@ -38,7 +38,7 @@ public class TeamController {
     public List<StudentAccount> getTeam2(String studentAccountId) {
         StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
         assert studentAccount != null;
-        return studentAccountService.list(new QueryWrapper<StudentAccount>().eq("teamId", studentAccount.getTeamId()));
+        return studentAccountService.list(new QueryWrapper<StudentAccount>().eq("team_id", studentAccount.getTeamId()));
     }
 
     @PostMapping("/quitTeam2")
@@ -47,7 +47,7 @@ public class TeamController {
         assert studentAccount != null;
 
         List<StudentAccount> studentAccountList = studentAccountService.list(new QueryWrapper<StudentAccount>()
-                .eq("teamId", studentAccount.getTeamId()));
+                .eq("team_id", studentAccount.getTeamId()));
         if (studentAccountList.size() > 2) {
             studentAccount.setTeamId(null);
             studentAccount.setTeam(null);
@@ -68,7 +68,7 @@ public class TeamController {
         try {
             StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
             assert studentAccount != null;
-            return invitationService.list(new QueryWrapper<Invitation>().eq("inviteeId", studentAccount.getTeamId()));
+            return invitationService.list(new QueryWrapper<Invitation>().eq("invitee_id", studentAccount.getTeamId()));
         } catch (Exception e) {
             throw new RuntimeException("get invitations failed!\n" + e.getMessage());
         }
@@ -163,7 +163,7 @@ public class TeamController {
     @GetMapping("/getTeam")
     public List<StudentAccount> getTeam(@RequestBody StudentAccount studentAccount ) {
          
-        return studentAccountService.list(new QueryWrapper<StudentAccount>().eq("teamId", studentAccount.getTeamId()));
+        return studentAccountService.list(new QueryWrapper<StudentAccount>().eq("team_id", studentAccount.getTeamId()));
     }
 
     @Deprecated
@@ -171,7 +171,7 @@ public class TeamController {
     public ResponseEntity<?> quitTeam(@RequestBody StudentAccount studentAccount ) {
          
         List<StudentAccount> studentAccountList = studentAccountService.list(new QueryWrapper<StudentAccount>()
-                .eq("teamId", studentAccount.getTeamId()));
+                .eq("team_id", studentAccount.getTeamId()));
         if (studentAccountList.size() > 2) {
             studentAccount.setTeamId(null);
             studentAccount.setTeam(null);
@@ -191,7 +191,7 @@ public class TeamController {
     @GetMapping("/getInvitations")
     public List<Invitation> getInvitations(@RequestBody StudentAccount studentAccount ) {
          
-        return invitationService.list(new QueryWrapper<Invitation>().eq("inviteeId", studentAccount.getTeamId()));
+        return invitationService.list(new QueryWrapper<Invitation>().eq("invitee_id", studentAccount.getTeamId()));
     }
 
     @Deprecated

@@ -99,7 +99,7 @@ public class ForumController {
     @GetMapping("/getCommentsByDormitory")
     public List<Comment> getCommentsByDormitory(@RequestBody Integer dormitoryId) {
 
-        return commentService.list(new QueryWrapper<Comment>().eq("dormitoryId", dormitoryId));
+        return commentService.list(new QueryWrapper<Comment>().eq("dormitory_id", dormitoryId));
     }
 
     @GetMapping("/getCommentsByBuilding")

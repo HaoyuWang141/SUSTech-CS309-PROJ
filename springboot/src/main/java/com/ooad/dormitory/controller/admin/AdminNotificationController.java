@@ -36,7 +36,7 @@ public class AdminNotificationController {
 
     @GetMapping("/get")
     public List<Notification> getNotifications(@RequestBody AdminAccount adminAccount) {
-        return notificationService.list(new QueryWrapper<Notification>().eq("publisherId", adminAccount.getAccountId()));
+        return notificationService.list(new QueryWrapper<Notification>().eq("publisher_id", adminAccount.getAccountId()));
     }
 
     @DeleteMapping("/delete")
