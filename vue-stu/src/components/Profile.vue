@@ -126,11 +126,11 @@ onMounted(() => {
         学生基本信息
       </template>
       <div>
+        <el-image style="width: 30%; margin-left: 35%;"
+                  :src="'src/assets/Kobe.jpg'"/>
         <el-form label-position="left" label-width="60px">
           <el-form-item label="姓名">
-
             <span>{{ student.name }}</span>
-
           </el-form-item>
           <el-form-item label="性别">
             <span>{{ student.gender === 1 ? "男" : "女" }}</span>

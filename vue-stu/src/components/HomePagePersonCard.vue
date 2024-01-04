@@ -57,7 +57,7 @@ onMounted(() => {
     </template>
     <div class="simple-card-body">
       <div class="simple-card-left">
-        <img src="@/assets/Kobe.jpg" alt="DaTouZhao" class="head-pic">
+        <el-image style="width: 90%; margin-left: 10%" :src="'src/assets/Kobe.jpg'"/>
       </div>
       <div class="simple-card-right">
         <el-row style="margin-bottom: 10px">
@@ -118,9 +118,4 @@ onMounted(() => {
     align-items: self-start;
 }
 
-.head-pic {
-    width: 120px;
-    height: 160px;
-    object-fit: cover;
-}
 </style>
