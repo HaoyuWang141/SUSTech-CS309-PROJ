@@ -25,25 +25,27 @@ function goProfile() {
         <img src="@/assets/Kobe.jpg" alt="DaTouZhao" class="head-pic">
       </div>
       <div class="simple-card-right">
-        <el-row>
+        <el-row style="margin-bottom: 10px">
           <span>姓名：</span>
           <span>{{ name }}</span>
         </el-row>
-        <el-row>
+        <el-row style="margin-bottom: 10px">
           <span>学号：</span>
           <span>{{ sid }}</span>
         </el-row>
-        <el-row>
+        <el-row style="margin-bottom: 10px">
           <span>年级：</span>
           <span>{{ grade }}</span>
         </el-row>
-        <el-row>
+        <el-row style="margin-bottom: 10px">
           <span>专业：</span>
           <span>{{ major }}</span>
         </el-row>
-        <el-button type="primary" @click="goProfile">
-          编辑个人信息
-        </el-button>
+        <el-row>
+          <el-button type="primary" @click="goProfile">
+            编辑个人信息
+          </el-button>
+        </el-row>
       </div>
     </div>
   </el-card>
@@ -72,17 +74,20 @@ function goProfile() {
 
 .simple-card-left {
     margin-right: 10%;
-    display: flex;
-    flex-direction: column;
+    //display: flex;
+    //flex-direction: column;
+    width: 20%;
 }
 
 .simple-card-right {
-
+    display: flex;
+    flex-direction: column;
+    align-items: self-start;
 }
 
 .head-pic {
-    width: 160px;
-    height: 240px;
+    width: 120px;
+    height: 160px;
     object-fit: cover;
 }
 </style>

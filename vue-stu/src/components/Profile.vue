@@ -1,19 +1,55 @@
 <script setup lang="ts">
 import {reactive, ref} from "vue";
 import type {CSSProperties} from "vue";
+import axiosInstance from "@/axios/axiosConfig";
 
 const student = ref({
     name: "姓名",
-    studentID: "12010000",
+    studentId: "12010000",
     gender: 1,
+    photoUrl: "string",
     college: "ShuDe",
     sleepTime: "23:59", // may be a ( DateTime )
     wakeUpTime: "7:59", // like above
-    acTemp: "23",
+    airConditionerTemperature: "23",
+    acTempInt:23,
     snore: false,
-    QQ: "123456789",
+    qq: "123456789",
     email: "123456789@email.com",
     wechat: "wx_id_123456789",
+    teamId: 0,
+    team: {
+        teamId: 0,
+        dormitoryId: 0,
+        dormitory: {
+            dormitoryId: 0,
+            floor: 0,
+            roomNumber: "string",
+            bedCount: 0,
+            description: "string",
+            layoutId: 0,
+            layout: {
+                layoutId: 0,
+                layoutName: "string",
+                description: "string",
+                imageUrl: "string"
+            },
+            isEmpty: true,
+            gender: 0,
+            degree: 0,
+            buildingId: 0,
+            building: {
+                buildingId: 0,
+                buildingName: "string",
+                description: "string",
+                regionId: 0,
+                region: {
+                    regionId: 0,
+                    regionName: "string"
+                }
+            }
+        }
+    }
 })
 const testTemp = ref(26);
 const showEditInfo = ref(false);
@@ -40,8 +76,38 @@ const marks = reactive<Marks>({
 });
 const isSnore = ref(false);
 const editInfoForm = ref({
-    sleepTime: '',
+    sleepTime: "",
+    wakeUpTime: "",
+    acTemp: 26,
+    snore: false,
+    QQ: "",
+    email: "",
+    wechat: "",
 })
+
+// async function confirmEdit() {
+//     try{
+//         const response = await axiosInstance.
+//     } catch (error) {
+//         console.log(error)
+//     }
+// }
+
+async function getStudentInfo() {
+
+}
+
+async function createStudentInfo() {
+    try{
+        const response = await axiosInstance.post(
+            "admin/studentAccount/create",
+            [student.value]
+        )
+        console.log("createStudentInfo() success")
+    }catch (error) {
+        console.log(error)
+    }
+}
 </script>
 
 <template>
@@ -53,39 +119,22 @@ const editInfoForm = ref({
       <div>
         <el-form label-position="left" label-width="60px">
           <el-form-item label="姓名">
-            <el-row>
-              <span>{{ student.name }}</span>
-            </el-row>
+
+            <span>{{ student.name }}</span>
+
           </el-form-item>
           <el-form-item label="性别">
             <span>{{ student.gender === 1 ? "男" : "女" }}</span>
           </el-form-item>
           <el-form-item label="学号">
-            <span>{{ student.studentID }}</span>
+            <span>{{ student.studentId }}</span>
           </el-form-item>
           <el-form-item label="书院">
             <span>{{ student.college }}</span>
           </el-form-item>
-          <el-row>
-            <el-col style="align-items: center" :span="12">
-              <div class="grid-content ep-bg-purple">
-                <el-form-item label="书院">
-                  <span>{{ student.college }}</span>
-                </el-form-item>
-              </div>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="24">
-              <div class="grid-content ep-bg-purple">
-                <el-form-item label="书院">
-                  <span>{{ student.college }}</span>
-                </el-form-item>
-              </div>
-            </el-col>
-          </el-row>
         </el-form>
       </div>
+      <el-button @click="createStudentInfo()">ceshi</el-button>
     </el-card>
     <el-card class="profile-right-card">
       <template #header>
@@ -110,32 +159,16 @@ const editInfoForm = ref({
           <span>{{ student.wakeUpTime }}</span>
         </el-form-item>
         <el-form-item label="空调温度">
-          <span>{{ student.acTemp + "℃" }}</span>
-        </el-form-item>
-        <el-form-item label="调温测试">
-          <el-slider v-model="testTemp"
-                     show-stops
-                     :marks="marks"
-                     :min="16"
-                     :max="30"
-          />
+          <span>{{ student.airConditionerTemperature + "℃" }}</span>
         </el-form-item>
         <el-form-item label="是否打鼾">
           <span>{{ student.snore === true ? "是" : "否" }}</span>
-        </el-form-item>
-        <el-form-item label="调整打鼾">
-          <el-switch v-model="isSnore"
-                     inline-prompt
-                     active-text="是"
-                     inactive-text="否"
-                     style="--el-switch-on-color: #ff4949; --el-switch-off-color: #13ce66"
-          />
         </el-form-item>
         <el-form-item label="邮箱">
           <span>{{ student.email }}</span>
         </el-form-item>
         <el-form-item label="QQ">
-          <span>{{ student.QQ }}</span>
+          <span>{{ student.qq }}</span>
         </el-form-item>
         <el-form-item label="微信">
           <span>{{ student.wechat }}</span>
@@ -150,18 +183,59 @@ const editInfoForm = ref({
     <div>
       <h1>编辑附加信息</h1>
     </div>
-    <el-form style="margin: 20px">
-      <el-row>
-        <el-form-item label="睡觉时间">
-          <el-time-picker v-model="editInfoForm.sleepTime"
-                          format="HH:mm">
 
-          </el-time-picker>
-        </el-form-item>
-      </el-row>
-      <el-row>
-      </el-row>
+    <el-form style="margin: 20px; max-width: 400px" label-width="80px" label-position="left">
+      <el-form-item label="睡觉时间">
+        <el-time-picker v-model="editInfoForm.sleepTime"
+                        format="HH:mm">
+        </el-time-picker>
+      </el-form-item>
+      <el-form-item label="起床时间">
+        <el-time-picker v-model="editInfoForm.wakeUpTime"
+                        format="HH:mm">
+        </el-time-picker>
+      </el-form-item>
+      <el-form-item label="空调温度">
+        <el-slider v-model="editInfoForm.acTemp"
+                   style="min-width: 250px"
+                   :marks="marks"
+                   :min="16"
+                   :max="30"
+        />
+      </el-form-item>
+      <el-form-item label="是否打鼾">
+        <el-switch v-model="editInfoForm.snore"
+                   inline-prompt
+                   active-text="是"
+                   inactive-text="否"
+                   style="--el-switch-on-color: #ff4949; --el-switch-off-color: #13ce66"
+        />
+      </el-form-item>
+      <el-form-item label="邮箱">
+        <el-input v-model="editInfoForm.email"
+                  placeholder="输入邮箱"
+                  clearable>
+        </el-input>
+      </el-form-item>
+      <el-form-item label="QQ">
+        <el-input v-model="editInfoForm.QQ"
+                  placeholder="输入QQ"
+                  clearable>
+        </el-input>
+      </el-form-item>
+      <el-form-item label="微信">
+        <el-input v-model="editInfoForm.wechat"
+                  placeholder="输入微信"
+                  clearable/>
+      </el-form-item>
     </el-form>
+    <template #footer>
+      <el-button round
+                 type="primary"
+                 @click="">
+        确认修改
+      </el-button>
+    </template>
   </el-drawer>
 </template>
 
