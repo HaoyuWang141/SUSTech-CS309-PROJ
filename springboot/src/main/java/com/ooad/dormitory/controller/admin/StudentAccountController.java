@@ -1,9 +1,6 @@
 package com.ooad.dormitory.controller.admin;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ooad.dormitory.controller.student.LoginController;
 import com.ooad.dormitory.entity.Authentication;
 import com.ooad.dormitory.entity.StudentAccount;
 import com.ooad.dormitory.mapper.AuthenticationMapper;
@@ -16,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/admin/studentAccount")
@@ -139,4 +137,13 @@ public class StudentAccountController {
     public StudentAccount getStudent(String studentId) {
         return studentAccountService.getById(studentId);
     }
+
+    @GetMapping("/getStudents")
+    public List<StudentAccount> getStudents(String partStudentId) {
+        return studentAccountService.list().stream()
+                .filter(studentAccount -> studentAccount.getStudentId().contains(partStudentId))
+                .collect(Collectors.toList());
+    }
+
+
 }

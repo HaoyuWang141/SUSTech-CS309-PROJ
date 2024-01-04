@@ -95,7 +95,7 @@ public class DormitorySelectionController {
 
         // 判断是否是收藏宿舍阶段
         List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
-                .eq("entryYear", studentAccount.calEntryYear())
+                .eq("entry_year", studentAccount.calEntryYear())
                 .eq("degree", studentAccount.calDegree())
                 .eq("gender", studentAccount.getGender()));
         if (allocationStageList.isEmpty() || allocationStageList.get(0).getStage() != 1) {
@@ -103,8 +103,8 @@ public class DormitorySelectionController {
         }
         // 收藏宿舍
         List<TeamFavoriteDorm> teamFavoriteDormList = teamFavoriteDormService.list(new QueryWrapper<TeamFavoriteDorm>()
-                .eq("teamId", studentAccount.getTeamId())
-                .eq("dormitoryId", dormitory.getDormitoryId()));
+                .eq("team_id", studentAccount.getTeamId())
+                .eq("dormitory_id", dormitory.getDormitoryId()));
         if (teamFavoriteDormList.isEmpty()) {
             TeamFavoriteDorm teamFavoriteDorm = new TeamFavoriteDorm(null, studentAccount.getTeamId(), dormitory.getDormitoryId(), dormitory);
             teamFavoriteDormService.save(teamFavoriteDorm);
@@ -137,7 +137,7 @@ public class DormitorySelectionController {
 
         // 判断是否是选择宿舍阶段
         List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
-                .eq("entryYear", studentAccount.calEntryYear())
+                .eq("entry_year", studentAccount.calEntryYear())
                 .eq("degree", studentAccount.calDegree())
                 .eq("gender", studentAccount.getGender()));
         if (allocationStageList.isEmpty() || allocationStageList.get(0).getStage() != 2) {
@@ -159,16 +159,16 @@ public class DormitorySelectionController {
 
         // 判断该宿舍是否已被选择
         List<Team> teamList = teamService.list(new QueryWrapper<Team>()
-                .eq("dormitoryId", dormitory.getDormitoryId()));
+                .eq("dormitory_id", dormitory.getDormitoryId()));
         if (!teamList.isEmpty()) {
             throw new RuntimeException("select dormitory failed! (the dormitory is already selected)");
         }
         // 判断该宿舍是否能够选择
         if (allocationRelationService.list(new QueryWrapper<AllocationRelation>()
-                .eq("entryYear", studentAccount.calEntryYear())
+                .eq("entry_year", studentAccount.calEntryYear())
                 .eq("degree", studentAccount.calDegree())
                 .eq("gender", studentAccount.getGender())
-                .eq("dormitoryId", dormitory.getDormitoryId())).isEmpty()) {
+                .eq("dormitory_id", dormitory.getDormitoryId())).isEmpty()) {
             throw new RuntimeException("select dormitory failed! (not exists this allocation)");
         }
         // 选择宿舍
@@ -201,7 +201,7 @@ public class DormitorySelectionController {
 
         // 判断是否是收藏宿舍阶段
         List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
-                .eq("entryYear", studentAccount.calEntryYear())
+                .eq("entry_year", studentAccount.calEntryYear())
                 .eq("degree", studentAccount.calDegree())
                 .eq("gender", studentAccount.getGender()));
         if (allocationStageList.isEmpty() || allocationStageList.get(0).getStage() != 1) {
@@ -209,8 +209,8 @@ public class DormitorySelectionController {
         }
         // 收藏宿舍
         List<TeamFavoriteDorm> teamFavoriteDormList = teamFavoriteDormService.list(new QueryWrapper<TeamFavoriteDorm>()
-                .eq("teamId", studentAccount.getTeamId())
-                .eq("dormitoryId", dormitory.getDormitoryId()));
+                .eq("team_id", studentAccount.getTeamId())
+                .eq("dormitory_id", dormitory.getDormitoryId()));
         if (teamFavoriteDormList.isEmpty()) {
             TeamFavoriteDorm teamFavoriteDorm = new TeamFavoriteDorm(null, studentAccount.getTeamId(), dormitory.getDormitoryId(), dormitory);
             teamFavoriteDormService.save(teamFavoriteDorm);
@@ -224,7 +224,7 @@ public class DormitorySelectionController {
 
         // 判断是否是选择宿舍阶段
         List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
-                .eq("entryYear", studentAccount.calEntryYear())
+                .eq("entry_year", studentAccount.calEntryYear())
                 .eq("degree", studentAccount.calDegree())
                 .eq("gender", studentAccount.getGender()));
         if (allocationStageList.isEmpty() || allocationStageList.get(0).getStage() != 2) {
@@ -237,16 +237,16 @@ public class DormitorySelectionController {
         }
         // 判断该宿舍是否已被选择
         List<Team> teamList = teamService.list(new QueryWrapper<Team>()
-                .eq("dormitoryId", dormitory.getDormitoryId()));
+                .eq("dormitory_id", dormitory.getDormitoryId()));
         if (!teamList.isEmpty()) {
             throw new RuntimeException("select dormitory failed! (the dormitory is already selected)");
         }
         // 判断该宿舍是否能够选择
         if (allocationRelationService.list(new QueryWrapper<AllocationRelation>()
-                .eq("entryYear", studentAccount.calEntryYear())
+                .eq("entry_year", studentAccount.calEntryYear())
                 .eq("degree", studentAccount.calDegree())
                 .eq("gender", studentAccount.getGender())
-                .eq("dormitoryId", dormitory.getDormitoryId())).isEmpty()) {
+                .eq("dormitory_id", dormitory.getDormitoryId())).isEmpty()) {
             throw new RuntimeException("select dormitory failed! (not exists this allocation)");
         }
         // 选择宿舍
@@ -266,7 +266,7 @@ public class DormitorySelectionController {
 
         // 判断是否是选择宿舍阶段
         List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
-                .eq("entryYear", studentAccount.calEntryYear())
+                .eq("entry_year", studentAccount.calEntryYear())
                 .eq("degree", studentAccount.calDegree())
                 .eq("gender", studentAccount.getGender()));
         if (allocationStageList.isEmpty() || allocationStageList.get(0).getStage() != 2) {
@@ -279,16 +279,16 @@ public class DormitorySelectionController {
         }
         // 判断该宿舍是否已被选择
         List<Team> teamList = teamService.list(new QueryWrapper<Team>()
-                .eq("dormitoryId", dormitory.getDormitoryId()));
+                .eq("dormitory_id", dormitory.getDormitoryId()));
         if (!teamList.isEmpty()) {
             throw new RuntimeException("select dormitory failed! (the dormitory is already selected)");
         }
         // 判断该宿舍是否能够选择
         if (allocationRelationService.list(new QueryWrapper<AllocationRelation>()
-                .eq("entryYear", studentAccount.calEntryYear())
+                .eq("entry_year", studentAccount.calEntryYear())
                 .eq("degree", studentAccount.calDegree())
                 .eq("gender", studentAccount.getGender())
-                .eq("dormitoryId", dormitory.getDormitoryId())).isEmpty()) {
+                .eq("dormitory_id", dormitory.getDormitoryId())).isEmpty()) {
             throw new RuntimeException("select dormitory failed! (not exists this allocation)");
         }
         // 选择宿舍
