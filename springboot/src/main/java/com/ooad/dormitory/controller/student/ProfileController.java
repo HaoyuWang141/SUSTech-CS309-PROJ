@@ -23,7 +23,7 @@ public class ProfileController {
     }
 
     @PostMapping("/set2")
-    public void setProfile2(@RequestBody String studentAccountId,
+    public void setProfile2(String studentAccountId,
                            @RequestParam(required = false) String photoUrl,
                            @RequestParam(required = false) Time sleepTime,
                            @RequestParam(required = false) Time wakeUpTime,
