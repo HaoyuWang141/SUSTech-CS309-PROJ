@@ -1,6 +1,6 @@
-<<<<<<< HEAD
+
 .vscode/
-=======
+
 # Logs
 logs
 *.log
@@ -10,6 +10,8 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+
+node_modules
 
 .DS_Store
 
@@ -22,4 +24,3 @@ lerna-debug.log*
 *.njsproj
 *.sln
 *.sw?
->>>>>>> 1b031b5742ab9765f294019ab6768c3a7441433e
