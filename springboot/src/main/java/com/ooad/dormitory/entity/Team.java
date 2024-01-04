@@ -13,6 +13,7 @@ public class Team {
     @TableId(type = IdType.AUTO)
     private Integer teamId;
     private Integer dormitoryId;
+    private String ownerId;
     @TableField(exist = false)
     private Dormitory dormitory;
 }

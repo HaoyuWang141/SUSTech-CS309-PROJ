@@ -69,6 +69,7 @@ CREATE TABLE team
 (
     team_id      SERIAL PRIMARY KEY,
     dormitory_id INT,
+    owner_id VARCHAR,
     FOREIGN KEY (dormitory_id) REFERENCES dormitory (dormitory_id)
 );
 
