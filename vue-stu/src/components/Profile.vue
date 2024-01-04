@@ -1,3 +1,4 @@
+
 <script setup lang="ts">
 import {reactive, ref} from "vue";
 import type {CSSProperties} from "vue";
@@ -73,26 +74,40 @@ const marks = reactive<Marks>({
 });
 const showEditInfo = ref(false);
 const editInfoForm = ref({
+    photoUrl: "",
     sleepTime: "",
     wakeUpTime: "",
-    acTemp: 26,
+    airConditionerTemperature: 26,
     snore: false,
     QQ: "",
     email: "",
     wechat: "",
 })
 
-// async function confirmEdit() {
-//     try{
-//         const response = await axiosInstance.
-//     } catch (error) {
-//         console.log(error)
-//     }
-// }
+async function confirmEdit() {
+    try{
+        console.log(editInfoForm.value.wakeUpTime)
+        await axiosInstance.post(
+            "student/profile/set2",
+            {
+                studentAccountId: "11911612",
+                token: "tokentokentoken"
+            },
+            {
+                params: editInfoForm.value,
+            },
+        ).then(response =>{
+            console.log(response)
+            showEditInfo.value = false
+        })
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 async function getStudentInfo() {
     try {
-        const response = await axiosInstance.get(
+        await axiosInstance.get(
             "admin/studentAccount/getStudent",
             {
                 params: {
@@ -203,16 +218,18 @@ async function createStudentInfo() {
     <el-form style="margin: 20px; max-width: 400px" label-width="80px" label-position="left">
       <el-form-item label="睡觉时间">
         <el-time-picker v-model="editInfoForm.sleepTime"
-                        format="HH:mm">
+                        format="HH:mm:ss"
+                        value-format="HH:mm:ss">
         </el-time-picker>
       </el-form-item>
       <el-form-item label="起床时间">
         <el-time-picker v-model="editInfoForm.wakeUpTime"
-                        format="HH:mm">
+                        format="HH:mm:ss"
+                        value-format="HH:mm:ss">
         </el-time-picker>
       </el-form-item>
       <el-form-item label="空调温度">
-        <el-slider v-model="editInfoForm.acTemp"
+        <el-slider v-model="editInfoForm.airConditionerTemperature"
                    style="min-width: 250px"
                    :marks="marks"
                    :min="16"
@@ -248,7 +265,7 @@ async function createStudentInfo() {
     <template #footer>
       <el-button round
                  type="primary"
-                 @click="">
+                 @click="confirmEdit()">
         确认修改
       </el-button>
     </template>
@@ -266,14 +283,5 @@ async function createStudentInfo() {
     width: 50%;
     margin-left: 5%;
     height: 100%;
-}
-
-.grid-content {
-    border-radius: 4px;
-    min-height: 30px;
-}
-
-.ep-bg-purple {
-    background-color: #13ce66;
 }
 </style>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {reactive, ref} from "vue";
+import axiosInstance from "@/axios/axiosConfig";
 
 const teammates = ref([
     {
@@ -20,6 +21,26 @@ function removeTeammate(index: number) {
     teammates.value.splice(index, 1)
     //TODO
 }
+
+async function invite() {
+    try {
+        await axiosInstance.post(
+            "/student/team/invite2",
+            {},
+            {
+                params: {
+                    inviterId: "12326667",
+                    inviteeId: inviteForm.studentID,
+                    token: "tokentokentoken",
+                }
+            },
+        ).then(response => {
+            console.log(response)
+        })
+    } catch (error) {
+        console.error(error);
+    }
+}
 </script>
 
 <template>
@@ -33,8 +54,8 @@ function removeTeammate(index: number) {
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="inviteDialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="inviteDialogVisible = false">
-          Confirm(TODO)
+        <el-button type="primary" @click="invite()">
+          Confirm
         </el-button>
       </span>
     </template>

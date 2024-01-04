@@ -5,7 +5,7 @@ import {useRouter} from "vue-router";
 const router = useRouter();
 const name = ref("xingming");
 const sid = ref("12010000");
-const grade = ref("dayi");
+const college = ref("shude");
 const major = ref("CS");
 
 function goProfile() {
@@ -34,8 +34,8 @@ function goProfile() {
           <span>{{ sid }}</span>
         </el-row>
         <el-row style="margin-bottom: 10px">
-          <span>年级：</span>
-          <span>{{ grade }}</span>
+          <span>书院：</span>
+          <span>{{ college }}</span>
         </el-row>
         <el-row style="margin-bottom: 10px">
           <span>专业：</span>
