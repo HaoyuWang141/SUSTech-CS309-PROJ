@@ -5,7 +5,7 @@
             <p>{{ comment.content }}</p>
         </div>
         <div class="replies" v-for="reply in comment.reply_list">
-            <span>{{ reply.publisher_id }}: {{ reply.content }}</span>
+            <span>{{ reply.publisher_id }} 回复：{{ reply.content }}</span>
         </div>
         <el-form>
             <el-form-item>
@@ -13,9 +13,10 @@
                     v-model="newReply"
                     placeholder="请输入回复"
                     clearable
+                    style="margin-top: 10px;"
                 />
             </el-form-item>
-            <el-form-item>
+            <el-form-item style="margin-bottom: 30px;">
                 <el-button type="primary" @click="postReply">
                     发布回复
                 </el-button>
@@ -93,11 +94,10 @@ async function postReply() {
 
 <style scoped>
 .comment {
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 .replies {
-    margin-left: 50px; /* 回复的缩进 */
 }
 
 .el-button {
