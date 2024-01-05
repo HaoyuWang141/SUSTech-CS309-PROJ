@@ -41,41 +41,15 @@
             <span>床数：{{ dormitory.bed_count }}</span>
             <span>简介：{{ layout?.description }}</span>
         </div>
-        <el-button type="primary" @click="bookmark"> 收藏至队伍 </el-button>
-        <div class="comment-container">
-            <span>评论</span>
-            <el-form>
-                <el-form-item>
-                    <el-input
-                        v-model="newComment"
-                        placeholder="请输入评论"
-                        type="textarea"
-                        :rows="3"
-                    />
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" @click="postComment">
-                        发布评论
-                    </el-button>
-                </el-form-item>
-            </el-form>
-            <div class="comments-list">
-                <Comment
-                    v-for="comment in comments"
-                    :key="comment.id"
-                    :comment="comment"
-                />
-            </div>
-        </div>
+        <el-button type="primary" @click="select" v-model="canSelect"> 选择宿舍 </el-button>
     </el-dialog>
 </template>
 
 <script setup lang="ts">
 import { ref, PropType, computed } from "vue";
-import { Dormitory, CommentType } from "@/types/globalTypes";
+import { Dormitory } from "@/types/globalTypes";
 import axiosInstance from "@/axios/axiosConfig";
 import { ElMessage } from "element-plus";
-import Comment from "./comment.vue";
 
 const props = defineProps({
     dormitory: {
@@ -93,100 +67,23 @@ const viewDetails = () => {
     dialogVisible.value = true;
 };
 
-async function bookmark() {
-    // 添加收藏的逻辑
-    console.log("收藏至队伍被点击");
-    axiosInstance
-        .post(
-            "/student/dormitory/favor2",
-            {},
-            {
-                params: {
-                    studentAccountId: localStorage.getItem("studentId"),
-                    dormitory_id: props.dormitory.dormitory_id,
-                },
-            }
-        )
-        .then((res) => {
-            console.log(res);
-            ElMessage.success("收藏成功");
-            dialogVisible.value = false;
-        })
-        .catch((err) => {
-            console.log(err);
-            ElMessage.error("收藏失败");
-        });
-}
-
-const comments = ref<CommentType[]>([]);
-
-async function fetchCommentsAndApplies(dormitory_id: number) {
-    // 添加获取评论的逻辑
-    console.log("获取评论");
-    axiosInstance
-        .get("/student/forum/getComments", {
-            params: {
-                dormitoryId: dormitory_id,
-            },
-        })
-        .then((res) => {
-            console.log(res);
-            comments.value = res.data;
-        })
-        .then(() => {
-            comments.value.forEach((comment) => {
-                axiosInstance
-                    .get("/student/forum/getReply", {
-                        params: {
-                            commentId: comment.id,
-                        },
-                    })
-                    .then((res) => {
-                        console.log(res);
-                        comment.reply_list = res.data;
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                    });
+const canSelect = ref(false);
+// TODO
+async function select() {
+    try {
+        await axiosInstance
+            .post("student/dormitory/selectDormitory", {
+                dormitoryId: props.dormitory.dormitory_id,
+            })
+            .then((response) => {
+                console.log("selectDormitory() ->");
+                console.log(response);
+                ElMessage.success("选择成功");
+                dialogVisible.value = false;
             });
-        })
-        .catch((err) => {
-            console.error(err);
-        });
-}
-fetchCommentsAndApplies(props.dormitory.dormitory_id);
-
-const newComment = ref("");
-async function postComment() {
-    // 添加发布评论的逻辑
-    console.log("发布评论");
-    if (newComment.value === "") {
-        ElMessage.error("评论不能为空");
-        return;
+    } catch (error) {
+        console.log(error);
     }
-    console.log(localStorage.getItem("studentId"));
-    axiosInstance
-        .post(
-            "/student/forum/launch",
-            {},
-            {
-                params: {
-                    studentAccountId: localStorage.getItem("studentId"),
-                    dormitoryId: props.dormitory.dormitory_id,
-                    content: newComment.value,
-                },
-            }
-        )
-        .then((res) => {
-            console.log(res);
-            ElMessage.success("发布成功");
-            fetchCommentsAndApplies(props.dormitory.dormitory_id);
-            newComment.value = "";
-        })
-        .catch((err) => {
-            console.error(err);
-            ElMessage.error("发布失败");
-        });
 }
 </script>
 

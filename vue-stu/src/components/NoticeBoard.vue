@@ -52,13 +52,18 @@ onMounted(() => {
 
 <style scoped>
 .notice-board-card {
-    border-radius: 20px;
-    width: 92.5%;
-    height: 92.5%;
-    margin-left: 2.5%;
+     border-radius: 20px;
+    margin-left: 5%;
     margin-top: 5%;
     margin-bottom: 2.5%;
-    margin-right: 5%;
+    margin-right: 2.5%;
+    background-color: rgba(0, 0, 0, 0.65);
+    border-color: rgba(194, 206, 219, 0.8);
+    border-width: 4px;
+    border-style: solid;
+    border-radius: 40px;
+    color: white;
+    min-height: 300px;
 }
 
 .notice-board-header {

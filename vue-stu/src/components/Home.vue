@@ -8,16 +8,16 @@ import FunctionBoard from "@/components/FunctionBoard.vue";
 <template>
   <div class="grid-container">
     <div class="upper-left">
-      <HomePagePersonCard></HomePagePersonCard>
+      <HomePagePersonCard />
     </div>
     <div class="upper-right">
-      <NoticeBoard></NoticeBoard>
+      <NoticeBoard />
     </div>
     <div class="lower-left">
-      <TeamView></TeamView>
+      <TeamView />
     </div>
     <div class="lower-right">
-      <FunctionBoard></FunctionBoard>
+      <FunctionBoard />
     </div>
   </div>
 </template>
@@ -28,12 +28,6 @@ import FunctionBoard from "@/components/FunctionBoard.vue";
     grid-gap: 20px;
     grid-template-columns: repeat(10, 1fr);
     grid-template-rows: repeat(10, 1fr);
-    background-color: #f2f2f2;
-    height: 86.4vh;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    border: 0;
 }
 
 .upper-left {

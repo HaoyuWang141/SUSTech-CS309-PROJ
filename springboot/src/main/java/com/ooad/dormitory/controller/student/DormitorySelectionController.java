@@ -96,11 +96,10 @@ public class DormitorySelectionController {
     }
 
     @PostMapping("/favor2")
-    public ResponseEntity<?> favorDormitory2(@RequestBody String studentAccountId, @RequestBody Integer dormitoryId) {
+    public ResponseEntity<?> favorDormitory2(String studentAccountId, Integer dormitoryId) {
         StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
         Dormitory dormitory = dormitoryService.getById(dormitoryId);
         assert studentAccount != null && dormitory != null;
-
 
         // 判断是否是收藏宿舍阶段
         List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
