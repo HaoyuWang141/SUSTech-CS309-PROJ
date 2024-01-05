@@ -9,7 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Component
+//@Component
 public class RateLimitInterceptor implements HandlerInterceptor {
 
     private static final Map<String, Integer> requestCount = new ConcurrentHashMap<>();
@@ -19,6 +19,7 @@ public class RateLimitInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
+        System.out.println("RateLimitInterceptor start pre-handling");
 //        String ipAddress = request.getRemoteAddr();
 //        if (requestCount.containsKey(ipAddress)) {
 //            int count = requestCount.get(ipAddress);
@@ -42,6 +43,7 @@ public class RateLimitInterceptor implements HandlerInterceptor {
         if (isRateLimited(accessInfo)) {
 //            response.setStatus(HttpServletResponse.SC_TOO_MANY_REQUESTS);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            System.out.println("RateLimitInterceptor denied");
             return false;
         }
 
@@ -67,6 +69,8 @@ public class RateLimitInterceptor implements HandlerInterceptor {
     private boolean isRateLimited(AccessInfo accessInfo) {
         long currentTime = System.currentTimeMillis();
         long elapsedTime = currentTime - accessInfo.getLastAccessTime();
+        System.out.println(currentTime);
+        System.out.println(elapsedTime);
 
         // 设置访问间隔和访问次数的阈值
         return elapsedTime < 1000 && accessInfo.getCount() > 10; // 1秒内超过10次请求视为频繁访问
