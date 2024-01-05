@@ -103,7 +103,7 @@ async function bookmark() {
             {
                 params: {
                     studentAccountId: localStorage.getItem("studentId"),
-                    dormitory_id: props.dormitory.dormitory_id,
+                    dormitoryId: props.dormitory.dormitory_id,
                 },
             }
         )

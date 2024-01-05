@@ -83,6 +83,7 @@ async function select() {
             });
     } catch (error) {
         console.log(error);
+        ElMessage.error("选择失败");
     }
 }
 </script>
@@ -99,6 +100,7 @@ async function select() {
     border-radius: 12px;
     font-size: large;
     box-shadow: 4px 4px 10px rgba(34, 204, 228, 0.8);
+    max-width: 400px;
 }
 
 .image {

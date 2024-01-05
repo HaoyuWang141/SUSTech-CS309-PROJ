@@ -4,6 +4,7 @@ import axiosInstance from "@/axios/axiosConfig";
 import { HomeFilled } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { Dormitory } from "@/types/globalTypes";
+import LayoutCard from "@/components/layout_card.vue";
 
 const teammates = ref([]);
 const invitationList = ref([]);
@@ -139,9 +140,11 @@ async function getFavorList() {
                 console.log("TeamView getFavorList() ->");
                 console.log(response);
                 favorList.value = response.data;
+                ElMessage.success("获取收藏列表成功");
             });
     } catch (error) {
         console.log(error);
+        ElMessage.error("获取收藏列表失败");
     }
 }
 
@@ -219,7 +222,7 @@ onMounted(() => {
                 <el-button
                     type="primary"
                     style="width: 80%; margin: 10px 0 0 12px"
-                    @click="getFavorList()"
+                    @click="getFavorList"
                 >
                     查看收藏
                 </el-button>
@@ -246,17 +249,13 @@ onMounted(() => {
             </div>
         </div>
 
-        <el-drawer
-            v-model="favorListVisible"
-            title="收藏列表"
-            direction="btt"
-        >
-            <LayoutCard
-                v-for="dorm in favorList"
-                :index="dorm.dormitory_id"
-                :dormitory="dorm"
-            />
-        </el-drawer>
+        <el-dialog v-model="favorListVisible" title="收藏列表" fullscreen="true">
+            <el-row :gutter="20">
+                <el-col :span="8" v-for="dorm in favorList" :key="dorm.dormitory_id">
+                    <LayoutCard :dormitory="dorm" />
+                </el-col>
+            </el-row>
+        </el-dialog>
     </el-card>
 </template>
 
@@ -292,14 +291,6 @@ onMounted(() => {
     display: flex;
     flex-direction: row;
 }
-/* .custom-table {
-    width: 100%;
-    margin: 10px 0 0 12px;
-    min-height: 200px;
-    background-color: transparent;
-    border-radius: 22px;
-    color: black;
-} */
 .custom-table {
     width: 100%;
     margin: 10px 0 0 12px;
@@ -311,4 +302,5 @@ onMounted(() => {
     border: None;
     color: black;
 }
+
 </style>

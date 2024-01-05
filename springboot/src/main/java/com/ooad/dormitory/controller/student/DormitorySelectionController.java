@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -78,9 +79,15 @@ public class DormitorySelectionController {
 
     @GetMapping("/getFavoriteList")
     public List<Dormitory> getFavoriteDormitories(Integer teamId) {
-
-        return teamFavoriteDormService.list(new QueryWrapper<TeamFavoriteDorm>().eq("team_id", teamId))
-                .stream().map(TeamFavoriteDorm::getDormitory).collect(Collectors.toList());
+        List<Integer> dormitoryIdList = teamFavoriteDormService.list(new QueryWrapper<TeamFavoriteDorm>().eq("team_id", teamId))
+                .stream().map(TeamFavoriteDorm::getDormitoryId).toList();
+        List<Dormitory> dormitoryList = new ArrayList<>();
+        for (Dormitory dormitory :  dormitoryService.getDormitories()) {
+            if (dormitoryIdList.contains(dormitory.getDormitoryId())) {
+                dormitoryList.add(dormitory);
+            }
+        }
+        return dormitoryList;
     }
 
     @GetMapping("/getDormitory")
@@ -99,7 +106,9 @@ public class DormitorySelectionController {
     public ResponseEntity<?> favorDormitory2(String studentAccountId, Integer dormitoryId) {
         StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
         Dormitory dormitory = dormitoryService.getById(dormitoryId);
-        assert studentAccount != null && dormitory != null;
+        if (studentAccount == null || dormitory == null) {
+            throw new BadRequestException("student or dormitory not exist");
+        }
 
         // 判断是否是收藏宿舍阶段
         List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
@@ -110,6 +119,10 @@ public class DormitorySelectionController {
         AllocationStage allocationStage = null;
         for (AllocationStage stage : allocationStageList) {
             if (stage.getStage() == 1) {
+                Timestamp now = new Timestamp(System.currentTimeMillis());
+                if (stage.getStartTime().compareTo(now) > 0 || stage.getEndTime().compareTo(now) < 0) {
+                    throw new BadRequestException("favor dormitory failed! (wrong time)");
+                }
                 allocationStage = stage;
                 break;
             }
@@ -129,8 +142,9 @@ public class DormitorySelectionController {
         return ResponseEntity.ok().build();
     }
 
+    @Deprecated
     @PostMapping("/select3")
-    public ResponseEntity<?> selectDormitory3(@RequestBody String studentAccountId, @RequestBody Integer dormitoryId) {
+    public ResponseEntity<?> selectDormitory3(Integer studentAccountId, Integer dormitoryId) {
 
         // 获取studentAccount
 //        StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
@@ -158,7 +172,7 @@ public class DormitorySelectionController {
                 .eq("degree", studentAccount.calDegree())
                 .eq("gender", studentAccount.getGender()));
         if (allocationStageList.isEmpty() || allocationStageList.get(0).getStage() != 2) {
-            throw new BadRequestException("select dormitory failed! (wrong stage)");
+            throw new BadRequestException("select dormitory failed! (wrong time)");
         }
 
         // 判断本队是否已选宿舍
@@ -211,28 +225,28 @@ public class DormitorySelectionController {
         return layoutIdSet.stream().map(layoutService::getById).collect(Collectors.toList());
     }
 
-    @GetMapping("/getStage")
-    public AllocationStage getStage(String studentAccountId) {
-        StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
-        if (studentAccount == null) {
-            throw new NotFoundException("student account not found!");
-        }
-
-        List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
-                .eq("entry_year", studentAccount.calEntryYear())
-                .eq("degree", studentAccount.calDegree())
-                .eq("gender", studentAccount.getGender()));
-        if (allocationStageList.isEmpty()) {
-            return null;
-        }
-        for (AllocationStage allocationStage : allocationStageList) {
-            if (allocationStage.getStartTime().compareTo(new Timestamp(System.currentTimeMillis())) < 0
-                    && allocationStage.getEndTime().compareTo(new Timestamp(System.currentTimeMillis())) > 0) {
-                return allocationStage;
-            }
-        }
-        return null;
-    }
+//    @GetMapping("/getStage")
+//    public AllocationStage getStage(String studentAccountId) {
+//        StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
+//        if (studentAccount == null) {
+//            throw new NotFoundException("student account not found!");
+//        }
+//
+//        List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
+//                .eq("entry_year", studentAccount.calEntryYear())
+//                .eq("degree", studentAccount.calDegree())
+//                .eq("gender", studentAccount.getGender()));
+//        if (allocationStageList.isEmpty()) {
+//            return null;
+//        }
+//        for (AllocationStage allocationStage : allocationStageList) {
+//            if (allocationStage.getStartTime().compareTo(new Timestamp(System.currentTimeMillis())) < 0
+//                    && allocationStage.getEndTime().compareTo(new Timestamp(System.currentTimeMillis())) > 0) {
+//                return allocationStage;
+//            }
+//        }
+//        return null;
+//    }
 
 
     @Deprecated
@@ -296,22 +310,34 @@ public class DormitorySelectionController {
         return ResponseEntity.ok().build();
     }
 
-    @Deprecated
     @PostMapping("/select2")
-    public ResponseEntity<?> selectDormitory2(@RequestBody String studentAccountId, @RequestBody Integer dormitoryId) {
+    public ResponseEntity<?> selectDormitory2(String studentAccountId, Integer dormitoryId) {
         StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
         Dormitory dormitory = dormitoryService.getById(dormitoryId);
-        assert studentAccount != null && dormitory != null;
-
+        if (studentAccount == null || dormitory == null) {
+            throw new BadRequestException("student or dormitory not exist");
+        }
 
         // 判断是否是选择宿舍阶段
         List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
                 .eq("entry_year", studentAccount.calEntryYear())
                 .eq("degree", studentAccount.calDegree())
                 .eq("gender", studentAccount.getGender()));
-        if (allocationStageList.isEmpty() || allocationStageList.get(0).getStage() != 2) {
+        AllocationStage allocationStage = null;
+        for (AllocationStage stage : allocationStageList) {
+            if (stage.getStage() == 2) {
+                Timestamp now = new Timestamp(System.currentTimeMillis());
+                if (stage.getStartTime().compareTo(now) > 0 || stage.getEndTime().compareTo(now) < 0) {
+                    throw new BadRequestException("select dormitory failed! (wrong time)");
+                }
+                allocationStage = stage;
+                break;
+            }
+        }
+        if (allocationStage == null) {
             throw new BadRequestException("select dormitory failed! (wrong stage)");
         }
+
         // 判断本队是否已选宿舍
         Team team = teamService.getById(studentAccount.getTeamId());
         if (team.getDormitory() != null) {
@@ -336,5 +362,27 @@ public class DormitorySelectionController {
         team.setDormitory(dormitory);
         teamService.saveOrUpdate(team);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/getStage")
+    public Integer getStage(String studentAccountId){
+        StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
+        if (studentAccount == null) {
+            throw new NotFoundException("student account not found!");
+        }
+        List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
+                .eq("entry_year", studentAccount.calEntryYear())
+                .eq("degree", studentAccount.calDegree())
+                .eq("gender", studentAccount.getGender()));
+        Integer stage = 0;
+        for (AllocationStage allocationStage : allocationStageList) {
+            if (allocationStage.getStartTime().compareTo(new Timestamp(System.currentTimeMillis())) < 0
+                    && allocationStage.getEndTime().compareTo(new Timestamp(System.currentTimeMillis())) > 0) {
+               if (allocationStage.getStage() > stage) {
+                   stage = allocationStage.getStage();
+               }
+            }
+        }
+        return stage;
     }
 }
