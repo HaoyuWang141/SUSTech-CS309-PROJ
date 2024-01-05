@@ -106,9 +106,18 @@ public class DormitorySelectionController {
                 .eq("entry_year", studentAccount.calEntryYear())
                 .eq("degree", studentAccount.calDegree())
                 .eq("gender", studentAccount.getGender()));
-        if (allocationStageList.isEmpty() || allocationStageList.get(0).getStage() != 1) {
+
+        AllocationStage allocationStage = null;
+        for (AllocationStage stage : allocationStageList) {
+            if (stage.getStage() == 1) {
+                allocationStage = stage;
+                break;
+            }
+        }
+        if (allocationStage == null) {
             throw new BadRequestException("favor dormitory failed! (wrong stage)");
         }
+
         // 收藏宿舍
         List<TeamFavoriteDorm> teamFavoriteDormList = teamFavoriteDormService.list(new QueryWrapper<TeamFavoriteDorm>()
                 .eq("team_id", studentAccount.getTeamId())
