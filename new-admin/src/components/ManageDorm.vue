@@ -49,7 +49,6 @@
       </el-row>
       <el-row style="position: absolute; left: 360px; top: 140px;width: 1000px" gutter="10">
 
-
         <el-col :span="5">
           <el-input v-model="inputFid" placeholder="请输入楼层" @change="searchFloor"></el-input>
         </el-col>
@@ -113,7 +112,7 @@
         </el-col>
       </el-row>
       <el-table id="dormTable" :data="tableData"
-                height="560"
+                height="540"
                 @selection-change="handleSelectChange"
                 style="position: absolute; left: 340px; bottom: 0; top: 180px; width: 1000px">
         <el-table-column type="selection" width="55"/>

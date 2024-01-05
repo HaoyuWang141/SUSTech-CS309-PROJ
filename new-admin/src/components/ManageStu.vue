@@ -118,6 +118,19 @@
         <el-table-column width="200" label="E-mail" prop="email"/>
         <el-table-column label="微信" prop="wechat"/>
 
+        <el-table-column label="已组队" prop="team_id">
+          <template v-slot="scope">
+            <span v-if="scope.row.team_id === null">否</span>
+            <span v-else>是</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="已选宿舍" prop="team_id">
+          <template v-slot="scope">
+            <span v-if="scope.row.team === null">否</span>
+            <span v-else-if="scope.row.team.dormitory_id === null">否</span>
+            <span v-else>是</span>
+          </template>
+        </el-table-column>
 
       </el-table>
 
