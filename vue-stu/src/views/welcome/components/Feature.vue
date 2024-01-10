@@ -30,7 +30,7 @@ defineProps({
     background-color: @background-color;
     border-radius: 2rem;
     transition: background-color 0.5s;
-    box-shadow: 4px 4px 10px rgba(34, 204, 228, 0.2);
+    box-shadow: 4px 4px 10px rgba(34, 204, 228, 0.4);
     margin: auto;
     max-width: 600px;
     width: 80%;
