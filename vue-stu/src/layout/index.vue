@@ -60,9 +60,11 @@
         </template>
       </el-dropdown>
     </header>
-    <main>
-      <RouterView/>
-    </main>
+    <el-scrollbar style="height: 600px;" class="my-scroll-bar">
+      <main>
+        <RouterView/>
+      </main>
+    </el-scrollbar>
   </div>
 </template>
 
@@ -177,7 +179,9 @@ onMounted(() => {
   display: flex;
   align-items: center;
   height: 100px;
-  background: linear-gradient(to bottom, black, rgba(0, 0, 0, 0));
+  //height: 20%;
+  background: line
+  ar-gradient(to bottom, black, rgba(0, 0, 0, 0));
   color: white;
   padding: 0 4rem;
 
@@ -213,5 +217,11 @@ onMounted(() => {
   //::selection {
   //  border-color: red;
   //}
+}
+
+/deep/ .my-scroll-bar {
+  .el-scrollbar__thumb {
+    background-color: #ff4949;
+  }
 }
 </style>
