@@ -4,6 +4,7 @@ import axiosInstance from "@/axios/axiosConfig";
 import {ElMessage} from "element-plus";
 import {Dormitory} from "@/types/globalTypes";
 import LayoutCard from "@/components/layout_card.vue";
+import router from "@/router";
 
 const teammates = ref([]);
 const invitationList = ref([]);
@@ -13,7 +14,9 @@ const favorListVisible = ref(false);
 const inviteForm = reactive({
   studentID: "",
 });
-
+function goDormmates() {
+    router.push("/dormmates");
+}
 async function invite() {
   try {
     await axiosInstance
@@ -163,6 +166,13 @@ onMounted(() => {
     </template>
     <div class="team-view-body">
       <div style="display: flex; flex-direction: column; width: 20%">
+        <el-button
+            type="primary"
+            style="width: 80%; margin: 10px 0 0 12px"
+            @click="goDormmates()"
+        >
+          推荐舍友
+        </el-button>
         <el-button
             type="primary"
             style="width: 80%; margin: 10px 0 0 12px"

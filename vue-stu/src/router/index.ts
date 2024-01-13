@@ -6,6 +6,7 @@ import Login from "@/views/login/index.vue";
 import Homepage from "@/views/homepage/index.vue";
 import Profile from "@/views/profile/index.vue";
 import Dormitory from "@/views/dormitory/index.vue";
+import Dormmates from "@/views/dormmates/index.vue"
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -44,6 +45,11 @@ const routes: Array<RouteRecordRaw> = [
                 component: Profile,
             },
             {path: "dormitory", name: "Dormitory", component: Dormitory},
+            {
+                path: "dormmates",
+                name: "Dormmates",
+                component: Dormmates,
+            }
         ],
     },
 ];
