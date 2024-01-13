@@ -1,10 +1,8 @@
-<script setup>
-import {onMounted, ref} from "vue";
-import {useRouter} from "vue-router";
+<script setup lang="ts">
+import {ref, onMounted} from "vue";
 import axiosInstance from "@/axios/axiosConfig";
 
-const router = useRouter();
-
+const imgSrc = ref("src/assets/ldh.jpg");
 const name = ref("");
 const sid = ref("");
 const gender = ref(1);
@@ -25,6 +23,11 @@ async function getSelfInfo() {
         .then((response) => {
           console.log("getSelfInfo() -> ");
           console.log(response);
+          console.log(response.data.photo_url)
+          console.log(response.data.photoUrl)
+          if (response.data.photo_url !== null && response.data.photo_url !== "") {
+            imgSrc.value = response.data.photo_url;
+          }
           name.value = response.data.name;
           sid.value = response.data.student_id;
           gender.value = response.data.gender;
@@ -50,7 +53,7 @@ onMounted(() => {
     <div class="simple-card-body">
       <div class="simple-card-left">
         <el-image
-            :src="'src/assets/Kobe.jpg'"
+            :src="imgSrc"
         />
       </div>
       <div class="simple-card-right">

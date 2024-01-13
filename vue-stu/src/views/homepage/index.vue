@@ -64,12 +64,12 @@ onMounted(() => {
     border-radius: 24px;
     backdrop-filter: blur(5px);
 
-    :deep .el-step__title {
+    :deep(.el-step__title) {
       font-weight: bold;
       font-size: 20px;
     }
 
-    :deep .success-step {
+    :deep(.success-step) {
       .el-step__icon {
         background-color: #67C23A;
       }
@@ -78,7 +78,7 @@ onMounted(() => {
       }
     }
 
-    :deep .active-step {
+    :deep(.active-step) {
       .el-step__icon {
         background-color: orange;
       }

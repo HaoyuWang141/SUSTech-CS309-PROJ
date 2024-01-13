@@ -170,19 +170,25 @@ public class TeamController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/getRecommendation2")
+    @GetMapping("/getRecommendation")
     public List<StudentAccount> getRecommendation2(String studentAccountId) {
         StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
-        assert studentAccount != null;
+        if (studentAccount == null) {
+            throw new BadRequestException("student account not found!");
+        }
 
-        return studentAccountService.list().stream()
-                .filter(s -> s.getTeamId() == null
-                        && !Objects.equals(studentAccount.getStudentId(), s.getStudentId())
-                        && Objects.equals(studentAccount.getGender(), s.getGender())
-                        && Objects.equals(studentAccount.calEntryYear(), s.calEntryYear())
+        QueryWrapper<StudentAccount> queryWrapper = new QueryWrapper<>();
+        queryWrapper.notLike("student_id", studentAccount.getStudentId());
+        queryWrapper.isNull("team_id");
+        queryWrapper.eq("gender", studentAccount.getGender());
+
+        List<StudentAccount> studentAccountList = studentAccountService.list(queryWrapper);
+
+        return studentAccountList.stream()
+                .filter(s -> Objects.equals(studentAccount.calEntryYear(), s.calEntryYear())
                         && Objects.equals(studentAccount.calDegree(), s.calDegree()))
                 .sorted(Comparator.comparingDouble(studentAccount::calSimilarity).reversed())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @GetMapping("getStudent")
@@ -258,15 +264,5 @@ public class TeamController {
         invitee.setTeam(inviter.getTeam());
         studentAccountService.saveOrUpdate(invitee);
         return ResponseEntity.ok().build();
-    }
-
-    @Deprecated
-    @GetMapping("/getRecommendation")
-    public List<StudentAccount> getRecommendation(@RequestBody StudentAccount studentAccount) {
-
-        return studentAccountService.list().stream()
-                .filter(s -> s.getTeamId() == null && !Objects.equals(studentAccount.getStudentId(), s.getStudentId()))
-                .sorted(Comparator.comparingDouble(s -> studentAccount.calSimilarity((StudentAccount) s)).reversed())
-                .collect(Collectors.toList());
     }
 }

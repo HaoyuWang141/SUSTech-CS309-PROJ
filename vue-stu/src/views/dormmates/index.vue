@@ -3,50 +3,53 @@ import {onMounted, ref} from "vue";
 import axiosInstance from "@/axios/axiosConfig";
 
 interface PERSON {
-    air_conditioner_temperature: number,
-    email:string,
-    gender: number,
-    name:"CYH",
-    photo_url:string,
-    qq:string,
-    sleep_time:string,
-    snore:boolean,
-    student_id:string,
-    wake_up_time:string,
-    wechat:string
+  air_conditioner_temperature: number,
+  email: string,
+  gender: number,
+  name: "CYH",
+  photo_url: string,
+  qq: string,
+  sleep_time: string,
+  snore: boolean,
+  student_id: string,
+  wake_up_time: string,
+  wechat: string
 }
 
 const dormmateList = ref<PERSON[]>([]);
 
 async function getDormmates() {
-    try {
-        await axiosInstance.get(
-            "/student/team/getRecommendation2",
-            {
-                params: {
-                    studentAccountId: localStorage.getItem("studentId")
-                },
-            },
-        ).then(response => {
-            dormmateList.value = response.data;
-            console.log("Dormmates getDormmates() ->")
-            console.log(response.data)
-            dormmateList.value.push({air_conditioner_temperature:23,email: "123",gender: 1,name: "CYH",qq: "123",sleep_time: "07:17:00",snore: false,student_id: "12012826",wake_up_time: "09:17:00",wechat: "123"});
-            dormmateList.value.push({air_conditioner_temperature:23,email: "123",gender: 1,name: "CYH",qq: "123",sleep_time: "07:17:00",snore: false,student_id: "12012826",wake_up_time: "09:17:00",wechat: "123"});
-            dormmateList.value.push({air_conditioner_temperature:23,email: "123",gender: 1,name: "CYH",qq: "123",sleep_time: "07:17:00",snore: false,student_id: "12012826",wake_up_time: "09:17:00",wechat: "123"});
-            dormmateList.value.push({air_conditioner_temperature:23,email: "123",gender: 1,name: "CYH",qq: "123",sleep_time: "07:17:00",snore: false,student_id: "12012826",wake_up_time: "09:17:00",wechat: "123"});
-        })
-    } catch (error) {
-        console.log(error)
-    }
+  try {
+    await axiosInstance.get(
+        "/student/team/getRecommendation",
+        {
+          params: {
+            studentAccountId: localStorage.getItem("studentId")
+          },
+        },
+    ).then(response => {
+      dormmateList.value = response.data;
+      console.log("Dormmates getDormmates() ->")
+      console.log(response.data)
+      //     dormmateList.value.push({air_conditioner_temperature:23,email: "123",gender: 1,name: "CYH",qq: "123",sleep_time: "07:17:00",snore: false,student_id: "12012826",wake_up_time: "09:17:00",wechat: "123"});
+      //     dormmateList.value.push({air_conditioner_temperature:23,email: "123",gender: 1,name: "CYH",qq: "123",sleep_time: "07:17:00",snore: false,student_id: "12012826",wake_up_time: "09:17:00",wechat: "123"});
+      //     dormmateList.value.push({air_conditioner_temperature:23,email: "123",gender: 1,name: "CYH",qq: "123",sleep_time: "07:17:00",snore: false,student_id: "12012826",wake_up_time: "09:17:00",wechat: "123"});
+      //     dormmateList.value.push({air_conditioner_temperature:23,email: "123",gender: 1,name: "CYH",qq: "123",sleep_time: "07:17:00",snore: false,student_id: "12012826",wake_up_time: "09:17:00",wechat: "123"});
+    })
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 onMounted(() => {
-    getDormmates();
+  getDormmates();
 })
 </script>
 
 <template>
+  <h1>
+    推荐舍友列表
+  </h1>
   <el-container class="dorm-mates-container">
     <el-row gutter="20px" v-for="(person, index) in dormmateList">
       <el-card class="dorm-mates-card">
@@ -117,12 +120,15 @@ onMounted(() => {
 .dorm-mates-card {
   width: 100%;
   margin-bottom: 5%;
+
   .dorm-mates-card-body {
     display: flex;
     flex-direction: row;
+
     .mid-part {
       margin-left: 10%;
     }
+
     .right-part {
       margin-left: 10%;
     }
