@@ -246,7 +246,7 @@ onMounted(() => {
       </el-table-column>
     </el-table>
   </el-dialog>
-  <el-dialog v-model="favorListVisible" title="收藏列表" fullscreen="true">
+  <el-dialog v-model="favorListVisible" title="收藏列表">
     <el-row :gutter="20">
       <el-col :span="8" v-for="dorm in favorList" :key="dorm.dormitory_id">
         <LayoutCard :dormitory="dorm"/>

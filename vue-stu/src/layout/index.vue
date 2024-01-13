@@ -33,7 +33,7 @@
       <div class="check-notify" style="margin-right: 30px" v-show="studentId">
         <el-button
             type="primary"
-            @click=""
+            @click="showNoticeBoard = true"
             class="button-style">
           <el-icon style="margin-right: 10px">
             <Comment/>
@@ -41,6 +41,14 @@
           系统通知
         </el-button>
       </div>
+      <el-dialog v-model="showNoticeBoard"
+                 style="
+                 backdrop-filter: blur(3px);
+                 background-color: rgba(0,0,0,0.8);
+                 border-radius: 30px;"
+      >
+        <NoticeBoard/>
+      </el-dialog>
       <el-dropdown v-show="studentId" hide-timeout="250">
         <el-button class="button-style">
           <el-icon>
@@ -73,10 +81,11 @@ import {onMounted, ref, computed} from "vue";
 import {useRouter} from "vue-router";
 import axiosInstance from "@/axios/axiosConfig";
 import {useAuthStore} from "@/stores/auth";
+import NoticeBoard from "@/components/NoticeBoard.vue";
 
 const router = useRouter();
 const authStore = useAuthStore();
-
+const showNoticeBoard = ref(false);
 const studentId = computed(() => authStore.studentId);
 
 const bg_color = ref<HTMLElement | null>(null);
@@ -221,7 +230,7 @@ onMounted(() => {
 
 /deep/ .my-scroll-bar {
   .el-scrollbar__thumb {
-    background-color: #ff4949;
+    background-color: rgba(34, 204, 228, 1);
   }
 }
 </style>
