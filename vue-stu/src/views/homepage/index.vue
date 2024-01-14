@@ -18,6 +18,7 @@ async function getCurrentStage() {
           console.log("getCurrentStage() ->");
           console.log(response);
           currentStage.value = response.data;
+          localStorage.setItem("currentStage", response.data);
         });
   } catch (error) {
     console.error(error);

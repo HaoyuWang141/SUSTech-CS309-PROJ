@@ -18,7 +18,7 @@ async function getSelfInfo() {
   try {
     console.log("Current student: " + localStorage.getItem("studentId"));
     await axiosInstance
-        .get("/admin/studentAccount/getStudent", {
+        .get("/student/team/getStudent", {
           params: {
             studentId: localStorage.getItem("studentId"),
           },
@@ -73,6 +73,9 @@ onMounted(() => {
           <span>{{ gender === 1 ? "男" : "女" }}</span>
         </el-row>
         <el-row>
+          <el-button type="primary" @click="viewDorm">
+            查看已选宿舍
+          </el-button>
           <el-button type="primary" @click="goProfile">
             编辑个人信息
           </el-button>

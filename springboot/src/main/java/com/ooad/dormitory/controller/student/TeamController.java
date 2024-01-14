@@ -191,10 +191,11 @@ public class TeamController {
                 .toList();
     }
 
-    @GetMapping("getStudent")
+    @GetMapping("/getStudent")
     public StudentAccount getStudent(String studentId) {
-
-        return studentAccountService.getById(studentId);
+        StudentAccount studentAccount = studentAccountService.getById(studentId);
+        studentAccount.setTeam(teamService.getTeamById(studentAccount.getTeamId()));
+        return studentAccount;
     }
 
 
