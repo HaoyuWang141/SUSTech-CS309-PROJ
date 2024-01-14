@@ -13,7 +13,7 @@ public interface TeamMapper extends BaseMapper<Team> {
     @Results({
             @Result(column = "team_id", property = "teamId"),
             @Result(column = "dormitory_id", property = "dormitoryId"),
-            @Result(column = "dormitory_id", property = "dormitory", one = @One(select = "com.ooad.dormitory.mapper.DormitoryMapper.selectById"))
+            @Result(column = "dormitory_id", property = "dormitory", one = @One(select = "com.ooad.dormitory.mapper.DormitoryMapper.selectDormitoryById"))
     })
     Team selectById(Integer teamId);
 }

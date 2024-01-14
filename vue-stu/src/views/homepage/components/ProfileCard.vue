@@ -26,8 +26,6 @@ async function getSelfInfo() {
         .then((response) => {
           console.log("getSelfInfo() -> ");
           console.log(response);
-          console.log(response.data.photo_url)
-          console.log(response.data.photoUrl)
           if (response.data.photo_url !== null && response.data.photo_url !== "") {
             imgSrc.value = response.data.photo_url;
           }
