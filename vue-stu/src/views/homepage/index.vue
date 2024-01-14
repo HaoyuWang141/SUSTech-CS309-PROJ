@@ -4,7 +4,7 @@ import TeamCard from "./components/TeamCard.vue";
 import {onMounted, ref} from "vue";
 import axiosInstance from "@/axios/axiosConfig";
 
-const currentStage = ref(2);
+const currentStage = ref(0);
 
 async function getCurrentStage() {
   try {
@@ -25,7 +25,7 @@ async function getCurrentStage() {
 }
 
 onMounted(() => {
-  // getCurrentStage();
+  getCurrentStage();
 });
 </script>
 

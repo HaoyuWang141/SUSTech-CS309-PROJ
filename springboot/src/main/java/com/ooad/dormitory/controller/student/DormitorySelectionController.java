@@ -109,6 +109,9 @@ public class DormitorySelectionController {
         if (studentAccount == null || dormitory == null) {
             throw new BadRequestException("student or dormitory not exist");
         }
+        if (studentAccount.getTeamId() == null) {
+            throw new BadRequestException("student not in a team");
+        }
 
         // 判断是否是收藏宿舍阶段
         List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
