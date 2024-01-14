@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import {ref, onMounted} from "vue";
 import axiosInstance from "@/axios/axiosConfig";
+import {useRouter} from "vue-router";
+
+const router = useRouter();
 
 const imgSrc = ref("src/assets/ldh.jpg");
 const name = ref("");
