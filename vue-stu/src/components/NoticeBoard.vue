@@ -43,7 +43,7 @@ onMounted(() => {
     <div class="notice-board-body">
       <ul>
         <li v-for="(notice, index) in notices" :key="index" class="notice-item">
-          {{ notice.content }}
+          {{ "【"+notice.title + "】：" +  notice.content }}
         </li>
       </ul>
     </div>
@@ -52,7 +52,7 @@ onMounted(() => {
 
 <style scoped>
 .notice-board-card {
-     border-radius: 20px;
+    //border-radius: 20px;
     margin-left: 5%;
     margin-top: 5%;
     margin-bottom: 2.5%;

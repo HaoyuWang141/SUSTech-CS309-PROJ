@@ -76,7 +76,8 @@ public class RateLimitInterceptor implements HandlerInterceptor {
 //        System.out.println(currentTime);
 //        System.out.println(elapsedTime);
 
-        return elapsedTime < 1000 && accessInfo.getCount() > 10; // 1秒内超过10次请求视为频繁访问
+        // 设置访问间隔和访问次数的阈值
+        return elapsedTime < 1000 && accessInfo.getCount() > 1000; // 1秒内超过1000次请求视为频繁访问
     }
 
     @Scheduled(fixedRate = 30000) // 每30秒执行一次:归零所有记录的count

@@ -1,5 +1,5 @@
 <template>
-    <el-card :body-style="{ padding: '0' }">
+    <el-card>
         <img :src="layout?.image_url" class="image" alt="Card image" />
         <div
             style="
@@ -95,7 +95,7 @@ async function select() {
     min-width: 100px;
     margin-bottom: 30px;
     background-color: @gray;
-    color: @text-color4;
+    color: @text-color-blue;
     border: none;
     border-radius: 12px;
     font-size: large;
@@ -136,7 +136,7 @@ async function select() {
 
     .title {
         text-align: center; // 文本居中
-        color: @text-color4; // 文本颜色
+        color: @text-color-blue; // 文本颜色
         font-size: x-large; // 字体大小
         font-weight: bold; // 字体加粗
     }
