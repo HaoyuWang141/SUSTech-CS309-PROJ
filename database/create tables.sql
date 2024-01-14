@@ -14,6 +14,7 @@ DROP TABLE IF EXISTS notification CASCADE;
 DROP TABLE IF EXISTS comment CASCADE;
 DROP TABLE IF EXISTS reply CASCADE;
 DROP TABLE IF EXISTS authentication CASCADE;
+DROP TABLE IF EXISTS hello CASCADE;
 
 -- 管理员账号表
 CREATE TABLE admin_account
@@ -178,4 +179,10 @@ CREATE TABLE authentication
     token_failure_time TIME,
     online_amount      INT, -- 该账户已在线设备数
     FOREIGN KEY (student_id) REFERENCES student_account (student_id)
+);
+
+CREATE TABLE hello
+(
+    id SERIAL PRIMARY KEY,
+    val VARCHAR(50)
 );

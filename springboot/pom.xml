@@ -99,6 +99,12 @@
             <version>2.11.1</version>
         </dependency>
 
+        <!--activeMQ-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-activemq</artifactId>
+        </dependency>
+
 <!--        &lt;!&ndash;引入 Spring Security&ndash;&gt;-->
 <!--        <dependency>-->
 <!--            <groupId>org.springframework.boot</groupId>-->

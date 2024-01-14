@@ -5,6 +5,7 @@ import com.ooad.dormitory.entity.*;
 import com.ooad.dormitory.exception.BadRequestException;
 import com.ooad.dormitory.exception.NotFoundException;
 import com.ooad.dormitory.mapper.AuthenticationMapper;
+import com.ooad.dormitory.processor.RequestSender;
 import com.ooad.dormitory.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -36,6 +38,8 @@ public class DormitorySelectionController {
 
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private RequestSender requestSender;
 
     @Autowired
     public DormitorySelectionController(StudentAccountService studentAccountService, DormitoryService dormitoryService, BuildingService buildingService, RegionService regionService, TeamFavoriteDormService teamFavoriteDormService, AllocationStageService allocationStageService, AllocationRelationService allocationRelationService, TeamService teamService, AuthenticationMapper authenticationMapper, LayoutService layoutService) {
@@ -114,21 +118,16 @@ public class DormitorySelectionController {
         List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
                 .eq("entry_year", studentAccount.calEntryYear())
                 .eq("degree", studentAccount.calDegree())
-                .eq("gender", studentAccount.getGender()));
-
-        AllocationStage allocationStage = null;
-        for (AllocationStage stage : allocationStageList) {
-            if (stage.getStage() == 1) {
-                Timestamp now = new Timestamp(System.currentTimeMillis());
-                if (stage.getStartTime().compareTo(now) > 0 || stage.getEndTime().compareTo(now) < 0) {
-                    throw new BadRequestException("favor dormitory failed! (wrong time)");
-                }
-                allocationStage = stage;
-                break;
-            }
+                .eq("gender", studentAccount.getGender())
+                .eq("stage", 1));
+        if (allocationStageList.isEmpty()) {
+            throw new BadRequestException("favor dormitory failed! (wrong time)");
         }
-        if (allocationStage == null) {
-            throw new BadRequestException("favor dormitory failed! (wrong stage)");
+        Timestamp startTime = allocationStageList.get(0).getStartTime();
+        Timestamp endTime = allocationStageList.get(0).getEndTime();
+        Timestamp nowTime = new Timestamp(System.currentTimeMillis());
+        if (nowTime.compareTo(startTime) < 0 || nowTime.compareTo(endTime) > 0) {
+            throw new BadRequestException("favor dormitory failed! (wrong time)");
         }
 
         // 收藏宿舍
@@ -142,7 +141,6 @@ public class DormitorySelectionController {
         return ResponseEntity.ok().build();
     }
 
-    @Deprecated
     @PostMapping("/select3")
     public ResponseEntity<?> selectDormitory3(Integer studentAccountId, Integer dormitoryId) {
 
@@ -170,10 +168,19 @@ public class DormitorySelectionController {
         List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
                 .eq("entry_year", studentAccount.calEntryYear())
                 .eq("degree", studentAccount.calDegree())
-                .eq("gender", studentAccount.getGender()));
-        if (allocationStageList.isEmpty() || allocationStageList.get(0).getStage() != 2) {
+                .eq("gender", studentAccount.getGender())
+                .eq("stage", 2));
+        if (allocationStageList.isEmpty()) {
             throw new BadRequestException("select dormitory failed! (wrong time)");
         }
+        Timestamp startTime = allocationStageList.get(0).getStartTime();
+        Timestamp endTime = allocationStageList.get(0).getEndTime();
+        Random random = new Random();  // 用于生成一个随机时间，真实开放选择时间为公布的开放时间加上此随机时间
+        Timestamp nowTime = new Timestamp(System.currentTimeMillis() - random.nextInt(100, 500));
+        if (nowTime.compareTo(startTime) < 0 || nowTime.compareTo(endTime) > 0) {
+            throw new BadRequestException("select dormitory failed! (wrong time)");
+        }
+
 
         // 判断本队是否已选宿舍
 //        Team team = teamService.getById(studentAccount.getTeamId());
@@ -207,6 +214,83 @@ public class DormitorySelectionController {
         team.setDormitory(dormitory);
         teamService.saveOrUpdate(team);
         redisTemplate.opsForValue().set(teamKey, team);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/select")
+    public ResponseEntity<?> selectDormitory4(Integer studentAccountId, Integer dormitoryId) {
+
+        // 获取studentAccount
+//        StudentAccount studentAccount = studentAccountService.getById(studentAccountId);
+        String studentAccountKey = "studentAccount:" + studentAccountId;
+        StudentAccount studentAccount = (StudentAccount) redisTemplate.opsForValue().get(studentAccountKey);
+        if (studentAccount == null) {
+            studentAccount = studentAccountService.getById(studentAccountId);
+            assert studentAccount != null;
+            redisTemplate.opsForValue().set(studentAccountKey, studentAccount);
+        }
+
+        // 获取dormitory
+//        Dormitory dormitory = dormitoryService.getById(dormitoryId);
+        String dormitoryKey = "dormitory:" + dormitoryId;
+        Dormitory dormitory = (Dormitory) redisTemplate.opsForValue().get(dormitoryKey);
+        if (dormitory == null) {
+            dormitory = dormitoryService.getById(dormitoryId);
+            assert dormitory != null;
+            redisTemplate.opsForValue().set(dormitoryKey, dormitory);
+        }
+
+        // 判断是否是选择宿舍阶段
+        List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
+                .eq("entry_year", studentAccount.calEntryYear())
+                .eq("degree", studentAccount.calDegree())
+                .eq("gender", studentAccount.getGender())
+                .eq("stage", 2));
+        if (allocationStageList.isEmpty()) {
+            throw new BadRequestException("select dormitory failed! (wrong time)");
+        }
+        Timestamp startTime = allocationStageList.get(0).getStartTime();
+        Timestamp endTime = allocationStageList.get(0).getEndTime();
+        Random random = new Random();  // 用于生成一个随机时间，真实开放选择时间为公布的开放时间加上此随机时间
+        Timestamp nowTime = new Timestamp(System.currentTimeMillis() - random.nextInt(100, 500));
+        if (nowTime.compareTo(startTime) < 0 || nowTime.compareTo(endTime) > 0) {
+            throw new BadRequestException("select dormitory failed! (wrong time)");
+        }
+
+
+        // 判断本队是否已选宿舍
+//        Team team = teamService.getById(studentAccount.getTeamId());
+        String teamKey = "team:" + studentAccount.getTeamId();
+        Team team = (Team) redisTemplate.opsForValue().get(teamKey);
+        if (team == null) {
+            team = teamService.getById(studentAccount.getTeamId());
+            assert team != null;
+            redisTemplate.opsForValue().set(teamKey, team);
+        }
+        if (team.getDormitory() != null) {
+            throw new BadRequestException("select dormitory failed! (already has a dormitory)");
+        }
+
+        // 判断该宿舍是否已被选择
+        List<Team> teamList = teamService.list(new QueryWrapper<Team>()
+                .eq("dormitory_id", dormitory.getDormitoryId()));
+        if (!teamList.isEmpty()) {
+            throw new BadRequestException("select dormitory failed! (the dormitory is already selected)");
+        }
+        // 判断该宿舍是否能够选择
+        if (allocationRelationService.list(new QueryWrapper<AllocationRelation>()
+                .eq("entry_year", studentAccount.calEntryYear())
+                .eq("degree", studentAccount.calDegree())
+                .eq("gender", studentAccount.getGender())
+                .eq("dormitory_id", dormitory.getDormitoryId())).isEmpty()) {
+            throw new BadRequestException("select dormitory failed! (not exists this allocation)");
+        }
+        // 选择宿舍
+        team.setDormitoryId(dormitory.getDormitoryId());
+        team.setDormitory(dormitory);
+        requestSender.sendRequest(team.getTeamId() + " " + dormitoryId + " " + team.getOwnerId());
+//        teamService.saveOrUpdate(team);
+//        redisTemplate.opsForValue().set(teamKey, team);
         return ResponseEntity.ok().build();
     }
 
@@ -273,8 +357,8 @@ public class DormitorySelectionController {
     }
 
     @Deprecated
-    @PostMapping("/select")
-    public ResponseEntity<?> selectDormitory(@RequestBody StudentAccount studentAccount, @RequestBody Dormitory dormitory) {
+    @PostMapping("/select-d")
+    public ResponseEntity<?> selectDormitoryD(@RequestBody StudentAccount studentAccount, @RequestBody Dormitory dormitory) {
 
         // 判断是否是选择宿舍阶段
         List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
@@ -322,20 +406,17 @@ public class DormitorySelectionController {
         List<AllocationStage> allocationStageList = allocationStageService.list(new QueryWrapper<AllocationStage>()
                 .eq("entry_year", studentAccount.calEntryYear())
                 .eq("degree", studentAccount.calDegree())
-                .eq("gender", studentAccount.getGender()));
-        AllocationStage allocationStage = null;
-        for (AllocationStage stage : allocationStageList) {
-            if (stage.getStage() == 2) {
-                Timestamp now = new Timestamp(System.currentTimeMillis());
-                if (stage.getStartTime().compareTo(now) > 0 || stage.getEndTime().compareTo(now) < 0) {
-                    throw new BadRequestException("select dormitory failed! (wrong time)");
-                }
-                allocationStage = stage;
-                break;
-            }
+                .eq("gender", studentAccount.getGender())
+                .eq("stage", 2));
+        if (allocationStageList.isEmpty()) {
+            throw new BadRequestException("select dormitory failed! (wrong time)");
         }
-        if (allocationStage == null) {
-            throw new BadRequestException("select dormitory failed! (wrong stage)");
+        Timestamp startTime = allocationStageList.get(0).getStartTime();
+        Timestamp endTime = allocationStageList.get(0).getEndTime();
+        Random random = new Random();  // 用于生成一个随机时间，真实开放选择时间为公布的开放时间加上此随机时间
+        Timestamp nowTime = new Timestamp(System.currentTimeMillis() - random.nextInt(100, 500));
+        if (nowTime.compareTo(startTime) < 0 || nowTime.compareTo(endTime) > 0) {
+            throw new BadRequestException("select dormitory failed! (wrong time)");
         }
 
         // 判断本队是否已选宿舍
@@ -361,6 +442,16 @@ public class DormitorySelectionController {
         team.setDormitoryId(dormitory.getDormitoryId());
         team.setDormitory(dormitory);
         teamService.saveOrUpdate(team);
+        return ResponseEntity.ok().build();
+    }
+
+
+    @Deprecated
+    @PostMapping("/select-test")
+    public ResponseEntity<?> selectDormitory(Integer studentAccountId, Integer dormitoryId) {
+//        System.out.println(studentAccountId + " " + dormitoryId);
+//        Team team = new Team(dormitoryId, dormitoryId, String.valueOf(studentAccountId), null);
+//        requestSender.sendRequest(team.getTeamId() + " " + team.getDormitoryId() + " " + team.getOwnerId());
         return ResponseEntity.ok().build();
     }
 
