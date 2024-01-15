@@ -27,7 +27,7 @@ public class SocketIOServerConfig {
 
     public SocketIOServerConfig() {
         Configuration config = new Configuration();
-        config.setHostname("localhost");
+        config.setHostname("0.0.0.0");
         config.setPort(8083); // 选择适合的端口
 
         this.server = new SocketIOServer(config);
