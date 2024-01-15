@@ -31,26 +31,42 @@ public class LoginController {
         this.studentAccountMapper = studentAccountMapper;
     }
 
+//    @PostMapping("/login")
+//        public ResponseEntity<?> login(String studentId, String password) {
+//        System.out.println(studentId + " " + password);
+//        Authentication authentication = authenticationMapper.selectById(studentId);
+//        if (authentication != null && Objects.equals(authentication.getStudentPassword(), password) && authentication.getOnlineAmount() < 1) {
+//            if (authentication.getToken()!=null && new Time(System.currentTimeMillis()).compareTo(authentication.getTokenFailureTime()) >= 0) {
+//                return ResponseEntity.ok(authentication.getToken());
+//            }
+//
+//            String token = TokenUtils.generateToken(studentId);
+//
+////            String token = createToken(studentId);
+////            authentication.setToken(token);
+////            authentication.setTokenFailureTime(new Time(new Time(System.currentTimeMillis()).getTime() + (failureTimeInMinutes * 60 * 1000)));
+////            authentication.setOnlineAmount(authentication.getOnlineAmount() + 1);
+//            authenticationMapper.updateById(authentication);
+//            return ResponseEntity.ok(token);
+//        }
+//        else {
+//            throw new BackEndException("login failed!");
+//        }
+//    }
+
     @PostMapping("/login")
-        public ResponseEntity<?> login(String studentId, String password) {
+    public ResponseEntity<?> login(String studentId, String password) {
         System.out.println(studentId + " " + password);
         Authentication authentication = authenticationMapper.selectById(studentId);
-        if (authentication != null && Objects.equals(authentication.getStudentPassword(), password) && authentication.getOnlineAmount() < 1) {
-            if (authentication.getToken()!=null && new Time(System.currentTimeMillis()).compareTo(authentication.getTokenFailureTime()) >= 0) {
-                return ResponseEntity.ok(authentication.getToken());
+        if (authentication != null && Objects.equals(authentication.getStudentPassword(), password)) {
+            if (!TokenUtils.checkOnlineAmount(studentId)) {
+                throw new BackEndException("online amount exceeded!");
             }
-
             String token = TokenUtils.generateToken(studentId);
-
-//            String token = createToken(studentId);
-//            authentication.setToken(token);
-//            authentication.setTokenFailureTime(new Time(new Time(System.currentTimeMillis()).getTime() + (failureTimeInMinutes * 60 * 1000)));
-//            authentication.setOnlineAmount(authentication.getOnlineAmount() + 1);
-            authenticationMapper.updateById(authentication);
             return ResponseEntity.ok(token);
         }
         else {
-            throw new BackEndException("login failed!");
+            throw new BackEndException("login failed! " + authentication.getStudentPassword());
         }
     }
 

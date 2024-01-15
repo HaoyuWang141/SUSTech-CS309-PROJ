@@ -8,16 +8,18 @@ import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 public interface AuthenticationMapper extends BaseMapper<Authentication> {
-    @Select("select * from authentication where student_id = #{studentId}")
-    @Results({
-            @Result(column = "student_id", property = "studentId"),
-            @Result(column = "student_password", property = "studentPassword"),
-            @Result(column = "token", property = "token"),
-            @Result(column = "token_failure_time", property = "tokenFailureTime"),
-            @Result(column = "online_amount", property = "onlineAmount")
-    })
-    Authentication selectById(String studentId);
+//    @Select("select * from authentication where student_id like #{studentId}")
+//    @Results({
+//            @Result(column = "student_id", property = "studentId"),
+//            @Result(column = "student_password", property = "studentPassword"),
+//            @Result(column = "token", property = "token"),
+//            @Result(column = "token_failure_time", property = "tokenFailureTime"),
+//            @Result(column = "online_amount", property = "onlineAmount")
+//    })
+//    Authentication selectById(String studentId);
 
     @Select("select * from authentication where token = #{token}")
     @Results({
@@ -28,4 +30,14 @@ public interface AuthenticationMapper extends BaseMapper<Authentication> {
             @Result(column = "online_amount", property = "onlineAmount")
     })
     Authentication selectByToken(String token);
+
+    @Select("select * from authentication")
+    @Results({
+            @Result(column = "student_id", property = "studentId"),
+            @Result(column = "student_password", property = "studentPassword"),
+            @Result(column = "token", property = "token"),
+            @Result(column = "token_failure_time", property = "tokenFailureTime"),
+            @Result(column = "online_amount", property = "onlineAmount")
+    })
+    List<Authentication> selectAll();
 }

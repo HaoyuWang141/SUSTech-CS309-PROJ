@@ -38,26 +38,45 @@ public class LoginInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 在进入Controller方法前执行，用于拦截处理逻辑
 
+        System.out.println("LoginInterceptor start pre-handling");
 
-        // 验证token
+        // 验证token 使用HTTP请求头中的Authorization字段
 //        String token = request.getHeader("Authorization");
 //        if (!TokenUtils.validateToken(token)) {
 //            response.sendRedirect("/student/login");
 //            return false;
 //        }
+
+        // 验证token
+//        String token = request.getHeader("Authorization");
+//        System.out.println("**** " + token);
+//        if (!TokenUtils.validateToken(token)) {
+//            System.out.println("LoginInterceptor denied");
+//            return false;
+//        }
         return true;
     }
 
+//    @Override
+//    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+//                           ModelAndView modelAndView) throws Exception {
+//        // 在Controller方法调用之后，渲染视图之前执行
+//    }
+//
+//    @Override
+//    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+//            throws Exception {
+//        // 在整个请求完成后执行，主要用于清理资源等工作
+//    }
+
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-                           ModelAndView modelAndView) throws Exception {
-        // 在Controller方法调用之后，渲染视图之前执行
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+        HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
-            throws Exception {
-        // 在整个请求完成后执行，主要用于清理资源等工作
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        HandlerInterceptor.super.afterCompletion(request, response, handler, ex);
     }
 }
 

@@ -77,4 +77,12 @@ public class NotificationController {
                 .filter(notification -> notification.getGender() == null || notification.getGender().equals(studentAccount.getGender()))
                 .collect(Collectors.toList());
     }
+
+    @GetMapping("/test")
+    public String test(@RequestParam String token) {
+        if (!TokenUtils.validateToken(token)) {
+            throw new UnauthorizedException("token invalid!");
+        }
+        return "success";
+    }
 }
