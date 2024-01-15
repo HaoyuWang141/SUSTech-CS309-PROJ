@@ -6,12 +6,12 @@
              background-color="rgb(25,49,82)"
              text-color="white"
              active-text-color="wheat">
-      <el-menu-item index="/mainpage">
-        <el-icon :size="20">
-          <house/>
-        </el-icon>
-        <span>首页</span>
-      </el-menu-item>
+<!--      <el-menu-item index="/mainpage">-->
+<!--        <el-icon :size="20">-->
+<!--          <house/>-->
+<!--        </el-icon>-->
+<!--        <span>首页</span>-->
+<!--      </el-menu-item>-->
 
       <el-menu-item index="/dormitory">
       <el-icon :size="20">
@@ -63,7 +63,7 @@ import {Edit, Message, Bell, User, House} from '@element-plus/icons-vue'
 export default {
   name: 'AsideMenu',
   components: {
-    Edit, Message, Bell, User, House
+    Edit, Message, Bell, User
   },
   data() {
     console.log(this.$route.path.substring(0, this.$route.path.length))
