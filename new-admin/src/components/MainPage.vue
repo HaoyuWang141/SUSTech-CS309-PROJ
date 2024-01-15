@@ -7,51 +7,86 @@
 
     <el-main>
 
+      <el-table
+          :data="laysTable"
+          @selection-change="sele"
+          height="560"
+          style="position: absolute; left: 180px; bottom: 0; top: 110px; width: 1000px"
+      >
+        <el-table-column type="selection" width="55"/>
+        <el-table-column width="100" label="名称" prop="layout_name"/>
+        <el-table-column label="描述" prop="description"/>
+        <el-table-column type="expand" prop="img_url">
+          <template v-slot="scope">
+            <el-row>
 
+              <el-col span="8"></el-col>
+              <el-col span="8">
+                <img :src="scope.row.image_url" height="300"/></el-col>
+              <el-col span="8"></el-col>
+            </el-row>
+          </template>
+
+        </el-table-column>
+
+
+      </el-table>
+
+      <el-button type="success"  style="position: absolute;
+      right: 200px; bottom: 10px;"
+                 @click="dialogAdd = true" >添加</el-button>
+
+      <el-button type="warning"  style="position: absolute;
+      right: 260px; bottom: 10px;"
+                 @click="clickUp" >更改</el-button>
 
     </el-main>
-    <!--    <el-main class="main_part"-->
-    <!--             style="position: absolute; left: 160px; right: 0; top: 60px; bottom: 0; overflow-y: scroll">-->
-    <!--      <el-row class="row_search">-->
-    <!--        <div style="display: flex">-->
-    <!--          <el-input v-model="keyword" :placeholder="placeholder" @keydown.enter="handleSearch"></el-input>-->
-    <!--          <el-button type="primary" @click="handleSearch" style="margin-left: 10px">搜索</el-button>-->
-    <!--        </div>-->
-    <!--      </el-row>-->
-
-    <!--      <el-row><br/></el-row>-->
-
-    <!--      <el-table class="posts_table" ref="main_table"-->
-    <!--                :data="this.tableData" :height="tableH" style="width: 100%"-->
-    <!--                @row-click="this.try"-->
-    <!--                v-el-table-infinite-scroll="this.loadTableMore"-->
-    <!--      >-->
-    <!--        <el-table-column width="120" label="时间" prop="time"/>-->
-    <!--        <el-table-column width="100" label="分区" prop="section"/>-->
-    <!--        &lt;!&ndash;        <el-table-column width="70" label="" prop="avatar">&ndash;&gt;-->
-    <!--        &lt;!&ndash;          <slot>&ndash;&gt;-->
-    <!--        &lt;!&ndash;            <el-avatar shape="square" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"/>&ndash;&gt;-->
-    <!--        &lt;!&ndash;          </slot>&ndash;&gt;-->
-    <!--        &lt;!&ndash;        </el-table-column>&ndash;&gt;-->
-    <!--        <el-table-column width="110" label="作者" prop="author"/>-->
-
-    <!--        <el-table-column min-width="120" label="标题" prop="title"/>-->
-    <!--        <el-table-column width="60" label="赞" prop="likeCount"/>-->
-    <!--        <el-table-column type="expand">-->
-    <!--          <template #default="props">-->
-    <!--            <div>-->
-    <!--              <p style="position: relative; left: 5%">{{ props.row.contentHead }}</p>-->
-    <!--            </div>-->
-    <!--          </template>-->
-    <!--        </el-table-column>-->
-    <!--      </el-table>-->
-
-    <!--      <el-button id="ToTop" type="plain" @click="toTop">-->
-    <!--        Top-->
-    <!--      </el-button>-->
-    <!--    </el-main>-->
-
   </el-container>
+
+
+  <el-drawer
+      ref="dra"
+      v-model="dialogUp"
+      title="更改房型"
+      direction="rtl"
+      class="demo-drawer"
+  >
+    <div class="demo-drawer__content">
+      <el-form :model="form1">
+        <el-form-item label="房型名称" :label-width="formLabelWidth">
+          <el-input v-model="form1.layout_name" autocomplete="off"/>
+        </el-form-item>
+        <el-form-item label="描述" :label-width="formLabelWidth">
+          <el-input v-model="form1.description" autocomplete="off"/>
+        </el-form-item>
+
+      </el-form>
+      <el-button @click="cancelForm1Up" type="info">取消</el-button>
+      <el-button @click="submit1Up" type="primary">提交</el-button>
+    </div>
+  </el-drawer>
+
+  <el-drawer
+      ref="drawerRef"
+      v-model="dialogAdd"
+      title="添加房型"
+      direction="rtl"
+      class="demo-drawer"
+  >
+    <div class="demo-drawer__content">
+      <el-form :model="form">
+        <el-form-item label="房型名称" :label-width="formLabelWidth">
+          <el-input v-model="form.layout_name" autocomplete="off"/>
+        </el-form-item>
+        <el-form-item label="描述" :label-width="formLabelWidth">
+          <el-input v-model="form.description" autocomplete="off"/>
+        </el-form-item>
+
+      </el-form>
+      <el-button @click="cancelFormCreate" type="info">取消</el-button>
+      <el-button @click="submitCreate" type="primary">提交</el-button>
+    </div>
+  </el-drawer>
 
 </template>
 
@@ -63,7 +98,6 @@ import AsideMenu from "@/components/util/AsideMenu";
 import axios from "axios";
 import "echarts-wordcloud/dist/echarts-wordcloud";
 import "echarts-wordcloud/dist/echarts-wordcloud.min";
-// import AsideMenu from "@/components/util/AsideMenu";
 import elTableInfiniteScroll from 'el-table-infinite-scroll';
 import router from "@/router";
 
@@ -83,31 +117,78 @@ export default {
 
   created() {
     this.check()
+    this.getAllLayout()
   },
 
   data() {
     return {
-      tableData: [],
-      windowH: 800,
-      tableH: 600,
-      nextPageI: 0,
-      allSections: [],
-      // active_side: '/mainpage',
-      search_suggestions: [],
-      keyword: '',
-      placeholder: '请输入关键字',
-      sectionList: {},
-      nowSectionId: -1
+      dialogAdd: false,
+      dialogUp: false,
+      laysTable: [],
+      form: {},
+      form1: {},
+      seleLay: null
     }
   },
 
   methods: {
+
+    clickUp() {
+      if (this.seleLay === null || this.seleLay === []) {
+        alert('未选择')
+        return;
+      }
+      if (this.seleLay.length !== 1) {
+        alert('请仅选一个')
+        return
+      }
+      this.form1.layout_name = this.seleLay[0].layout_name
+      this.form1.description = this.seleLay[0].description
+      this.dialogUp = true
+    },
+
+    submit1Up() {
+      this.form1.layout_id = this.seleLay[0].layout_id
+      console.log(this.form1)
+      axios.put('api/admin/dormitory/update/layout', this.form1).then(resp=>{
+        alert('成功更改')
+        this.getAllLayout()
+      })
+
+    },
+
+    cancelForm1Up() {
+      this.dialogUp = false
+    },
+
+    sele(se) {
+      this.seleLay = se
+    },
+
+    submitCreate() {
+      axios.post('api/admin/dormitory/create/layout', [this.form]).then(resp=>{
+        alert('成功添加')
+        this.getAllLayout()
+      })
+    },
+
+    cancelFormCreate() {
+      this.dialogAdd = false
+    },
+
+    getAllLayout() {
+      axios.get('/api/admin/dormitory/get/layout').then(resp => {
+        this.laysTable = resp.data
+      }).catch(e => {
+        console.log(e)
+      })
+    },
+
     check() {
       if (localStorage.getItem('act') === null) {
         this.$router.push('/');
       }
     }
-
 
   }
 }

@@ -18,11 +18,11 @@ const routes = [
         name: "Login",
         component: Login,
     },
-    // {
-    //     path: "/mainpage",
-    //     name: "MainPage",
-    //     component: MainPage,
-    // },
+    {
+        path: "/mainpage",
+        name: "MainPage",
+        component: MainPage,
+    },
 
     {
         path: "/dormitory",
