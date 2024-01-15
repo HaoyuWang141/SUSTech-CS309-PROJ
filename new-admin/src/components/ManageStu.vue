@@ -52,7 +52,7 @@
             搜索
           </el-button>
         </el-col>
-        <el-col :span="4"></el-col>
+        <el-col :span="2"></el-col>
         <el-col :span="3">
           <el-button type="success" @click="dialog = true">
             <el-icon size="14">
@@ -61,7 +61,7 @@
             添加
           </el-button>
         </el-col>
-        <el-col :span="4">
+        <el-col :span="3">
           <el-tooltip
               class="box-item"
               effect="dark"
@@ -69,28 +69,19 @@
               placement="bottom-start"
           >
 
-<!--            <el-upload-->
-<!--                class="upload"-->
-<!--                :show-file-list="false"-->
-<!--                action=""-->
-<!--                :multiple="false"-->
-<!--                accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"-->
-<!--                :on-change="importExcel"-->
-<!--                :limit="1"-->
-<!--            >-->
-<!--              <el-button type="success">-->
-<!--                <el-icon size="14">-->
-<!--                  <circle-plus/>-->
-<!--                </el-icon>-->
-<!--                批量上传-->
-<!--              </el-button>-->
-<!--            </el-upload>-->
-
+            <el-button type="success">
+              <el-icon size="14">
+                <circle-plus/>
+              </el-icon>
+              批量上传
+            </el-button>
 
           </el-tooltip>
-
-
         </el-col>
+
+        <el-col :span="4">
+          <input type="file" @change="handleFileChange"></el-col>
+
       </el-row>
 
 
@@ -146,6 +137,9 @@
       right: 200px; bottom: 10px;"
                  @click="handleUpdate">更改</el-button>
 
+      <el-button type="primary" style="position: absolute;
+      right: 280px; bottom: 10px;"
+                 @click="handleExpo">导出</el-button>
 
     </el-main>
   </el-container>
@@ -241,8 +235,13 @@ import HeadMenu from "@/components/util/HeadMenu";
 import AsideMenu from "@/components/util/AsideMenu";
 import axios from "axios";
 import {Search, CirclePlus} from "@element-plus/icons-vue";
-// import XLSX from 'xlsx';
+import * as XLSX from 'xlsx';
+
 import {ElMessage, ElMessageBox} from "element-plus";
+import {ref} from "vue";
+
+const parsedData = ref([]);
+
 
 export default {
   name: "ManageStu",
@@ -251,12 +250,18 @@ export default {
   },
 
   created() {
+    this.check()
+    this.getAllRegions()
     this.getAllMaster()
     this.getAllDoctor()
   },
 
   data() {
     return {
+      allRegions: [],
+      regionIdNameDict: {},
+      buildIdObjDict: {},
+
       formLabelWidth: '80px',
       form: {},
       dialog: false,
@@ -276,6 +281,38 @@ export default {
   },
 
   methods: {
+    check() {
+      if (localStorage.getItem('act') === null) {
+        this.$router.push('/');
+      }
+    },
+
+    getAllRegions() {
+      axios.get('/api/admin/dormitory/get/region').then(resp => {
+        this.allRegions = resp.data
+        for (let i = 0; i < this.allRegions.length; i++) {
+
+          this.regionIdNameDict[this.allRegions[i].region_id.toString()] = this.allRegions[i].region_name
+
+          axios.get('/api/admin/dormitory/get/building', {
+            params: {
+              regionId: this.allRegions[i].region_id
+            }
+          }).then(resp => {
+            this.allRegions[i].building = []
+            for (let j = 0; j < resp.data.length; j++) {
+              this.allRegions[i].building.push(resp.data[j])
+              this.buildIdObjDict[resp.data[j].building_id.toString()] = resp.data[j]
+            }
+          }).catch(e => {
+            console.log(e)
+          })
+        }
+
+      }).catch(e => {
+        console.log(e)
+      })
+    },
 
     handleSelectionChange(pa) {
       console.log(pa)
@@ -300,12 +337,273 @@ export default {
       }
     },
 
+    handleFileChange(event) {
+      const file = event.target.files[0];
+      this.readFileContent(file);
+    },
+
+    readFileContent (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const fileContent = e.target.result;
+        // 使用 xlsx 库解析文件内容
+        const workbook = XLSX.read(fileContent, { type: 'binary' });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        // 将解析的数据存储在 Vue 组件中
+        parsedData.value = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+        console.log(parsedData.value);
+        let matrix = parsedData.value
+        alert('上传成功！')
+
+        let formCreate = []
+        for (let i = 1; i < matrix.length; i++) {
+          formCreate.push({})
+            formCreate[i-1].student_id = matrix[i][0]
+            formCreate[i-1].name = matrix[i][2]
+            formCreate[i-1].gender = matrix[i][3] === '女' ? 0 : 1
+            formCreate[i-1].qq = matrix[i][4]
+            formCreate[i-1].email = matrix[i][5]
+            formCreate[i-1].wechat = matrix[i][6]
+        }
+        console.log(formCreate)
+        axios.post('api/admin/studentAccount/create',
+            formCreate
+        ).then(resp => {
+          if (resp.data['success_count'] === 1) {
+            alert('成功创建！')
+            this.getAllMaster()
+            this.getAllDoctor()
+          }
+        }).catch(e => {
+          console.log(e)
+          console.log(formCreate)
+        })
+
+      };
+      reader.readAsBinaryString(file);
+    },
+
+    handleImport() {
+      console.log(parsedData.value);
+
+    },
+
+    handleExpo() {
+      let expo = []
+
+      // this.selectedStu = [
+      //   {
+      //     "student_id": "12039876",
+      //     "name": "李三",
+      //     "gender": 0,
+      //     "photo_url": "string",
+      //     "air_conditioner_temperature": 0,
+      //     "snore": true,
+      //     "qq": "123",
+      //     "email": "www",
+      //     "wechat": "333",
+      //     "team_id": 5,
+      //     "team": {
+      //       "team_id": 20,
+      //       "owner_id": "12021925",
+      //       "dormitory_id": 3,
+      //       "dormitory": {
+      //
+      //         "dormitory_id": 3,
+      //
+      //         "floor": 3,
+      //         "room_number": "308",
+      //         "bed_count": 0,
+      //         "is_empty": false,
+      //         "gender": 0,
+      //         "degree": 0,
+      //         "building_id": 2,
+      //
+      //         "building": {
+      //           "building_id": 2,
+      //           "building_name": "13栋宿舍楼",
+      //           "region_id": 1,
+      //           "region": {
+      //             "region_id": 1,
+      //             "region_name": "学生宿舍区"
+      //           }
+      //         }
+      //
+      //
+      //       }
+      //     }
+      //   },
+      //
+      //
+      //
+      //
+      //
+      //
+      //   {
+      //     "student_id": "12039881",
+      //     "name": "王",
+      //     "gender": 0,
+      //     "photo_url": "string",
+      //     "air_conditioner_temperature": 0,
+      //     "snore": true,
+      //     "qq": "123",
+      //     "email": "www",
+      //     "wechat": "333",
+      //     "team_id": 5,
+      //     "team": {
+      //       "team_id": 20,
+      //       "owner_id": "12021925",
+      //       "dormitory_id": 3,
+      //       "dormitory": {
+      //
+      //         "dormitory_id": 3,
+      //
+      //         "floor": 3,
+      //         "room_number": "308",
+      //         "bed_count": 0,
+      //         "is_empty": false,
+      //         "gender": 0,
+      //         "degree": 0,
+      //         "building_id": 2,
+      //
+      //         "building": {
+      //           "building_id": 2,
+      //           "building_name": "13栋宿舍楼",
+      //           "region_id": 1,
+      //           "region": {
+      //             "region_id": 1,
+      //             "region_name": "学生宿舍区"
+      //           }
+      //         }
+      //
+      //
+      //       }
+      //     }
+      //   },
+      //
+      //
+      //   {
+      //     "student_id": "12039882",
+      //     "name": "张",
+      //     "gender": 0,
+      //     "photo_url": "string",
+      //     "air_conditioner_temperature": 0,
+      //     "snore": true,
+      //     "qq": "123",
+      //     "email": "www",
+      //     "wechat": "333",
+      //     "team_id": 5,
+      //     "team": {
+      //       "team_id": 20,
+      //       "owner_id": "12021925",
+      //       "dormitory_id": 3,
+      //       "dormitory": {
+      //
+      //         "dormitory_id": 3,
+      //
+      //         "floor": 3,
+      //         "room_number": "319",
+      //         "bed_count": 0,
+      //         "is_empty": false,
+      //         "gender": 0,
+      //         "degree": 0,
+      //         "building_id": 1,
+      //
+      //         "building": {
+      //           "building_id": 1,
+      //           "building_name": "11栋宿舍楼",
+      //           "region_id": 1,
+      //           "region": {
+      //             "region_id": 1,
+      //             "region_name": "学生宿舍区"
+      //           }
+      //         }
+      //       }
+      //     }
+      //   },
+      //
+      //
+      //
+      //   {
+      //     "student_id": "12039883",
+      //     "name": "赵",
+      //     "gender": 0,
+      //     "photo_url": "string",
+      //     "air_conditioner_temperature": 0,
+      //     "snore": true,
+      //     "qq": "123",
+      //     "email": "www",
+      //     "wechat": "333",
+      //     "team_id": 5,
+      //     "team": {
+      //       "team_id": 20,
+      //       "owner_id": "12021925",
+      //       "dormitory_id": 3,
+      //       "dormitory": {
+      //
+      //         "dormitory_id": 3,
+      //
+      //         "floor": 5,
+      //         "room_number": "510",
+      //         "bed_count": 0,
+      //         "is_empty": false,
+      //         "gender": 0,
+      //         "degree": 0,
+      //         "building_id": 1,
+      //
+      //         "building": {
+      //           "building_id": 1,
+      //           "building_name": "11栋宿舍楼",
+      //           "region_id": 1,
+      //           "region": {
+      //             "region_id": 1,
+      //             "region_name": "学生宿舍区"
+      //           }
+      //         }
+      //       }
+      //     }
+      //   }
+      // ]
+
+      console.log('***********')
+      console.log(this.selectedStu)
+
+      for (let i = 0; i < this.selectedStu.length; i++) {
+        let stu = {}
+        stu['学号'] = this.selectedStu[i].student_id
+        stu['姓名'] = this.selectedStu[i].name
+        stu['性别'] = this.selectedStu[i].gender === 0? '女' : '男'
+        stu.QQ = this.selectedStu[i].qq
+        stu.Email = this.selectedStu[i].email
+        stu['微信'] = this.selectedStu[i].wechat
+
+        let build = this.buildIdObjDict[this.selectedStu[i].team.dormitory.building_id.toString()]
+
+        stu['楼层'] = this.selectedStu[i].team.dormitory.floor
+        stu['房号'] = this.selectedStu[i].team.dormitory.room_number
+
+        stu['宿舍楼'] = build.building_name
+        stu['区域'] = this.regionIdNameDict[build.region_id.toString()]
+        expo.push(stu)
+      }
+      console.log(expo)
+
+      const jsonData = ref(expo)
+      const ws = XLSX.utils.json_to_sheet(jsonData.value);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+      // 导出 Excel 文件
+      XLSX.writeFile(wb, 'exported_data.xlsx');
+
+    },
+
     handleDelete() {
       if (this.selectedStu.length > 0) {
 
         ElMessageBox.confirm(
-            '是否确认删除？',
-            '警告',
+            '是否确认删除？', '警告',
             {
               confirmButtonText: '确认',
               cancelButtonText: '取消',
@@ -441,7 +739,6 @@ export default {
                 this.doctor.push(res.data[stui])
               }
             }
-
             if (!this.showingMaster) {
               this.tableData = this.doctor
             }

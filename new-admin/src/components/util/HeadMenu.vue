@@ -49,25 +49,14 @@ export default {
     },
 
       doLogout:function(){
-        let do_logout = localStorage.getItem('uid') !== null
-        if (do_logout) {
-          axios.post("/api/logout").then(resp =>{
-            if(resp.status===200){
-              console.log("Log out successfully");
-              ElMessageBox.alert('登出成功', {
-                confirmButtonText: 'OK',
-                type: 'success'
-              })
-            }
-          }).catch();
-          localStorage.removeItem('uid');
-        } else {
-          ElMessageBox.alert('未登录，无需登出', {
-            confirmButtonText: 'OK',
-            type: 'success'
-          })
-        }
-
+        let account = localStorage.getItem('act')
+        localStorage.removeItem('act')
+        localStorage.removeItem('pw')
+        this.$router.push('/');
+        ElMessageBox.alert('管理员账号：' +account+ ' 登出成功', {
+          confirmButtonText: 'OK',
+          type: 'success'
+        })
       }
     }
 }

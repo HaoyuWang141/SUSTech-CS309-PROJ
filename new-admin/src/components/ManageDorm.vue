@@ -33,10 +33,10 @@
 
       </el-aside>
       <el-row style="position: absolute; left: 360px; top: 80px;width: 1000px;height: 60px" gutter="10">
-        <el-col :span="16">描述：“{{ this.nowDescribe }}”</el-col>
+        <el-col :span="16">楼栋描述：“{{ this.nowDescribe }}”</el-col>
 
         <el-col :span="3">
-          <el-button type="warning" @click="dialog_building_up = true">
+          <el-button type="warning" @click="dialog_up_b = true">
             更改楼栋信息
           </el-button>
         </el-col>
@@ -79,37 +79,36 @@
             <el-icon size="14">
               <circle-plus/>
             </el-icon>
-            添加
+            添加/更改
           </el-button>
         </el-col>
         <el-col :span="4">
-          <el-tooltip
-              class="box-item"
-              effect="dark"
-              content="请上传Excel表格，需按照下方表格的表头格式"
-              placement="bottom-start"
-          >
-            <el-upload
-                class="upload"
-                :show-file-list="false"
-                action=""
-                :multiple="false"
-                :on-change="importExcel"
-                :limit="1"
-            >
-              <el-button type="success">
-                <el-icon size="14">
-                  <circle-plus/>
-                </el-icon>
-                批量上传
-              </el-button>
-            </el-upload>
-          </el-tooltip>
+          <input type="file" @change="handleFileChange"></el-col>
+
+        <!--          <el-tooltip-->
+<!--              class="box-item"-->
+<!--              effect="dark"-->
+<!--              content="请上传Excel表格，需按照下方表格的表头格式"-->
+<!--              placement="bottom-start"-->
+<!--          >-->
+<!--            <el-upload-->
+<!--                class="upload"-->
+<!--                :show-file-list="false"-->
+<!--                action=""-->
+<!--                :multiple="false"-->
+<!--                :on-change="importExcel"-->
+<!--                :limit="1"-->
+<!--            >-->
+<!--              <el-button type="success">-->
+<!--                <el-icon size="14">-->
+<!--                  <circle-plus/>-->
+<!--                </el-icon>-->
+<!--                批量上传-->
+<!--              </el-button>-->
+<!--            </el-upload>-->
+<!--          </el-tooltip>-->
 
 
-
-
-        </el-col>
       </el-row>
       <el-table id="dormTable" :data="tableData"
                 height="540"
@@ -138,8 +137,12 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="为空" prop="is_empty"/>
-
+        <el-table-column label="为空" prop="is_empty">
+          <template v-slot="scope">
+            <span v-if="scope.row.is_empty === null">未确定</span>
+            <span v-else>{{ scope.row.is_empty ? '是' : '否'}}</span>
+          </template>
+        </el-table-column>
 
 
       </el-table>
@@ -151,7 +154,7 @@
   <el-drawer
       ref="drawerRef"
       v-model="dialog_create_room"
-      title="添加房间"
+      title="添加/更改房间"
       direction="rtl"
       class="demo-drawer"
   >
@@ -171,7 +174,7 @@
           >
             <el-option label="男" value="1"/>
             <el-option label="女" value="0"/>
-            <el-option label="不确定" value="-1"/>
+<!--            <el-option label="不确定" value="-1"/>-->
           </el-select>
         </el-form-item>
         <el-form-item label="学生学位" :label-width="formLabelWidth">
@@ -182,7 +185,7 @@
           >
             <el-option label="硕士" value="1"/>
             <el-option label="博士" value="2"/>
-            <el-option label="不确定" value="-1"/>
+<!--            <el-option label="不确定" value="-1"/>-->
           </el-select>
         </el-form-item>
         <el-form-item label="房型" :label-width="formLabelWidth">
@@ -224,6 +227,53 @@
     </div>
   </el-drawer>
 
+
+  <el-drawer
+      ref="drawerRef"
+      v-model="dialog_up_b"
+      title="更改楼栋信息"
+      direction="rtl"
+      class="demo-drawer"
+  >
+    <div class="demo-drawer__content">
+      <el-form :model="formUB">
+        <el-form-item label="楼栋名" :label-width="formLabelWidth">
+          <el-input v-model="formUB.building_name" autocomplete="off"/>
+        </el-form-item>
+        <el-form-item label="描述" :label-width="formLabelWidth">
+          <el-input v-model="formUB.description" autocomplete="off"/>
+        </el-form-item>
+
+
+
+      </el-form>
+      <!--      <div class="demo-drawer__footer">-->
+      <el-button @click="cancelformUB" type="info">取消</el-button>
+      <el-button @click="submitUB" type="primary">提交</el-button>
+    </div>
+  </el-drawer>
+
+
+  <el-drawer
+      ref="drawerRef"
+      v-model="dialog_region_up"
+      title="更改宿舍区信息"
+      direction="rtl"
+      class="demo-drawer"
+  >
+    <div class="demo-drawer__content">
+      <el-form :model="formRegion">
+        <el-form-item label="宿舍区名" :label-width="formLabelWidth">
+          <el-input v-model="formRegion.region_name" autocomplete="off"/>
+        </el-form-item>
+      </el-form>
+      <!--      <div class="demo-drawer__footer">-->
+      <el-button @click="cancelformRegion" type="info">取消</el-button>
+      <el-button @click="submitRegion" type="primary">提交</el-button>
+    </div>
+  </el-drawer>
+
+
 </template>
 
 <script>
@@ -231,6 +281,11 @@ import HeadMenu from "@/components/util/HeadMenu";
 import AsideMenu from "@/components/util/AsideMenu";
 import axios from "axios";
 import {Search, CirclePlus} from "@element-plus/icons-vue";
+import router from "@/router";
+import * as XLSX from "xlsx";
+import {ref} from "vue";
+
+const parsedData = ref([]);
 
 
 export default {
@@ -242,7 +297,8 @@ export default {
     return {
       inputFid: '',
       inputDid: '',
-
+      dialog_region_up: false,
+      formRegion: [],
       dialog_create_room: false,
       formCreateRoom: {
         bed_count: 4
@@ -250,23 +306,168 @@ export default {
 
       allLayouts: [],
       layoutDictIdToObj: {},
+      layoutDictNameToObj: {},
+
       tableData: [],
       allRegions: [],
-      regionDictName: {},
       nowDescribe: '',
-      nowBuilding: {}
+      nowBuilding: {},
+
+      dialog_up_b: false,
+      formUB: [],
+
+      dict4Name: {},
+
+      selectDorm: []
     }
   },
 
   created() {
+    this.check()
     this.getAllRegions()
     this.getAllLayout()
   },
 
   methods: {
+    check() {
+      if (localStorage.getItem('act') === null) {
+        this.$router.push('/');
+      }
+    },
+
+    cancelformRegion() {
+      this.dialog_region_up = false
+    },
+
+    submitRegion() {
+      let submitForm = {
+        region_id: this.nowBuilding.region_id,
+        region_name: this.formRegion.region_name
+      }
+      console.log(submitForm)
+      let url = 'api/admin/dormitory/update/region'
+      axios.put(url,
+          submitForm
+      ).then(resp => {
+        if (resp.status === 200) {
+          alert('成功更改')
+          router.go(0)
+        }
+      }).catch(e => {
+        console.log(e)
+      })
+
+    },
+
+    handleSelectChange(p) {
+      this.selectDorm = p
+    },
+
+    cancelformUB() {
+      this.dialog_up_b = false
+    },
+
+    submitUB(){
+      let submitForm = JSON.parse(JSON.stringify(this.nowBuilding))
+      submitForm.building_name = this.formUB.building_name
+      submitForm.description = this.formUB.description
+
+
+
+      let url = 'api/admin/dormitory/update/building'
+      axios.put(url,
+          submitForm
+      ).then(resp => {
+        if (resp.status === 200) {
+          alert('成功更改')
+          router.go(0)
+        }
+      }).catch(e => {
+        console.log(e)
+      })
+
+    },
 
     cancelFormCreateRoom() {
       this.dialog_create_room = false
+    },
+
+    handleFileChange(event) {
+      const file = event.target.files[0];
+      this.readFileContent(file);
+    },
+
+    readFileContent (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const fileContent = e.target.result;
+        // 使用 xlsx 库解析文件内容
+        const workbook = XLSX.read(fileContent, { type: 'binary' });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        // 将解析的数据存储在 Vue 组件中
+        parsedData.value = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+        console.log(parsedData.value);
+        let matrix = parsedData.value
+        alert('上传成功！')
+        console.log(matrix)
+        console.log(this.dict4Name)
+        let formCreate = []
+        let failList = []
+        for (let i = 1; i < matrix.length; i++) {
+          let region = matrix[i][0]
+          let build = matrix[i][1]
+          let layout = matrix[i][7]
+          if (! (layout in this.layoutDictNameToObj) ||
+              ! (region in this.dict4Name)
+          ) {
+            failList.push(matrix[i])
+            continue
+          } else if (! (build in this.dict4Name[region])) {
+            failList.push(matrix[i])
+            continue
+          }
+
+          // formCreate[i-1].is_enpty = matrix[i][8] === '是' ? true :
+          //     (matrix[i][8] === '否' ? false : null)
+          formCreate.push({})
+          formCreate[i-1].layout_id = this.layoutDictNameToObj[layout].layout_id
+          formCreate[i-1].building_id = this.dict4Name[region][build].building_id
+
+          formCreate[i-1].floor = matrix[i][2]
+          formCreate[i-1].room_number = matrix[i][3]
+          formCreate[i-1].bed_count = matrix[i][4]
+          formCreate[i-1].gender = matrix[i][5] === '女' ? 0 : 1
+          switch (matrix[i][6]) {
+            case '': formCreate[i-1].degree = null
+                  break
+            case '本科': formCreate[i-1].degree = 0
+                  break
+            case '硕士': formCreate[i-1].degree = 1
+                  break
+            case '博士': formCreate[i-1].degree = 2
+          }
+        }
+        console.log(formCreate)
+        let url = 'api/admin/dormitory/create/dormitory'
+        axios.post(url, formCreate).then(resp => {
+          if (resp.status === 200) {
+            let msg = '添加完成，'
+            if (failList.length > 0) {
+              msg += '失败列表：\n'
+              for (let f of failList) {
+                msg += f.toString() + '\n'
+              }
+            }
+            alert(msg)
+            this.clickBuild(this.nowBuilding)
+          }
+        }).catch(e => {
+          console.log(e)
+        })
+
+      };
+      reader.readAsBinaryString(file);
     },
 
     submitCreateRoom(){
@@ -286,11 +487,28 @@ export default {
       submitForm.building_id = this.nowBuilding.building_id
       console.log(submitForm)
 
-      axios.post('api/admin/dormitory/create/dormitory',
+      let url = 'api/admin/dormitory/create/dormitory'
+      if (this.selectDorm.length === 1) {
+        url = 'api/admin/dormitory/update/dormitory'
+        submitForm.dormitory_id = this.selectDorm[0].dormitory_id
+        axios.put(url,
+            [submitForm]
+        ).then(resp => {
+          if (resp.status === 200) {
+            alert('成功更改')
+            this.clickBuild(this.nowBuilding)
+          }
+        }).catch(e => {
+          console.log(e)
+        })
+        return;
+      }
+
+      axios.post(url,
           [submitForm]
       ).then(resp => {
         if (resp.status === 200) {
-          alert('成功')
+          alert('成功添加')
           this.clickBuild(this.nowBuilding)
         }
       }).catch(e => {
@@ -342,6 +560,10 @@ export default {
       this.nowDescribe = nowBuild["description"]
       this.nowBuilding = nowBuild
 
+      this.formUB.building_name = nowBuild.building_name
+      this.formUB.description = nowBuild.description
+
+
       axios.get('/api/admin/dormitory/get/dormitory', {
         params: {
           type: 'building',
@@ -362,6 +584,7 @@ export default {
         this.allLayouts = resp.data
         for (let i = 0; i < this.allLayouts.length; i++) {
           this.layoutDictIdToObj[this.allLayouts[i].layout_id.toString()] = this.allLayouts[i]
+          this.layoutDictNameToObj[this.allLayouts[i].layout_name.toString()] = this.allLayouts[i]
         }
         console.log('!!!!')
         console.log(this.allLayouts)
@@ -376,7 +599,7 @@ export default {
         this.allRegions = resp.data
         for (let i = 0; i < this.allRegions.length; i++) {
 
-          this.regionDictName[i.toString()] = this.allRegions[i].region_name
+          this.dict4Name[this.allRegions[i].region_name] = this.allRegions[i]
 
           axios.get('/api/admin/dormitory/get/building', {
             params: {
@@ -386,6 +609,9 @@ export default {
             this.allRegions[i].building = []
             for (let j = 0; j < resp.data.length; j++) {
               this.allRegions[i].building.push(resp.data[j])
+
+              this.dict4Name[this.allRegions[i].region_name][resp.data[j].building_name] =
+                  resp.data[j]
             }
           }).catch(e => {
             console.log(e)
