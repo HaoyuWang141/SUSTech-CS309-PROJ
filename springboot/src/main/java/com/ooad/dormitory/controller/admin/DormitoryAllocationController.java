@@ -30,7 +30,7 @@ public class DormitoryAllocationController {
 
     @PostMapping("/relate")
     @Operation(summary = "dormitory allocation", description = "0:组队阶段, 1:收藏阶段, 2:正选阶段, 3:结束阶段")
-    public ResponseEntity<?> relateDormitory(@RequestBody Integer entryYear, @RequestBody Integer degree, @RequestBody Integer gender, @RequestBody List<Integer> dormitoryIdList) {
+    public ResponseEntity<?> relateDormitory(@RequestParam Integer entryYear, @RequestParam Integer degree, @RequestParam Integer gender, @RequestBody List<Integer> dormitoryIdList) {
         List<AllocationRelation> allocationRelationList = new ArrayList<>();
         for (Integer dormitoryId : dormitoryIdList) {
             allocationRelationList.add(new AllocationRelation(null, entryYear, degree, gender, dormitoryId));
