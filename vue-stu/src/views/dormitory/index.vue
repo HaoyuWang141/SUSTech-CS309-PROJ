@@ -74,6 +74,9 @@ import {ref} from "vue";
 import LayoutCard from "./components/layout_card.vue";
 import axiosInstance from "@/axios/axiosConfig";
 import type {Region, Building, Layout, Dormitory} from "@/types/globalTypes";
+import {useRoute} from "vue-router";
+
+const route = useRoute();
 
 const regions = ref<Region[]>([]);
 const selectedRegion = ref<Region>();
@@ -93,6 +96,12 @@ async function fetchRegions() {
         "/student/dormitory/getRegions"
     );
     regions.value = response.data;
+    if (route.query.region) {
+      selectedRegion.value = regions.value.find(
+          (region) => region.region_id === Number(route.query.region)
+      );
+      await fetchBuildings();
+    }
   } catch (error) {
     console.error(error);
   }

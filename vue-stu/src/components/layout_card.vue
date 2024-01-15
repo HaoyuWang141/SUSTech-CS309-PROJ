@@ -89,6 +89,7 @@ async function select() {
           console.log(response);
           ElMessage.success("选择成功");
           dialogVisible.value = false;
+          disabled.value = true;
         });
   } catch (error) {
     console.log(error);

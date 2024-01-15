@@ -6,8 +6,9 @@ import Login from "@/views/login/index.vue";
 import Homepage from "@/views/homepage/index.vue";
 import Profile from "@/views/profile/index.vue";
 import Dormitory from "@/views/dormitory/index.vue";
-import Dormmates from "@/views/dormmates/index.vue"
-import Chat from "@/components/Chat.vue"
+import Dormmates from "@/views/dormmates/index.vue";
+import Chat from "@/views/chat/index.vue";
+import Map from "@/views/map/index.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -55,9 +56,15 @@ const routes: Array<RouteRecordRaw> = [
                 path: "chat",
                 name: "Chat",
                 component: Chat,
-            }
+            },
+
         ],
     },
+    {
+        path: "/map",
+        name: "Map",
+        component: Map,
+    }
 ];
 
 const router = createRouter({
