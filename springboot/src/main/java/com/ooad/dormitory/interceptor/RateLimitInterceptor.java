@@ -2,6 +2,8 @@ package com.ooad.dormitory.interceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Getter;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -9,7 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Component
+//@Component
 public class RateLimitInterceptor implements HandlerInterceptor {
 
     private static final Map<String, Integer> requestCount = new ConcurrentHashMap<>();
@@ -19,6 +21,7 @@ public class RateLimitInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
+        System.out.println("RateLimitInterceptor start pre-handling");
 //        String ipAddress = request.getRemoteAddr();
 //        if (requestCount.containsKey(ipAddress)) {
 //            int count = requestCount.get(ipAddress);
@@ -36,12 +39,14 @@ public class RateLimitInterceptor implements HandlerInterceptor {
         String ipAddress = request.getRemoteAddr();
 
         // 获取或创建访问信息
-        AccessInfo accessInfo = requestInfo.computeIfAbsent(ipAddress, k -> new AccessInfo());
+        AccessInfo accessInfo = requestInfo.computeIfAbsent(ipAddress, k -> new AccessInfo(ipAddress));
 
         // 检查访问频率
         if (isRateLimited(accessInfo)) {
 //            response.setStatus(HttpServletResponse.SC_TOO_MANY_REQUESTS);
+            accessInfo.setBanned(true);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            System.out.println("RateLimitInterceptor denied");
             return false;
         }
 
@@ -67,29 +72,52 @@ public class RateLimitInterceptor implements HandlerInterceptor {
     private boolean isRateLimited(AccessInfo accessInfo) {
         long currentTime = System.currentTimeMillis();
         long elapsedTime = currentTime - accessInfo.getLastAccessTime();
+        System.out.println("ip: " + accessInfo.getIpAddress() + "\n" + "count: " + accessInfo.getCount());
+//        System.out.println(currentTime);
+//        System.out.println(elapsedTime);
 
         // 设置访问间隔和访问次数的阈值
-        return elapsedTime < 1000 && accessInfo.getCount() > 10; // 1秒内超过10次请求视为频繁访问
+        return elapsedTime < 1000 && accessInfo.getCount() > 1000; // 1秒内超过1000次请求视为频繁访问
     }
 
-    private static class AccessInfo {
-        private int count = 0;
-        private long lastAccessTime = 0;
+    @Scheduled(fixedRate = 30000) // 每30秒执行一次:归零所有记录的count
+    public void resetCount() {
+        System.out.println("reset counts");
+        for (AccessInfo accessInfo : requestInfo.values()) {
+            accessInfo.resetCount();
+            accessInfo.setBanned(false);
+        }
+    }
 
-        public int getCount() {
-            return count;
+
+    @Getter
+    private static class AccessInfo {
+        private String ipAddress;
+        private int count;
+        private long lastAccessTime;
+        private boolean banned;
+
+        public AccessInfo(String ipAddress) {
+            this.ipAddress = ipAddress;
+            this.count = 0;
+            this.lastAccessTime = System.currentTimeMillis();
+            this.banned = false;
         }
 
         public void incrementCount() {
             count++;
         }
 
-        public long getLastAccessTime() {
-            return lastAccessTime;
-        }
-
         public void setLastAccessTime(long lastAccessTime) {
             this.lastAccessTime = lastAccessTime;
+        }
+
+        public void setBanned(boolean banned) {
+            this.banned = banned;
+        }
+
+        public void resetCount() {
+            this.count = 0;
         }
     }
 

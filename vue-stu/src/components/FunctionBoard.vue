@@ -12,19 +12,11 @@ import router from "@/router";
     </template>
     <template class="function-board-layout">
       <div style="grid-column: 1/4; grid-row: 1/6">
-        <el-button style="width: 100%; height: 100%" @click="router.push('dormitory')">
+        <el-button @click="router.push('dormitory')">
           <el-icon :style="{fontSize: '50px'}">
             <Search/>
           </el-icon>
           <span>查看宿舍</span>
-        </el-button>
-      </div>
-      <div style="grid-column: 4/7; grid-row: 1/6;">
-        <el-button style="width: 100%; height: 100%">
-          <el-icon :style="{fontSize: '50px'}">
-            <ChatDotRound />
-          </el-icon>
-          <span>论坛</span>
         </el-button>
       </div>
     </template>
@@ -32,14 +24,22 @@ import router from "@/router";
 </template>
 
 <style scoped>
+body {
+  background-color: transparent;
+}
+
 .function-board-card {
     border-radius: 20px;
-    width: 92.5%;
-    height: 92.5%;
-    margin-top: 2.5%;
-    margin-bottom: 5%;
-    margin-left: 2.5%;
-    margin-right: 5%;
+    margin-left: 5%;
+    margin-top: 5%;
+    margin-bottom: 2.5%;
+    margin-right: 2.5%;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-color: rgba(194, 206, 219, 0.8);
+    border-width: 4px;
+    border-style: solid;
+    border-radius: 40px;
+    color: white;
 }
 
 .function-board-header {
@@ -48,7 +48,15 @@ import router from "@/router";
     font-weight: bold;
 }
 
+.el-button {
+    background-color: rgba(194, 206, 219, 0.8);
+    border: None;
+    color: black;
+    height: auto;
+}
+
 .function-board-layout {
+    padding: 20px 20px;
     display: grid;
     grid-gap: 20px;
     grid-template-columns: repeat(10, 1fr);

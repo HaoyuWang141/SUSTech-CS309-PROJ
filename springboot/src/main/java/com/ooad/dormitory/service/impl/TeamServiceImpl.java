@@ -7,6 +7,8 @@ import com.ooad.dormitory.service.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class TeamServiceImpl extends ServiceImpl<TeamMapper, Team> implements TeamService {
 
@@ -15,5 +17,10 @@ public class TeamServiceImpl extends ServiceImpl<TeamMapper, Team> implements Te
     @Autowired
     public TeamServiceImpl(TeamMapper teamMapper) {
         this.teamMapper = teamMapper;
+    }
+
+    @Override
+    public Team getTeamById(Integer id) {
+        return teamMapper.selectById(id);
     }
 }

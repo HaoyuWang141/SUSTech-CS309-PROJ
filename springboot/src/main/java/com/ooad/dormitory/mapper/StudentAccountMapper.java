@@ -25,5 +25,5 @@ public interface StudentAccountMapper extends BaseMapper<StudentAccount> {
             @Result(column = "team_id", property = "teamId"),
             @Result(column = "team_id", property = "team", one = @org.apache.ibatis.annotations.One(select = "com.ooad.dormitory.mapper.TeamMapper.selectById"))
     })
-    List<StudentAccount> selectAllWithTeam();
+    List<StudentAccount> selectAllStudents();
 }

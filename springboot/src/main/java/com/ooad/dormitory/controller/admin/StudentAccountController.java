@@ -5,6 +5,7 @@ import com.ooad.dormitory.entity.Authentication;
 import com.ooad.dormitory.entity.StudentAccount;
 import com.ooad.dormitory.mapper.AuthenticationMapper;
 import com.ooad.dormitory.service.StudentAccountService;
+import com.ooad.dormitory.service.TeamService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ public class StudentAccountController {
 
     private final StudentAccountService studentAccountService;
     private final AuthenticationMapper authenticationMapper;
+    @Autowired
+    private TeamService teamService;
 
     @Autowired
     public StudentAccountController(StudentAccountService studentAccountService, AuthenticationMapper authenticationMapper) {
@@ -131,7 +134,11 @@ public class StudentAccountController {
                 queryWrapper.eq("gender", 0);
             }
         }
-        return studentAccountService.list(queryWrapper);
+        List<StudentAccount> studentAccountList = studentAccountService.list(queryWrapper);
+        for (StudentAccount s: studentAccountList) {
+            s.setTeam(teamService.getTeamById(s.getTeamId()));
+        }
+        return studentAccountList;
     }
 
     @GetMapping("/getStudent")
@@ -141,7 +148,7 @@ public class StudentAccountController {
 
     @GetMapping("/getStudents")
     public List<StudentAccount> getStudents(String partStudentId) {
-        return studentAccountService.list().stream()
+        return studentAccountService.getAllStudentAccount().stream()
                 .filter(studentAccount -> studentAccount.getStudentId().contains(partStudentId))
                 .collect(Collectors.toList());
     }

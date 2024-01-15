@@ -14,6 +14,11 @@ DROP TABLE IF EXISTS notification CASCADE;
 DROP TABLE IF EXISTS comment CASCADE;
 DROP TABLE IF EXISTS reply CASCADE;
 DROP TABLE IF EXISTS authentication CASCADE;
+<<<<<<< HEAD
+DROP TABLE IF EXISTS hello CASCADE;
+=======
+DROP TABLE IF EXISTS chat_message;
+>>>>>>> 7e7dd95420bd4a06af456c2d12d976b4672e7e10
 
 -- 管理员账号表
 CREATE TABLE admin_account
@@ -178,4 +183,20 @@ CREATE TABLE authentication
     token_failure_time TIME,
     online_amount      INT, -- 该账户已在线设备数
     FOREIGN KEY (student_id) REFERENCES student_account (student_id)
+);
+
+(
+    id SERIAL PRIMARY KEY,
+    val VARCHAR(50)
+);
+
+CREATE TABLE chat_message
+(
+    id          SERIAL PRIMARY KEY,                  -- 消息ID
+    sender_id   VARCHAR(20) NOT NULL,                -- 发送者ID
+    receiver_id VARCHAR(20),                         -- 接收者ID（对于一对一消息）
+    team_id     INT REFERENCES team,                 -- 聊天室ID（对于群聊）
+    content     TEXT        NOT NULL,                -- 消息内容
+    timestamp   TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 时间戳
+    status      VARCHAR(50)                          -- 消息状态（例如：已发送、已接收、已读等）
 );

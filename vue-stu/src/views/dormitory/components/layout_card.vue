@@ -46,7 +46,12 @@
             <span>评论</span>
             <el-form>
                 <el-form-item>
-                    <el-input v-model="newComment" placeholder="请输入评论" type="textarea" :rows="3"/>
+                    <el-input
+                        v-model="newComment"
+                        placeholder="请输入评论"
+                        type="textarea"
+                        :rows="3"
+                    />
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="postComment">
@@ -92,10 +97,16 @@ async function bookmark() {
     // 添加收藏的逻辑
     console.log("收藏至队伍被点击");
     axiosInstance
-        .post("/student/dormitory/favor2", {
-            studentAccountId: localStorage.getItem("studentId"),
-            dormitory_id: props.dormitory.dormitory_id,
-        })
+        .post(
+            "/student/dormitory/favor2",
+            {},
+            {
+                params: {
+                    studentAccountId: localStorage.getItem("studentId"),
+                    dormitoryId: props.dormitory.dormitory_id,
+                },
+            }
+        )
         .then((res) => {
             console.log(res);
             ElMessage.success("收藏成功");
@@ -186,7 +197,7 @@ async function postComment() {
     min-width: 100px;
     margin-bottom: 30px;
     background-color: @gray;
-    color: @text-color4;
+    color: @text-color-blue;
     border: none;
     border-radius: 12px;
     font-size: large;
@@ -226,7 +237,7 @@ async function postComment() {
 
     .title {
         text-align: center; // 文本居中
-        color: @text-color4; // 文本颜色
+        color: @text-color-blue; // 文本颜色
         font-size: x-large; // 字体大小
         font-weight: bold; // 字体加粗
     }

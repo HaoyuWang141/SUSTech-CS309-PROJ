@@ -7,6 +7,8 @@ import com.ooad.dormitory.service.StudentAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class StudentAccountServiceImpl extends ServiceImpl<StudentAccountMapper, StudentAccount> implements StudentAccountService {
 
@@ -15,5 +17,11 @@ public class StudentAccountServiceImpl extends ServiceImpl<StudentAccountMapper,
     @Autowired
     public StudentAccountServiceImpl(StudentAccountMapper studentAccountMapper) {
         this.studentAccountMapper = studentAccountMapper;
+    }
+
+
+    @Override
+    public List<StudentAccount> getAllStudentAccount() {
+        return studentAccountMapper.selectAllStudents();
     }
 }
