@@ -10,7 +10,7 @@
         <el-icon :size="20">
           <house/>
         </el-icon>
-        <span>首页</span>
+        <span>房型管理</span>
       </el-menu-item>
 
       <el-menu-item index="/dormitory">
