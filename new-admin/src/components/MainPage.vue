@@ -82,8 +82,7 @@ export default {
   },
 
   created() {
-    // this.check()
-
+    this.check()
   },
 
   data() {
@@ -104,11 +103,10 @@ export default {
 
   methods: {
     check() {
-      if (localStorage.getItem('uid') === null) {
+      if (localStorage.getItem('act') === null) {
         this.$router.push('/');
       }
     }
-
 
 
   }
