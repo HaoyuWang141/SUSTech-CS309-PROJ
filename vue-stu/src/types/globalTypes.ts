@@ -50,3 +50,26 @@ export interface CommentType {
     publish_time: string;
     reply_list: ReplyType[];
 }
+
+export interface Team {
+    team_id: number,
+    dormitory_id: number,
+    owner_id: number,
+    dormitory: Dormitory,
+}
+
+export interface StudentAccount {
+    student_id: string,
+    name: string,
+    gender: number,
+    photoUrl: string,
+    sleep_time: string,
+    wake_up_time: string,
+    air_conditioner_temperature: number,
+    snore: false,
+    qq: string,
+    email: string,
+    wechat: string,
+    teamId: number,
+    team: Team,
+}

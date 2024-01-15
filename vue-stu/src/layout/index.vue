@@ -7,7 +7,7 @@
       <!--      <el-row style="width: 100%">-->
       <!--        <el-col :span="6">-->
       <el-button
-          @click="backToHome"
+          @click="router.push('/welcome');"
           link
           style="
                     font-size: 30px;
@@ -22,7 +22,7 @@
       <div class="check-dorm" style="margin-left: auto; margin-right: 30px" v-show="studentId">
         <el-button
             type="primary"
-            @click="router.push('/dormitory')"
+            @click="router.push('/map')"
             class="button-style">
           <el-icon style="margin-right: 10px">
             <HomeFilled/>
@@ -44,7 +44,7 @@
       <el-dialog v-model="showNoticeBoard"
                  style="
                  backdrop-filter: blur(3px);
-                 background-color: rgba(0,0,0,0.8);
+                 background-color: rgba(0,0,0,0.6);
                  border-radius: 30px;"
       >
         <NoticeBoard/>
@@ -61,9 +61,10 @@
         </el-button>
 
         <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item @click="toProfile">个人主页</el-dropdown-item>
-            <el-dropdown-item @click="logout">登出</el-dropdown-item>
+          <el-dropdown-menu >
+            <el-dropdown-item @click="() => {router.push('/home')}" style="font-weight: bold;">个人主页</el-dropdown-item>
+            <el-dropdown-item @click="() => {router.push('/chat')}" style="font-weight: bold;">聊天室</el-dropdown-item>
+            <el-dropdown-item @click="logout" style="color: darkred; font-weight: bold;">登出</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -81,7 +82,7 @@ import {onMounted, ref, computed} from "vue";
 import {useRouter} from "vue-router";
 import axiosInstance from "@/axios/axiosConfig";
 import {useAuthStore} from "@/stores/auth";
-import NoticeBoard from "@/components/NoticeBoard.vue";
+import NoticeBoard from "@/layout/components/NoticeBoard.vue";
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -100,17 +101,9 @@ function updateBgHeight() {
   }
 }
 
-function backToHome() {
-  router.push("/home");
-}
-
 function logout() {
   authStore.logout();
   router.push("/welcome");
-}
-
-function toProfile() {
-  router.push("/profile");
 }
 
 onMounted(() => {
@@ -155,7 +148,7 @@ onMounted(() => {
 .bg-picture {
   width: 100%;
   height: 100%;
-  background: url("../assets/bg.png") no-repeat center center fixed;
+  background: url("../assets/bg.png") no-repeat   fixed;
   background-size: cover;
   position: absolute;
   top: 0;
@@ -214,18 +207,6 @@ onMounted(() => {
   border-radius: 12px;
   transition: background-color 0.5s;
   box-shadow: rgba(34, 204, 228, 0.3) 5px 5px 10px;
-
-  //&:hover {
-  //  background-color: @button-hover-color;
-  //}
-
-  //&:focus {
-  //  border-color: red;
-  //}
-
-  //::selection {
-  //  border-color: red;
-  //}
 }
 
 /deep/ .my-scroll-bar {

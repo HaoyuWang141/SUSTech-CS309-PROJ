@@ -11,10 +11,10 @@
             <el-form-item>
                 <el-button class="login-button" type="primary" @click="doLogin" style="width: 100%;">登陆</el-button>
             </el-form-item>
-            <el-row style="text-align: center;margin-top: -10px;">
-                <el-link type="primary" @click="doRegister">注册账号</el-link>
-<!--                <el-link type="primary" >忘记密码</el-link>-->
-            </el-row>
+<!--            <el-row style="text-align: center;margin-top: -10px;">-->
+<!--                <el-link type="primary" @click="doRegister">注册账号</el-link>-->
+<!--&lt;!&ndash;                <el-link type="primary" >忘记密码</el-link>&ndash;&gt;-->
+<!--            </el-row>-->
         </el-form>
     </div>
 </template>
@@ -35,53 +35,21 @@ export default{
         doLogin:function(){
             let username=this.username;
             let password=this.password;
-            console.log(password);
-            let url="/api/login";
-            let data={
-                uid:username,
-                password:password,
-                methodName:'login'
-            }
-            axios.post(url,data,{headers: {
-                'Content-Type' : 'application/json'
-                }}).then(resp=>{
-                    console.log("Get response: " + resp);
-                    // if log in successfully, set session id...
-                    // localStorage.setItem('JSESSIONID',resp.headers['set-cookie'][0].split(';')[0]);
-                    localStorage.setItem('uid',username);
-                    if(resp.data==="Login successful") {
-                        console.log("成功");
-                        ElMessageBox.alert('登陆成功', {
-                            confirmButtonText: 'OK',
-                            type: 'success'
-                        }).then(() => {
-                                this.$router.push('/mainpage');
-                            }
-                        )
-                    }
-                    else if (resp.data==="Already login") {
-                      console.log("已登录")
-                      ElMessageBox.alert('您已登录，请勿再次登录', {
-                        confirmButtonText: 'OK',
-                        type: 'success'
-                      }).then(() => {
-                            this.$router.push('/mainpage');
-                          }
-                      )
-                    }
-                    else {
-                        ElMessageBox.alert('登陆失败，用户名或密码错误', '错误！', {
-                            confirmButtonText: 'OK',
-                            type: 'error'
-                        })
-                        console.log("失败" + resp.data);
-                    }
-                }).catch(err=>{
-                console.log("出现错误"+err);
+
+            axios.get('api/admin/adminAccount/get').then(resp=>{
+              for (let i = 0; i < resp.data.length; i++) {
+                if (resp.data[i].account_name === username &&
+                    resp.data[i].password === password) {
+                  localStorage.setItem('act',username)
+                  localStorage.setItem('pw',password)
+                  this.$router.push('/student')
+                }
+              }
+
+              // alert('密码错误')
+            }).catch(err=>{
+              console.log("出现错误"+err);
             })
-        },
-        doRegister:function(){
-            this.$router.push('/register')
         }
     }
 }

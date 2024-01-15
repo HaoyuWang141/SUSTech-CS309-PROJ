@@ -113,11 +113,16 @@ export default {
   },
 
   created() {
+    this.check()
     this.getAllNotes()
   },
 
   methods: {
-
+    check() {
+      if (localStorage.getItem('act') === null) {
+        this.$router.push('/');
+      }
+    },
     submitNote() {
       let submitForm = JSON.parse(JSON.stringify(this.formNote))
       switch (submitForm.gender) {

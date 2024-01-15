@@ -182,11 +182,6 @@ CREATE TABLE authentication
     FOREIGN KEY (student_id) REFERENCES student_account (student_id)
 );
 
-(
-    id SERIAL PRIMARY KEY,
-    val VARCHAR(50)
-);
-
 CREATE TABLE chat_message
 (
     id          SERIAL PRIMARY KEY,                  -- 消息ID

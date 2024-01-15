@@ -471,7 +471,7 @@ public class DormitorySelectionController {
                 .eq("entry_year", studentAccount.calEntryYear())
                 .eq("degree", studentAccount.calDegree())
                 .eq("gender", studentAccount.getGender()));
-        Integer stage = 0;
+        Integer stage = -1;
         for (AllocationStage allocationStage : allocationStageList) {
             if (allocationStage.getStartTime().compareTo(new Timestamp(System.currentTimeMillis())) < 0
                     && allocationStage.getEndTime().compareTo(new Timestamp(System.currentTimeMillis())) > 0) {

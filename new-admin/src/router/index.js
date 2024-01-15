@@ -6,6 +6,7 @@ import ManageDorm from "@/components/ManageDorm";
 import ManageStu from "@/components/ManageStu";
 import ManageNote from "@/components/ManageNote";
 import ManageAllocate from "@/components/ManageAllocate";
+import EXL from "@/components/EXL";
 
 const routes = [
     {
@@ -42,6 +43,11 @@ const routes = [
         path: "/allocate",
         name: "ManageAllocate",
         component: ManageAllocate
+    },
+    {
+        path: "/123",
+        name: "123",
+        component: EXL
     }
 ]
 
